@@ -1,0 +1,24 @@
+# Workflow - Verify and Deploy to GitHub Packages
+name: verify-to-deploy-workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip-verify:
+        description: skip verify?
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  call-verify:
+    if: ${{ !inputs.skip-verify }}
+    uses: ./.github/workflows/verify-workflow.yml
+
+  call-deploy:
+    if: ${{ !failure() }}
+    needs: call-verify
+    uses: ./.github/workflows/deploy-workflow.yml
+    with:
+      skip-test: true
+    secrets: inherit

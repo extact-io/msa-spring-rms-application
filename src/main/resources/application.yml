@@ -1,0 +1,67 @@
+logging.level:
+  org.springframework:
+    #transaction: info
+    #security: trace
+
+spring:
+  messages:
+    basename: application-messages
+    encoding: UTF-8
+  profiles:
+    default: jpa
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: "env,beans"
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: "readinessState,db"
+      validate-group-membership: false # groupにindicatorが存在しない場合もエラーにしない設定
+
+rms:
+  debug:
+    configdump:
+      enable: false
+      #system-properties: on
+      #system-environment: on
+  log:
+    server:
+      enable: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "jpa"
+  sql:
+    init:
+      schema-locations: classpath:sql/rentalItem-schema.sql
+      data-locations: classpath:sql/rentalItem-data.sql
+  jpa:
+    open-in-view:
+      false
+    hibernate:
+      ddl-auto: none
+    properties:
+      javax.persistence.validation.mode: NONE
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "file"
+rms:
+  persistence:
+    rental-item:
+      csv:
+        type: temporary
+        temporary:
+          resource: temporary/rentalItemTemp.csv
