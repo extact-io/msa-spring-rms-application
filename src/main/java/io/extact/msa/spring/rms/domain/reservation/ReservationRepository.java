@@ -4,13 +4,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 import io.extact.msa.spring.platform.fw.domain.repository.GenericRepository;
-import io.extact.msa.spring.platform.fw.domain.service.DuplicationDataFinder;
 import io.extact.msa.spring.platform.fw.domain.type.DateTimePeriod;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
-public interface ReservationRepository extends GenericRepository<Reservation>, DuplicationDataFinder<Reservation> {
+public interface ReservationRepository extends GenericRepository<Reservation> {
 
     /**
      * レンタル品IDと利用開始日が一致する予約一覧を取得する。
