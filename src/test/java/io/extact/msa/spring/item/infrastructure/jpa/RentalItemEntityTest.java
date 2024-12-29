@@ -16,7 +16,7 @@ class RentalItemEntityTest {
         String itemName = "Laptop";
 
         // when
-        RentalItemEntity rentalItemEntity = new RentalItemEntity(id, serialNo, itemName);
+        ItemEntity rentalItemEntity = new ItemEntity(id, serialNo, itemName);
 
         // then
         assertThat(rentalItemEntity).isNotNull();
@@ -28,7 +28,7 @@ class RentalItemEntityTest {
     @Test
     void testSetters() {
         // given
-        RentalItemEntity rentalItemEntity = new RentalItemEntity();
+        ItemEntity rentalItemEntity = new ItemEntity();
         Integer id = 1;
         String serialNo = "SN12345";
         String itemName = "Laptop";
@@ -50,7 +50,7 @@ class RentalItemEntityTest {
         Item rentalItem = Item.reconstruct(1, "SN12345", "Laptop");
 
         // when
-        RentalItemEntity rentalItemEntity = RentalItemEntity.from(rentalItem);
+        ItemEntity rentalItemEntity = ItemEntity.from(rentalItem);
 
         // then
         assertThat(rentalItemEntity).isNotNull();
@@ -62,7 +62,7 @@ class RentalItemEntityTest {
     @Test
     void testToModel() {
         // given
-        RentalItemEntity rentalItemEntity = new RentalItemEntity(1, "SN12345", "Laptop");
+        ItemEntity rentalItemEntity = new ItemEntity(1, "SN12345", "Laptop");
 
         // when
         Item rentalItem = rentalItemEntity.toModel();

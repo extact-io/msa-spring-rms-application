@@ -44,8 +44,8 @@ class RentalItemFileRepositoryTest extends RentalItemRepositoryTest {
         ItemRepository prototypeRentalItemFileRepository(Environment env, ModelArrayMapper<Item> mapper)
                 throws IOException {
             LoadPathDeriver pathDeriver = new LoadPathDeriver(env); // Bean生成の都度ファイルを再配置する
-            FileOperator fileOperator = new FileOperator(pathDeriver.derive(RentalItemFileRepository.FILE_ENTITY));
-            return new RentalItemFileRepository(fileOperator, mapper);
+            FileOperator fileOperator = new FileOperator(pathDeriver.derive(ItemFileRepository.FILE_ENTITY));
+            return new ItemFileRepository(fileOperator, mapper);
         }
 
         @Bean
