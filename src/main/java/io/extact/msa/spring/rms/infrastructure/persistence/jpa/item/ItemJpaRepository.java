@@ -6,7 +6,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.ModelEntityMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.AbstractJpaRepository;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 
 public class ItemJpaRepository extends AbstractJpaRepository<Item, ItemEntity> implements ItemRepository {
 
@@ -21,7 +20,7 @@ public class ItemJpaRepository extends AbstractJpaRepository<Item, ItemEntity> i
     }
 
     @Override
-    public Optional<Item> findDuplicationData(ItemReference checkItem) {
+    public Optional<Item> findDuplicationData(Item checkItem) {
         return springJpa.findBySerialNo(checkItem.getSerialNo())
                 .map(entityMapper::toModel);
     }

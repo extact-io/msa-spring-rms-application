@@ -5,14 +5,13 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArr
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
 
 public class UserArrayMapper implements ModelArrayMapper<User>, UserCreatable {
 
     public static final UserArrayMapper INSTANCE = new UserArrayMapper();
 
     @Override
-    public UserReference toModel(String[] attributes) {
+    public User toModel(String[] attributes) {
 
         int id = Integer.parseInt(attributes[0]);
         String loginId = attributes[1];

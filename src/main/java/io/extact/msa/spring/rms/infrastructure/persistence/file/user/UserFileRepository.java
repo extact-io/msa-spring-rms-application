@@ -7,7 +7,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArr
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
 
 public class UserFileRepository extends AbstractFileRepository<User> implements UserRepository {
 
@@ -23,7 +22,7 @@ public class UserFileRepository extends AbstractFileRepository<User> implements 
     }
 
     @Override
-    public Optional<User> findDuplicationData(UserReference checkModel) {
+    public Optional<User> findDuplicationData(User checkModel) {
         return this.findAll().stream()
                 .filter(account -> account.getLoginId().equals(checkModel.getLoginId()))
                 .findFirst();

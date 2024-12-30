@@ -10,7 +10,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEnti
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +34,7 @@ public class ItemEntity implements TableEntity<Item>, ItemCreatable {
     }
 
     @Override
-    public ItemReference toModel() {
+    public Item toModel() {
         return newInstance(new ItemId(this.id), this.serialNo, this.itemName);
     }
 }

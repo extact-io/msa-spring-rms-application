@@ -13,7 +13,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEnti
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,7 +50,7 @@ public class UserEntity implements TableEntity<User>, UserCreatable {
     }
 
     @Override
-    public UserReference toModel() {
+    public User toModel() {
         return newInstance(
                 new UserId(id),
                 loginId,

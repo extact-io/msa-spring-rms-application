@@ -7,7 +7,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArr
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 
 public class ItemFileRepository extends AbstractFileRepository<Item> implements ItemRepository {
 
@@ -23,7 +22,7 @@ public class ItemFileRepository extends AbstractFileRepository<Item> implements 
     }
 
     @Override
-    public Optional<Item> findDuplicationData(ItemReference checkItem) {
+    public Optional<Item> findDuplicationData(Item checkItem) {
         return this.findAll().stream()
                 .filter(item -> item.getSerialNo().equals(checkItem.getSerialNo()))
                 .findFirst();

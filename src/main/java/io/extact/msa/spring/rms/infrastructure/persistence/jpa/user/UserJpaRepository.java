@@ -6,7 +6,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.ModelEntityMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.AbstractJpaRepository;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
 
 public class UserJpaRepository extends AbstractJpaRepository<User, UserEntity> implements UserRepository {
 
@@ -21,7 +20,7 @@ public class UserJpaRepository extends AbstractJpaRepository<User, UserEntity> i
     }
 
     @Override
-    public Optional<User> findDuplicationData(UserReference checkModel) {
+    public Optional<User> findDuplicationData(User checkModel) {
         return delegator.findByLoginId(checkModel.getLoginId())
                 .map(entityMapper::toModel);
     }

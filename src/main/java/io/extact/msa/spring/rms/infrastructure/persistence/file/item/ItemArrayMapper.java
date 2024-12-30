@@ -5,14 +5,13 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArr
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 
 public class ItemArrayMapper implements ModelArrayMapper<Item>, ItemCreatable {
 
     public static final ItemArrayMapper INSTANCE = new ItemArrayMapper();
 
     @Override
-    public ItemReference toModel(String[] attributes) throws RmsSystemException {
+    public Item toModel(String[] attributes) throws RmsSystemException {
         Integer id = Integer.parseInt(attributes[0]);
         String serialNo = attributes[1];
         String itemName = attributes[2];

@@ -8,7 +8,6 @@ import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
-import io.extact.msa.spring.rms.domain.reservation.model.ReservationReference;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
 public class ReservationArrayMapper implements ModelArrayMapper<Reservation>, ReservationCreatable {
@@ -17,7 +16,7 @@ public class ReservationArrayMapper implements ModelArrayMapper<Reservation>, Re
     public static final ReservationArrayMapper INSTANCE = new ReservationArrayMapper();
 
     @Override
-    public ReservationReference toModel(String[] attributes) {
+    public Reservation toModel(String[] attributes) {
 
         int id = Integer.parseInt(attributes[0]);
         LocalDateTime from = LocalDateTime.parse(attributes[1], DATE_TIME_FORMATTER);
