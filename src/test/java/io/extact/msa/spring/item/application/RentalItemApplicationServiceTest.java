@@ -42,7 +42,7 @@ class RentalItemApplicationServiceTest {
     @Test
     void testRegister_ShouldRegisterRentalItem() {
         // given
-        AddItemCommand command = new AddItemCommand("SN123", "Item Name");
+        ItemAddCommand command = new ItemAddCommand("SN123", "Item Name");
         Item newItem = Item.reconstruct(1, "SN123", "Item Name");
 
         when(factory.create(command.serialNo(), command.itemName())).thenReturn(newItem);
@@ -62,7 +62,7 @@ class RentalItemApplicationServiceTest {
     @Test
     void testEdit_ShouldEditRentalItem() {
         // given
-        UpdateItemCommand command = new UpdateItemCommand(new ItemId(1), "SN456", "Updated Name");
+        ItemUpdateCommand command = new ItemUpdateCommand(new ItemId(1), "SN456", "Updated Name");
         Item existingItem = Item.reconstruct(1, "SN123", "Item Name");
 
         when(repository.find(command.id())).thenReturn(Optional.of(existingItem));
@@ -84,7 +84,7 @@ class RentalItemApplicationServiceTest {
     @Test
     void testEdit_ShouldThrowExceptionIfRentalItemNotFound() {
         // given
-        UpdateItemCommand command = new UpdateItemCommand(new ItemId(99), "SN999", "Non-existent Item");
+        ItemUpdateCommand command = new ItemUpdateCommand(new ItemId(99), "SN999", "Non-existent Item");
 
         when(repository.find(command.id())).thenReturn(Optional.empty());
 
@@ -100,7 +100,7 @@ class RentalItemApplicationServiceTest {
     @Test
     void testRegister_ShouldThrowExceptionForDuplicateItem() {
         // given
-        AddItemCommand command = new AddItemCommand("SN123", "Duplicate Item");
+        ItemAddCommand command = new ItemAddCommand("SN123", "Duplicate Item");
         Item duplicateItem = Item.reconstruct(1, "SN123", "Duplicate Item");
 
         when(factory.create(command.serialNo(), command.itemName())).thenReturn(duplicateItem);

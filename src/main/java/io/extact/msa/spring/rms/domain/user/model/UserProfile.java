@@ -13,7 +13,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class UserProfile {
+public class UserProfile implements UserProfileReference {
 
     private @UserName String userName;
     private @PhoneNumber String phoneNumber;

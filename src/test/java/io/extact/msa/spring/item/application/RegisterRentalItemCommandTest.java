@@ -9,7 +9,7 @@ class RegisterRentalItemCommandTest {
     @Test
     void testBuilder() {
 
-        AddItemCommand command = AddItemCommand.builder()
+        ItemAddCommand command = ItemAddCommand.builder()
                 .serialNo("serialNo123")
                 .itemName("itemNameABC")
                 .build();

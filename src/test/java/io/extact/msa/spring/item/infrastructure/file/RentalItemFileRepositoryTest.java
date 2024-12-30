@@ -35,7 +35,7 @@ class RentalItemFileRepositoryTest extends RentalItemRepositoryTest {
     private ItemRepository repository;
 
     @TestConfiguration(proxyBeanMethods = false)
-    @Import(RentalItemFileRepositoryConfig.class)
+    @Import(FileRepositoryConfig.class)
     static class TestConfig {
 
         @Bean

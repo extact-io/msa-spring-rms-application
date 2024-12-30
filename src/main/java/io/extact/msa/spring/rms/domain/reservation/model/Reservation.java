@@ -29,7 +29,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(of = "id")
 @BeforeAfterDateTime
-public class Reservation implements DomainModel, BeforeAfterDateTimeValidatable {
+public class Reservation implements DomainModel, BeforeAfterDateTimeValidatable, ReservationReference {
 
     @RmsId
     private ReservationId id;
@@ -71,6 +71,7 @@ public class Reservation implements DomainModel, BeforeAfterDateTimeValidatable 
         }
     }
 
+    @Override
     public DateTimePeriod getReservePeriod() {
         return new DateTimePeriod(fromDateTime, toDateTime);
     }

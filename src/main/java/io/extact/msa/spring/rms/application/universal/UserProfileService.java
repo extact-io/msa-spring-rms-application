@@ -9,6 +9,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseTyp
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
+import io.extact.msa.spring.rms.domain.user.model.UserReference;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -27,7 +28,7 @@ public class UserProfileService {
                 .orElseThrow(() -> new BusinessFlowException("target does not exist for id", CauseType.NOT_FOUND));
     }
 
-    public User updateOwnProfile(UpdateUserProfileCommand command) {
+    public UserReference updateOwnProfile(UpdateUserProfileCommand command) {
 
         User user = getOwnProfile();
 

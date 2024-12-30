@@ -39,7 +39,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseTyp
  * ・Request  → Commadの項目マッピングの確認
  * ・Response ← Modelの項目マッピングの確認
  */
-@WebMvcTest(RentalItemController.class)
+@WebMvcTest(ItemAdminController.class)
 @Import(WebConfig.class)
 class RentalItemControllerTest {
 
@@ -172,13 +172,13 @@ class RentalItemControllerTest {
     void testAdd() throws Exception {
 
         // given
-        AddRentalItemRequest req = AddRentalItemRequest.builder()
+        ItemAddRequest req = ItemAddRequest.builder()
                 .serialNo("newNo")
                 .itemName("追加アイテム")
                 .build();
         String body = mapper.writeValueAsString(req);
 
-        AddItemCommand shouldBePassed = req.transform(RequestUtils::toRegisterCommand);
+        ItemAddCommand shouldBePassed = req.transform(RequestUtils::toRegisterCommand);
         when(itemService.register(shouldBePassed))
                 .thenReturn(Item.reconstruct(5, req.serialNo(), req.itemName()));
 
@@ -198,7 +198,7 @@ class RentalItemControllerTest {
     void testAddOnParameterError() throws Exception {
 
         // given
-        AddRentalItemRequest request = AddRentalItemRequest.builder()
+        ItemAddRequest request = ItemAddRequest.builder()
                 .build(); // empty value
         String body = mapper.writeValueAsString(request);
 
@@ -223,13 +223,13 @@ class RentalItemControllerTest {
     void testAddOnDuplicate() throws Exception {
 
         // given
-        AddRentalItemRequest req = AddRentalItemRequest.builder()
+        ItemAddRequest req = ItemAddRequest.builder()
                 .serialNo("A0004")
                 .itemName("レンタル品5号")
                 .build();
         String body = mapper.writeValueAsString(req);
 
-        AddItemCommand shouldBePassed = req.transform(RequestUtils::toRegisterCommand);
+        ItemAddCommand shouldBePassed = req.transform(RequestUtils::toRegisterCommand);
         when(itemService.register(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
@@ -247,7 +247,7 @@ class RentalItemControllerTest {
     void testAddOnAuthenticationError() throws Exception {
 
         // given
-        AddRentalItemRequest req = AddRentalItemRequest.builder()
+        ItemAddRequest req = ItemAddRequest.builder()
                 .serialNo("newNo")
                 .itemName("追加アイテム")
                 .build();
@@ -267,14 +267,14 @@ class RentalItemControllerTest {
     void testUpdate() throws Exception {
 
         // given
-        UpdateRentalItemRequest req = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest req = ItemUpdateRequest.builder()
                 .id(2)
                 .serialNo("UPDATE-1")
                 .itemName("UPDATE-2")
                 .build();
         String body = mapper.writeValueAsString(req);
 
-        UpdateItemCommand shouldBePassed = req.transform(RequestUtils::toEditCommand);
+        ItemUpdateCommand shouldBePassed = req.transform(RequestUtils::toEditCommand);
         when(itemService.edit(shouldBePassed))
                 .thenReturn(Item.reconstruct(5, req.serialNo(), req.itemName()));
 
@@ -294,7 +294,7 @@ class RentalItemControllerTest {
     void testUpdateOnParameterError() throws Exception {
 
         // given
-        UpdateRentalItemRequest req = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest req = ItemUpdateRequest.builder()
                 .serialNo("@@@@@") // 使用不可文字
                 .itemName("1234567890123456") // 桁数オーバー
                 .build();
@@ -322,14 +322,14 @@ class RentalItemControllerTest {
     void testUpdateOnNotFound() throws Exception {
 
         // given
-        UpdateRentalItemRequest req = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest req = ItemUpdateRequest.builder()
                 .id(9) // not exist id
                 .serialNo("UPDATE-1")
                 .itemName("UPDATE-2")
                 .build();
         String body = mapper.writeValueAsString(req);
 
-        UpdateItemCommand shouldBePassed = req.transform(RequestUtils::toEditCommand);
+        ItemUpdateCommand shouldBePassed = req.transform(RequestUtils::toEditCommand);
         when(itemService.edit(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
@@ -350,13 +350,13 @@ class RentalItemControllerTest {
     void testUpdateOnDuplicate() throws Exception {
 
         // given
-        UpdateRentalItemRequest req = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest req = ItemUpdateRequest.builder()
                 .id(2)
                 .serialNo("A0004")
                 .build();
         String body = mapper.writeValueAsString(req);
 
-        UpdateItemCommand shouldBePassed = req.transform(RequestUtils::toEditCommand);
+        ItemUpdateCommand shouldBePassed = req.transform(RequestUtils::toEditCommand);
         when(itemService.edit(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
@@ -376,7 +376,7 @@ class RentalItemControllerTest {
     void testUpdateOnAuthenticationError() throws Exception {
 
         // given
-        UpdateRentalItemRequest req = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest req = ItemUpdateRequest.builder()
                 .id(2)
                 .serialNo("UPDATE-1")
                 .itemName("UPDATE-2")

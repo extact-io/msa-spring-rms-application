@@ -11,7 +11,7 @@ class EditRentalItemCommandTest {
     @Test
     void testBuilder() {
 
-        UpdateItemCommand command = UpdateItemCommand.builder()
+        ItemUpdateCommand command = ItemUpdateCommand.builder()
                 .id(new ItemId(1))
                 .serialNo("serialNo")
                 .itemName("itemName")

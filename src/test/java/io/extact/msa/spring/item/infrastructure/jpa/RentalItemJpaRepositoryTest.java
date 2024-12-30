@@ -20,7 +20,7 @@ class RentalItemJpaRepositoryTest extends RentalItemRepositoryTest {
     private ItemRepository repository;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(ItemJpaRepositoryConfig.class)
+    @Import(JpaRepositoryConfig.class)
     static class TestConfig {
     }
 

@@ -23,7 +23,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(of = "id")
-public class User implements DomainModel {
+public class User implements DomainModel, UserReference {
 
     private @NotNull @Valid UserId id;
     private @LoginId String loginId;

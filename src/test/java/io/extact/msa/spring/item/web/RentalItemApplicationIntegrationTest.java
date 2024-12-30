@@ -59,10 +59,10 @@ import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 @TestMethodOrder(OrderAnnotation.class)
 public class RentalItemApplicationIntegrationTest {
 
-    private static final RentalItemResponse item1 = new RentalItemResponse(1, "A0001", "レンタル品1号");
-    private static final RentalItemResponse item2 = new RentalItemResponse(2, "A0002", "レンタル品2号");
-    private static final RentalItemResponse item3 = new RentalItemResponse(3, "A0003", "レンタル品3号");
-    private static final RentalItemResponse item4 = new RentalItemResponse(4, "A0004", "レンタル品4号");
+    private static final ItemAdminResponse item1 = new ItemAdminResponse(1, "A0001", "レンタル品1号");
+    private static final ItemAdminResponse item2 = new ItemAdminResponse(2, "A0002", "レンタル品2号");
+    private static final ItemAdminResponse item3 = new ItemAdminResponse(3, "A0003", "レンタル品3号");
+    private static final ItemAdminResponse item4 = new ItemAdminResponse(4, "A0004", "レンタル品4号");
 
     @Autowired
     private RentalItemClient client;
@@ -101,9 +101,9 @@ public class RentalItemApplicationIntegrationTest {
     @Order(1)
     void testGetAll() {
         // given
-        List<RentalItemResponse> expected = List.of(item1, item2, item3, item4);
+        List<ItemAdminResponse> expected = List.of(item1, item2, item3, item4);
         // when
-        List<RentalItemResponse> actual = client.getAll();
+        List<ItemAdminResponse> actual = client.getAll();
         // then
         assertThat(actual).containsExactlyElementsOf(expected);
     }
@@ -126,7 +126,7 @@ public class RentalItemApplicationIntegrationTest {
         // given
         int existId = 3; // 該当あり
         // when
-        RentalItemResponse actual = client.get(existId);
+        ItemAdminResponse actual = client.get(existId);
         // then
         assertThat(actual).isEqualTo(item3);
     }
@@ -136,7 +136,7 @@ public class RentalItemApplicationIntegrationTest {
         // given
         int noExistId = 999; // 該当なし
         // when
-        RentalItemResponse actual = client.get(noExistId);
+        ItemAdminResponse actual = client.get(noExistId);
         // then
         assertThat(actual).isNull();
     }
@@ -170,20 +170,20 @@ public class RentalItemApplicationIntegrationTest {
     @Order(3)
     void testAdd() {
         // given
-        AddRentalItemRequest request = AddRentalItemRequest.builder()
+        ItemAddRequest request = ItemAddRequest.builder()
                 .serialNo("newNo")
                 .itemName("追加アイテム")
                 .build();
         // when
-        RentalItemResponse actual = client.add(request);
+        ItemAdminResponse actual = client.add(request);
         // then
-        assertThat(actual).isEqualTo(new RentalItemResponse(5, "newNo", "追加アイテム"));
+        assertThat(actual).isEqualTo(new ItemAdminResponse(5, "newNo", "追加アイテム"));
     }
 
     @Test
     void testAddOnParameterError() {
         // given
-        AddRentalItemRequest request = AddRentalItemRequest.builder()
+        ItemAddRequest request = ItemAddRequest.builder()
                 .build(); // empty values
         // when
         assertThatThrownBy(() -> client.add(request))
@@ -197,7 +197,7 @@ public class RentalItemApplicationIntegrationTest {
     @Test
     void testAddOnDuplicate() {
         // given
-        AddRentalItemRequest request = AddRentalItemRequest.builder()
+        ItemAddRequest request = ItemAddRequest.builder()
                 .serialNo("A0004")
                 .itemName("レンタル品5号")
                 .build();
@@ -213,7 +213,7 @@ public class RentalItemApplicationIntegrationTest {
     void testAddOnAuthenticationError() {
         // given
         SecurityContextHolder.clearContext();
-        AddRentalItemRequest request = AddRentalItemRequest.builder()
+        ItemAddRequest request = ItemAddRequest.builder()
                 .serialNo("newNo")
                 .itemName("追加アイテム")
                 .build();
@@ -229,21 +229,21 @@ public class RentalItemApplicationIntegrationTest {
     @Order(4)
     void testUpdate() {
         // given
-        UpdateRentalItemRequest request = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest request = ItemUpdateRequest.builder()
                 .id(2)
                 .serialNo("UPDATE-1")
                 .itemName("UPDATE-2")
                 .build();
         // when
-        RentalItemResponse actual = client.update(request);
+        ItemAdminResponse actual = client.update(request);
         // then
-        assertThat(actual).isEqualTo(new RentalItemResponse(2, "UPDATE-1", "UPDATE-2"));
+        assertThat(actual).isEqualTo(new ItemAdminResponse(2, "UPDATE-1", "UPDATE-2"));
     }
 
     @Test
     void testUpdateOnParameterError() {
         // given
-        UpdateRentalItemRequest request = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest request = ItemUpdateRequest.builder()
                 .serialNo("@@@@@") // 使用不可文字
                 .itemName("1234567890123456") // 桁数オーバー
                 .build();
@@ -259,7 +259,7 @@ public class RentalItemApplicationIntegrationTest {
     @Test
     void testUpdateOnNotFound() {
         // given
-        UpdateRentalItemRequest request = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest request = ItemUpdateRequest.builder()
                 .id(9) // not exist id
                 .serialNo("UPDATE-1")
                 .itemName("UPDATE-2")
@@ -275,7 +275,7 @@ public class RentalItemApplicationIntegrationTest {
     @Test
     void testUpdateOnDuplicate() {
         // given
-        UpdateRentalItemRequest request = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest request = ItemUpdateRequest.builder()
                 .id(2)
                 .serialNo("A0004")
                 .build();
@@ -291,7 +291,7 @@ public class RentalItemApplicationIntegrationTest {
     void testUpdateOnAuthenticationError() {
         // given
         SecurityContextHolder.clearContext();
-        UpdateRentalItemRequest request = UpdateRentalItemRequest.builder()
+        ItemUpdateRequest request = ItemUpdateRequest.builder()
                 .id(2)
                 .serialNo("UPDATE-1")
                 .itemName("UPDATE-2")
@@ -390,16 +390,16 @@ public class RentalItemApplicationIntegrationTest {
     public interface RentalItemClient {
 
         @GetExchange
-        List<RentalItemResponse> getAll();
+        List<ItemAdminResponse> getAll();
 
         @GetExchange("/{id}")
-        RentalItemResponse get(@PathVariable("id") Integer itemId);
+        ItemAdminResponse get(@PathVariable("id") Integer itemId);
 
         @PostExchange
-        RentalItemResponse add(@RequestBody AddRentalItemRequest request);
+        ItemAdminResponse add(@RequestBody ItemAddRequest request);
 
         @PutExchange
-        RentalItemResponse update(@RequestBody UpdateRentalItemRequest request);
+        ItemAdminResponse update(@RequestBody ItemUpdateRequest request);
 
         @DeleteExchange("/{id}")
         void delete(@PathVariable("id") Integer itemId);

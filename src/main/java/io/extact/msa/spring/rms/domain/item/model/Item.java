@@ -21,7 +21,7 @@ import lombok.ToString;
 @EqualsAndHashCode(of = "id")
 @Getter
 @ToString
-public class Item implements DomainModel {
+public class Item implements DomainModel, ItemReference {
 
     private @NotNull @Valid ItemId id;
     private @SerialNo String serialNo;
