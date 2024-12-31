@@ -39,7 +39,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseTyp
  * ・Request  → Commadの項目マッピングの確認
  * ・Response ← Modelの項目マッピングの確認
  */
-@WebMvcTest(ItemAdminController.class)
+@WebMvcTest(LoginController.class)
 @Import(WebConfig.class)
 class RentalItemControllerTest {
 

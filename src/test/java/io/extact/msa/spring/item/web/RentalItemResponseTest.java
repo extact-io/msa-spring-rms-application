@@ -15,7 +15,7 @@ class RentalItemResponseTest {
         Item model = Item.reconstruct(1, "12345", "Test Item");
 
         // Act
-        ItemAdminResponse response = ItemAdminResponse.from(model);
+        ItemMemberResponse response = ItemMemberResponse.from(model);
 
         // Assert
         assertThat(response).isNotNull();
@@ -30,7 +30,7 @@ class RentalItemResponseTest {
         Item model = null;
 
         // Act
-        ItemAdminResponse response = ItemAdminResponse.from(model);
+        ItemMemberResponse response = ItemMemberResponse.from(model);
 
         // Assert
         assertThat(response).isNull();

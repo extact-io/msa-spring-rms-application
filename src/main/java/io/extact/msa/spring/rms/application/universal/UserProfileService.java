@@ -23,20 +23,29 @@ public class UserProfileService {
 
     private final UserRepository repository;
 
-    public User getOwnProfile() {
-        return repository.find(getLoginUserId())
-                .orElseThrow(() -> new BusinessFlowException("target does not exist for id", CauseType.NOT_FOUND));
+    public UserReference getOwnProfile() {
+        return getInternalOwnProfile();
     }
 
-    public UserReference updateOwnProfile(UpdateUserProfileCommand command) {
+    public UserReference updateOwnProfile(UserProfileUpdateCommand command) {
 
-        User user = getOwnProfile();
-
+        User user = getInternalOwnProfile();
         user.changePassword(command.password());
-        user.getProfile().editProfile(command.userName(), command.phoneNumber(), command.contact());
+        user.getProfile().editProfile(
+                command.userName(),
+                command.phoneNumber(),
+                command.contact());
+
         repository.update(user);
 
         return user;
+    }
+
+    private User getInternalOwnProfile() {
+        return repository
+                .find(getLoginUserId())
+                .orElseThrow(() -> new BusinessFlowException(
+                        "target does not exist for id", CauseType.NOT_FOUND));
     }
 
     private UserId getLoginUserId() {

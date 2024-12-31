@@ -59,10 +59,10 @@ import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 @TestMethodOrder(OrderAnnotation.class)
 public class RentalItemApplicationIntegrationTest {
 
-    private static final ItemAdminResponse item1 = new ItemAdminResponse(1, "A0001", "レンタル品1号");
-    private static final ItemAdminResponse item2 = new ItemAdminResponse(2, "A0002", "レンタル品2号");
-    private static final ItemAdminResponse item3 = new ItemAdminResponse(3, "A0003", "レンタル品3号");
-    private static final ItemAdminResponse item4 = new ItemAdminResponse(4, "A0004", "レンタル品4号");
+    private static final ItemMemberResponse item1 = new ItemMemberResponse(1, "A0001", "レンタル品1号");
+    private static final ItemMemberResponse item2 = new ItemMemberResponse(2, "A0002", "レンタル品2号");
+    private static final ItemMemberResponse item3 = new ItemMemberResponse(3, "A0003", "レンタル品3号");
+    private static final ItemMemberResponse item4 = new ItemMemberResponse(4, "A0004", "レンタル品4号");
 
     @Autowired
     private RentalItemClient client;
@@ -101,9 +101,9 @@ public class RentalItemApplicationIntegrationTest {
     @Order(1)
     void testGetAll() {
         // given
-        List<ItemAdminResponse> expected = List.of(item1, item2, item3, item4);
+        List<ItemMemberResponse> expected = List.of(item1, item2, item3, item4);
         // when
-        List<ItemAdminResponse> actual = client.getAll();
+        List<ItemMemberResponse> actual = client.getAll();
         // then
         assertThat(actual).containsExactlyElementsOf(expected);
     }
@@ -126,7 +126,7 @@ public class RentalItemApplicationIntegrationTest {
         // given
         int existId = 3; // 該当あり
         // when
-        ItemAdminResponse actual = client.get(existId);
+        ItemMemberResponse actual = client.get(existId);
         // then
         assertThat(actual).isEqualTo(item3);
     }
@@ -136,7 +136,7 @@ public class RentalItemApplicationIntegrationTest {
         // given
         int noExistId = 999; // 該当なし
         // when
-        ItemAdminResponse actual = client.get(noExistId);
+        ItemMemberResponse actual = client.get(noExistId);
         // then
         assertThat(actual).isNull();
     }
@@ -175,9 +175,9 @@ public class RentalItemApplicationIntegrationTest {
                 .itemName("追加アイテム")
                 .build();
         // when
-        ItemAdminResponse actual = client.add(request);
+        ItemMemberResponse actual = client.add(request);
         // then
-        assertThat(actual).isEqualTo(new ItemAdminResponse(5, "newNo", "追加アイテム"));
+        assertThat(actual).isEqualTo(new ItemMemberResponse(5, "newNo", "追加アイテム"));
     }
 
     @Test
@@ -235,9 +235,9 @@ public class RentalItemApplicationIntegrationTest {
                 .itemName("UPDATE-2")
                 .build();
         // when
-        ItemAdminResponse actual = client.update(request);
+        ItemMemberResponse actual = client.update(request);
         // then
-        assertThat(actual).isEqualTo(new ItemAdminResponse(2, "UPDATE-1", "UPDATE-2"));
+        assertThat(actual).isEqualTo(new ItemMemberResponse(2, "UPDATE-1", "UPDATE-2"));
     }
 
     @Test
@@ -390,16 +390,16 @@ public class RentalItemApplicationIntegrationTest {
     public interface RentalItemClient {
 
         @GetExchange
-        List<ItemAdminResponse> getAll();
+        List<ItemMemberResponse> getAll();
 
         @GetExchange("/{id}")
-        ItemAdminResponse get(@PathVariable("id") Integer itemId);
+        ItemMemberResponse get(@PathVariable("id") Integer itemId);
 
         @PostExchange
-        ItemAdminResponse add(@RequestBody ItemAddRequest request);
+        ItemMemberResponse add(@RequestBody ItemAddRequest request);
 
         @PutExchange
-        ItemAdminResponse update(@RequestBody ItemUpdateRequest request);
+        ItemMemberResponse update(@RequestBody ItemUpdateRequest request);
 
         @DeleteExchange("/{id}")
         void delete(@PathVariable("id") Integer itemId);

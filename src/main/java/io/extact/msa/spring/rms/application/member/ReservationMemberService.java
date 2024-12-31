@@ -61,7 +61,7 @@ public class ReservationMemberService {
                 .toList();
     }
 
-    public boolean canRentedItemAtTerm(ItemId itemId, LocalDateTime from, LocalDateTime to) {
+    public boolean canRentedItemAtPeriod(ItemId itemId, LocalDateTime from, LocalDateTime to) {
         DateTimePeriod overlapPeriod = new DateTimePeriod(from, to);
         return reservationRepository
                 .findOverlappingReservations(itemId, overlapPeriod)
