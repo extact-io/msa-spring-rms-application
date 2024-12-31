@@ -69,7 +69,7 @@ public class RentalItemApplicationIntegrationTest {
 
     @Configuration(proxyBeanMethods = false)
     @EnableWebSecurity(debug = true)
-    @Import(RentalItemApplication.class)
+    @Import(WebApiApplication.class)
     static class TestConfig {
 
         @Bean

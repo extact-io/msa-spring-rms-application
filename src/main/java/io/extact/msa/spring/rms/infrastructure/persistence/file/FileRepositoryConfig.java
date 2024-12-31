@@ -23,7 +23,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.file.user.UserFileRep
 @Configuration(proxyBeanMethods = false)
 @Import(ValidationConfiguration.class)
 @Profile("file")
-class FileRepositoryConfig {
+public class FileRepositoryConfig {
 
     @Bean
     ModelArrayMapper<Item> rentalItemArrayMapper() {

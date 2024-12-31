@@ -24,7 +24,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.jpa.user.UserJpaRepos
 @EnableJpaRepositories(basePackageClasses = JpaRepositoryConfig.class)
 @Import(ValidationConfiguration.class)
 @Profile("jpa")
-class JpaRepositoryConfig {
+public class JpaRepositoryConfig {
 
     @Bean
     ItemJpaRepository itemJpaRepository(ItemJpaRepositoryDelegator delegator) {
