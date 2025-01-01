@@ -2,7 +2,7 @@ package io.extact.msa.spring.rms.application.admin;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.rms.application.support.ApplicationCrudSupport;
@@ -13,7 +13,7 @@ import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 
-@Service
+@Transactional
 public class ItemAdminService {
 
     private final ItemCreator modelCreator;

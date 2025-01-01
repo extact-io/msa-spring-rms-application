@@ -2,15 +2,12 @@ package io.extact.msa.spring.rms.domain.item;
 
 import jakarta.validation.Validator;
 
-import org.springframework.stereotype.Service;
-
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
-@Service
 @RequiredArgsConstructor
 public class ItemCreator {
 

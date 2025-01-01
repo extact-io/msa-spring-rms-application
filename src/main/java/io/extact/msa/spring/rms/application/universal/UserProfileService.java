@@ -1,7 +1,8 @@
 package io.extact.msa.spring.rms.application.universal;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
 import io.extact.msa.spring.platform.core.auth.RmsAuthentication;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
@@ -17,8 +18,8 @@ import lombok.RequiredArgsConstructor;
  * 実体はユーザ管理機能の一部と同じだがサービスを利用するアクターと更新範囲、
  * チェック内容がが異なるため別のサービスとして設けている。
  */
-@Service
 @RequiredArgsConstructor
+@Transactional
 public class UserProfileService {
 
     private final UserRepository repository;

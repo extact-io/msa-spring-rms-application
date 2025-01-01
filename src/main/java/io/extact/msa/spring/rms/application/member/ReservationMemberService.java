@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.extact.msa.spring.platform.core.auth.RmsAuthentication;
 import io.extact.msa.spring.platform.fw.domain.type.DateTimePeriod;
@@ -28,9 +28,8 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.RequiredArgsConstructor;
 
-
-@Service
 @RequiredArgsConstructor
+@Transactional
 public class ReservationMemberService {
 
     private final ReservationCreator modelCreator;

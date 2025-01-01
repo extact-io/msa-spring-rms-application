@@ -13,41 +13,41 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.web.RmsRestController;
-import io.extact.msa.spring.rms.application.admin.ItemAdminService;
-import io.extact.msa.spring.rms.domain.item.model.ItemId;
+import io.extact.msa.spring.rms.application.admin.UserAdminService;
+import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.RequiredArgsConstructor;
 
 @RmsRestController("/users")
 @RequiredArgsConstructor
 public class UserAdminController {
 
-    private final ItemAdminService service;
+    private final UserAdminService service;
 
     @GetMapping
-    public List<ItemAdminResponse> getAll() {
+    public List<UserAdminResponse> getAll() {
         return service
                 .getAll()
                 .stream()
-                .map(ItemAdminResponse::from)
+                .map(UserAdminResponse::from)
                 .toList();
     }
 
     @PostMapping
-    public ItemAdminResponse add(@Valid @RequestBody ItemAddRequest request) {
+    public UserAdminResponse add(@Valid @RequestBody UserAddRequest request) {
         return service
                 .add(request.toCommand())
-                .transform(ItemAdminResponse::from);
+                .transform(UserAdminResponse::from);
     }
 
     @PutMapping
-    public ItemAdminResponse update(@Valid @RequestBody ItemUpdateRequest request) {
+    public UserAdminResponse update(@Valid @RequestBody UserUpdateRequest request) {
         return service
                 .update(request.toCommand())
-                .transform(ItemAdminResponse::from);
+                .transform(UserAdminResponse::from);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@RmsId @PathVariable("id") Integer itemId) {
-        service.delete(new ItemId(itemId));
+        service.delete(new UserId(itemId));
     }
 }
