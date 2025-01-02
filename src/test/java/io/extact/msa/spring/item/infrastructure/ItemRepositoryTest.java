@@ -1,5 +1,6 @@
 package io.extact.msa.spring.item.infrastructure;
 
+import static io.extact.msa.spring.test.assertj.ToStringAssert.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,10 +12,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.method.MethodValidationException;
 
-import io.extact.msa.spring.item.domain.RentalItemRepository;
-import io.extact.msa.spring.item.domain.model.ItemId;
-import io.extact.msa.spring.item.domain.model.RentalItem;
 import io.extact.msa.spring.platform.fw.exception.RmsPersistenceException;
+import io.extact.msa.spring.rms.domain.item.ItemRepository;
+import io.extact.msa.spring.rms.domain.item.model.Item;
+import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 
 /**
  * RentalItemリポジトリのFileとJPA実装に共通なテストクラス。
@@ -27,12 +29,14 @@ import io.extact.msa.spring.platform.fw.exception.RmsPersistenceException;
  */
 @Transactional
 @Rollback
-public abstract class RentalItemRepositoryTest {
+public abstract class ItemRepositoryTest {
 
-    private static final Item item1 = Item.reconstruct(1, "A0001", "レンタル品1号");
-    private static final Item item2 = Item.reconstruct(2, "A0002", "レンタル品2号");
-    private static final Item item3 = Item.reconstruct(3, "A0003", "レンタル品3号");
-    private static final Item item4 = Item.reconstruct(4, "A0004", "レンタル品4号");
+    protected static final ItemCreatable testCreator = new ItemCreatable() {};
+
+    private static final Item item1 = testCreator.newInstance(new ItemId(1), "A0001", "レンタル品1号");
+    private static final Item item2 = testCreator.newInstance(new ItemId(2), "A0002", "レンタル品2号");
+    private static final Item item3 = testCreator.newInstance(new ItemId(3), "A0003", "レンタル品3号");
+    private static final Item item4 = testCreator.newInstance(new ItemId(4), "A0004", "レンタル品4号");
 
     protected abstract ItemRepository repository();
 
@@ -45,7 +49,7 @@ public abstract class RentalItemRepositoryTest {
         Optional<Item> actual = repository().find(itemId);
         // then
         assertThat(actual).isPresent();
-        assertThat(actual.get()).isEqualTo(item1);
+        assertThatToString(actual.get()).isEqualTo(item1);
 
         // given
         ItemId notFoundId = new ItemId(999);
@@ -68,17 +72,17 @@ public abstract class RentalItemRepositoryTest {
     @Test
     void testUpdate() {
         // given
-        Item updateItem = Item.reconstruct(4, "UPDATE", "UPDATE");
+        Item updateItem = testCreator.newInstance(new ItemId(4), "UPDATE", "UPDATE");
         // when
         repository().update(updateItem);
         //then
-        assertThat(repository().find(updateItem.getId()).get()).isEqualTo(updateItem);
+        assertThatToString(repository().find(updateItem.getId()).get()).isEqualTo(updateItem);
     }
 
     @Test
     void testUpdateOnValidationError() {
         // given
-        Item validateErrorItem = Item.reconstruct(4, "", "UPDATE"); // serialNoがブランク
+        Item validateErrorItem = testCreator.newInstance(new ItemId(4), "", "UPDATE"); // serialNoがブランク
         // when & then
         assertThrows(MethodValidationException.class, () -> {
             repository().update(validateErrorItem);
@@ -88,7 +92,7 @@ public abstract class RentalItemRepositoryTest {
     @Test
     void testUpdateOnDuplicate() {
         // given
-        Item duplicateItem = Item.reconstruct(4, "A0001", "UPDATE"); // A0001は既に登録済み
+        Item duplicateItem = testCreator.newInstance(new ItemId(4), "A0001", "UPDATE"); // A0001は既に登録済み
         // when & then
         assertThatCode(() -> repository().update(duplicateItem))
                 // 重複チェックは上位で行うので正常に処理できることを確認
@@ -98,7 +102,7 @@ public abstract class RentalItemRepositoryTest {
     @Test
     void testUpdateOnNotFound() {
         // given
-        Item notFoundItem = Item.reconstruct(999, "UPDATE", "UPDATE");
+        Item notFoundItem = testCreator.newInstance(new ItemId(999), "UPDATE", "UPDATE");
         // when & then
         RmsPersistenceException exception = assertThrows(RmsPersistenceException.class, () -> {
             repository().update(notFoundItem);
@@ -109,17 +113,17 @@ public abstract class RentalItemRepositoryTest {
     @Test
     void testAdd() {
         // given
-        Item addItem = Item.reconstruct(5, "ADD", "ADD");
+        Item addItem = testCreator.newInstance(new ItemId(5), "ADD", "ADD");
         // when
         repository().add(addItem);
         // then
-        assertThat(repository().find(addItem.getId()).get()).isEqualTo(addItem);
+        assertThatToString(repository().find(addItem.getId()).get()).isEqualTo(addItem);
     }
 
     @Test
     void testAddOnValidationError() {
         // given
-        Item validateErrorItem = Item.reconstruct(6, "", "ADD"); // serialNoがブランク
+        Item validateErrorItem = testCreator.newInstance(new ItemId(6), "", "ADD"); // serialNoがブランク
         // when & then
         assertThrows(MethodValidationException.class, () -> {
             repository().add(validateErrorItem);
@@ -129,7 +133,7 @@ public abstract class RentalItemRepositoryTest {
     @Test
     void testAddOnDuplicate() {
         // given
-        Item duplicateItem = Item.reconstruct(7, "A0001", "ADD"); // A0001は既に登録済み
+        Item duplicateItem = testCreator.newInstance(new ItemId(7), "A0001", "ADD"); // A0001は既に登録済み
         // when & then
         assertThatCode(() -> repository().add(duplicateItem))
                 // 重複チェックは上位で行うので正常に処理できることを確認
@@ -139,7 +143,7 @@ public abstract class RentalItemRepositoryTest {
     @Test
     void testDelete() {
         // given
-        Item deleteItem = Item.reconstruct(1, "delete", "delete");
+        Item deleteItem = testCreator.newInstance(new ItemId(1), "delete", "delete");
         // when
         repository().delete(deleteItem);
         // then
@@ -149,7 +153,7 @@ public abstract class RentalItemRepositoryTest {
     @Test
     void testDeleteOnValidationError() {
         // given
-        Item validateErrorItem = Item.reconstruct(2, "", "ADD"); // serialNoがブランク
+        Item validateErrorItem = testCreator.newInstance(new ItemId(2), "", "ADD"); // serialNoがブランク
         // when & then
         assertThrows(MethodValidationException.class, () -> {
             repository().delete(validateErrorItem);
@@ -159,7 +163,7 @@ public abstract class RentalItemRepositoryTest {
     @Test
     void testDeleteOnNotFound() {
         // given
-        Item notFoundItem = Item.reconstruct(999, "DELETE", "DELETE");
+        Item notFoundItem = testCreator.newInstance(new ItemId(999), "DELETE", "DELETE");
         // when & then
         RmsPersistenceException exception = assertThrows(RmsPersistenceException.class, () -> {
             repository().delete(notFoundItem);
@@ -178,7 +182,7 @@ public abstract class RentalItemRepositoryTest {
         assertThat(result).isPresent();
 
         // given
-        Item notFoundItem = Item.reconstruct(1, "qazxsw", "");
+        Item notFoundItem = testCreator.newInstance(new ItemId(1), "qazxsw", "");
         // when
         result = repository().findDuplicationData(notFoundItem);
         // then

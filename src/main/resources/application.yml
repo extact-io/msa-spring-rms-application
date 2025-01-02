@@ -8,7 +8,18 @@ spring:
     basename: application-messages
     encoding: UTF-8
   profiles:
-    default: jpa
+    default: item-jpa,reservation-jpa,user-jpa
+  sql:
+    init:
+      schema-locations: classpath:sql/rentalItem-schema.sql
+      data-locations: classpath:sql/rentalItem-data.sql
+  jpa:
+    open-in-view:
+      false
+    hibernate:
+      ddl-auto: none
+    properties:
+      javax.persistence.validation.mode: NONE
 
 management:
   endpoints:
@@ -35,33 +46,9 @@ rms:
   log:
     server:
       enable: false
-
----
-spring:
-  config:
-    activate:
-      on-profile: "jpa"
-  sql:
-    init:
-      schema-locations: classpath:sql/rentalItem-schema.sql
-      data-locations: classpath:sql/rentalItem-data.sql
-  jpa:
-    open-in-view:
-      false
-    hibernate:
-      ddl-auto: none
-    properties:
-      javax.persistence.validation.mode: NONE
-
----
-spring:
-  config:
-    activate:
-      on-profile: "file"
-rms:
   persistence:
-    rental-item:
+    item:
       csv:
         type: temporary
         temporary:
-          resource: temporary/rentalItemTemp.csv
+          resource: temporary/itemTemp.csv

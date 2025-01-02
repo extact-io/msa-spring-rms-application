@@ -3,8 +3,6 @@ package io.extact.msa.spring.rms.application.support;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import org.springframework.stereotype.Component;
-
 import io.extact.msa.spring.platform.core.async.AsyncInvoker;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
@@ -17,7 +15,6 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserReference;
 import lombok.RequiredArgsConstructor;
 
-@Component
 @RequiredArgsConstructor
 public class ReservationModelComposer {
 

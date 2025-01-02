@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
+import io.extact.msa.spring.platform.core.condition.ConditionalOnAnyEndsWithProfile;
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfiguration;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
@@ -22,42 +23,51 @@ import io.extact.msa.spring.rms.infrastructure.persistence.file.user.UserFileRep
 
 @Configuration(proxyBeanMethods = false)
 @Import(ValidationConfiguration.class)
-@Profile("file")
+@ConditionalOnAnyEndsWithProfile("file")
 public class FileRepositoryConfig {
 
-    @Bean
-    ModelArrayMapper<Item> rentalItemArrayMapper() {
-        return ItemArrayMapper.INSTANCE;
+    @Configuration(proxyBeanMethods = false)
+    @Profile("item-file")
+    static class ItemFileConfiguration {
+        @Bean
+        ModelArrayMapper<Item> rentalItemArrayMapper() {
+            return ItemArrayMapper.INSTANCE;
+        }
+        @Bean
+        ItemFileRepository itemFileRepository(Environment env, ModelArrayMapper<Item> mapper) {
+            LoadPathDeriver pathDeriver = new LoadPathDeriver(env);
+            FileOperator fileOperator = new FileOperator(pathDeriver.derive(ItemFileRepository.FILE_ENTITY));
+            return new ItemFileRepository(fileOperator, mapper);
+        }
     }
 
-    @Bean
-    ItemFileRepository itemFileRepository(Environment env, ModelArrayMapper<Item> mapper) {
-        LoadPathDeriver pathDeriver = new LoadPathDeriver(env);
-        FileOperator fileOperator = new FileOperator(pathDeriver.derive(ItemFileRepository.FILE_ENTITY));
-        return new ItemFileRepository(fileOperator, mapper);
+    @Configuration(proxyBeanMethods = false)
+    @Profile("reservation-file")
+    static class ReservationFileConfiguration {
+        @Bean
+        ModelArrayMapper<Reservation> reservationArrayMapper() {
+            return ReservationArrayMapper.INSTANCE;
+        }
+        @Bean
+        ReservationFileRepository reservationFileRepository(Environment env, ModelArrayMapper<Reservation> mapper) {
+            LoadPathDeriver pathDeriver = new LoadPathDeriver(env);
+            FileOperator fileOperator = new FileOperator(pathDeriver.derive(ReservationFileRepository.FILE_ENTITY));
+            return new ReservationFileRepository(fileOperator, mapper);
+        }
     }
 
-    @Bean
-    ModelArrayMapper<Reservation> reservationArrayMapper() {
-        return ReservationArrayMapper.INSTANCE;
-    }
-
-    @Bean
-    ReservationFileRepository reservationFileRepository(Environment env, ModelArrayMapper<Reservation> mapper) {
-        LoadPathDeriver pathDeriver = new LoadPathDeriver(env);
-        FileOperator fileOperator = new FileOperator(pathDeriver.derive(ReservationFileRepository.FILE_ENTITY));
-        return new ReservationFileRepository(fileOperator, mapper);
-    }
-
-    @Bean
-    ModelArrayMapper<User> userAccountArrayMapper() {
-        return UserArrayMapper.INSTANCE;
-    }
-
-    @Bean
-    UserFileRepository userFileRepository(Environment env, ModelArrayMapper<User> mapper) {
-        LoadPathDeriver pathDeriver = new LoadPathDeriver(env);
-        FileOperator fileOperator = new FileOperator(pathDeriver.derive(UserFileRepository.FILE_ENTITY));
-        return new UserFileRepository(fileOperator, mapper);
+    @Configuration(proxyBeanMethods = false)
+    @Profile("user-file")
+    static class UserFileConfiguration {
+        @Bean
+        ModelArrayMapper<User> userAccountArrayMapper() {
+            return UserArrayMapper.INSTANCE;
+        }
+        @Bean
+        UserFileRepository userFileRepository(Environment env, ModelArrayMapper<User> mapper) {
+            LoadPathDeriver pathDeriver = new LoadPathDeriver(env);
+            FileOperator fileOperator = new FileOperator(pathDeriver.derive(UserFileRepository.FILE_ENTITY));
+            return new UserFileRepository(fileOperator, mapper);
+        }
     }
 }

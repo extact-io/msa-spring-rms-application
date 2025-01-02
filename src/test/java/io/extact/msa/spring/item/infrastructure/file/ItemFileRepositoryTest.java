@@ -18,19 +18,22 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import io.extact.msa.spring.item.domain.RentalItemRepository;
-import io.extact.msa.spring.item.domain.model.RentalItem;
-import io.extact.msa.spring.item.infrastructure.RentalItemRepositoryTest;
-import io.extact.msa.spring.item.infrastructure.file.RentalItemFileRepositoryTest.TestConfig;
+import io.extact.msa.spring.item.infrastructure.ItemRepositoryTest;
+import io.extact.msa.spring.item.infrastructure.file.ItemFileRepositoryTest.TestConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.LoadPathDeriver;
+import io.extact.msa.spring.rms.domain.item.ItemRepository;
+import io.extact.msa.spring.rms.domain.item.model.Item;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
+import io.extact.msa.spring.rms.infrastructure.persistence.file.FileRepositoryConfig;
+import io.extact.msa.spring.rms.infrastructure.persistence.file.item.ItemFileRepository;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
 import io.extact.msa.spring.test.spring.SelfRootContext;
 
 @SpringBootTest(classes = { SelfRootContext.class, TestConfig.class }, webEnvironment = WebEnvironment.NONE)
-@ActiveProfiles("file")
-class RentalItemFileRepositoryTest extends RentalItemRepositoryTest {
+@ActiveProfiles("item-file")
+class ItemFileRepositoryTest extends ItemRepositoryTest {
 
     private ItemRepository repository;
 
@@ -68,13 +71,15 @@ class RentalItemFileRepositoryTest extends RentalItemRepositoryTest {
     @Test
     @Override
     protected void testNextIdentity() {
+
         // when
         int firstTime = repository.nextIdentity();
-        repository.add(Item.reconstruct(firstTime, "1st", ""));
+        repository.add(testCreator.newInstance(new ItemId(firstTime), "1st", ""));
         int secondTime = repository.nextIdentity();
-        repository.add(Item.reconstruct(secondTime, "2nd", ""));
+        repository.add(testCreator.newInstance(new ItemId(secondTime), "2nd", ""));
         int thirdTime = repository.nextIdentity();
-        repository.add(Item.reconstruct(thirdTime, "3rd", ""));
+        repository.add(testCreator.newInstance(new ItemId(thirdTime), "3rd", ""));
+
         // then
         assertThat(secondTime).isEqualTo(firstTime + 1);
         assertThat(thirdTime).isEqualTo(secondTime + 1);

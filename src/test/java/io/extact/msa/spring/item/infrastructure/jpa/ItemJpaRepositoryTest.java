@@ -9,12 +9,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import io.extact.msa.spring.item.domain.RentalItemRepository;
-import io.extact.msa.spring.item.infrastructure.RentalItemRepositoryTest;
+import io.extact.msa.spring.item.infrastructure.ItemRepositoryTest;
+import io.extact.msa.spring.rms.domain.item.ItemRepository;
+import io.extact.msa.spring.rms.infrastructure.persistence.jpa.JpaRepositoryConfig;
 
 @DataJpaTest
 @ActiveProfiles("jpa")
-class RentalItemJpaRepositoryTest extends RentalItemRepositoryTest {
+class ItemJpaRepositoryTest extends ItemRepositoryTest {
 
     @Autowired
     private ItemRepository repository;
@@ -32,10 +33,12 @@ class RentalItemJpaRepositoryTest extends RentalItemRepositoryTest {
     @Test
     @Override
     protected void testNextIdentity() {
+
         // when
         int firstTime = repository.nextIdentity();
         int secondTime = repository.nextIdentity();
         int thirdTime = repository.nextIdentity();
+
         // then
         assertThat(secondTime).isEqualTo(firstTime + 1);
         assertThat(thirdTime).isEqualTo(secondTime + 1);

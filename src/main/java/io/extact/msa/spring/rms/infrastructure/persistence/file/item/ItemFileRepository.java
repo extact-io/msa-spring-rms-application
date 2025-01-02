@@ -10,7 +10,7 @@ import io.extact.msa.spring.rms.domain.item.model.Item;
 
 public class ItemFileRepository extends AbstractFileRepository<Item> implements ItemRepository {
 
-    public static final String FILE_ENTITY = "rental-item";
+    public static final String FILE_ENTITY = "item";
 
     public ItemFileRepository(FileOperator fileReadWriter, ModelArrayMapper<Item> mapper) {
         super(fileReadWriter, mapper);
