@@ -39,12 +39,12 @@ public class ReservationArrayMapper implements ModelArrayMapper<Reservation>, Re
 
         String[] attributes = new String[7];
 
-        attributes[0] = String.valueOf(reservation.getId());
+        attributes[0] = String.valueOf(reservation.getId().id());
         attributes[1] = DATE_TIME_FORMATTER.format(reservation.getFromDateTime());
         attributes[2] = DATE_TIME_FORMATTER.format(reservation.getToDateTime());
         attributes[3] = reservation.getNote();
-        attributes[4] = String.valueOf(reservation.getItemId());
-        attributes[5] = String.valueOf(reservation.getReserverId());
+        attributes[4] = String.valueOf(reservation.getItemId().id());
+        attributes[5] = String.valueOf(reservation.getReserverId().id());
 
         return attributes;
     }

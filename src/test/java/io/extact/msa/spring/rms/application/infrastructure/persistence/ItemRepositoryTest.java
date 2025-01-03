@@ -1,4 +1,4 @@
-package io.extact.msa.spring.item.infrastructure;
+package io.extact.msa.spring.rms.application.infrastructure.persistence;
 
 import static io.extact.msa.spring.test.assertj.ToStringAssert.*;
 import static org.assertj.core.api.Assertions.*;
@@ -143,7 +143,7 @@ public abstract class ItemRepositoryTest {
     @Test
     void testDelete() {
         // given
-        Item deleteItem = testCreator.newInstance(new ItemId(1), "delete", "delete");
+        Item deleteItem = item1;
         // when
         repository().delete(deleteItem);
         // then

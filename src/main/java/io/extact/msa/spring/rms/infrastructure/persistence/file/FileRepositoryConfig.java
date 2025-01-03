@@ -22,8 +22,8 @@ import io.extact.msa.spring.rms.infrastructure.persistence.file.user.UserArrayMa
 import io.extact.msa.spring.rms.infrastructure.persistence.file.user.UserFileRepository;
 
 @Configuration(proxyBeanMethods = false)
-@Import(ValidationConfiguration.class)
 @ConditionalOnAnyEndsWithProfile("file")
+@Import(ValidationConfiguration.class)
 public class FileRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)

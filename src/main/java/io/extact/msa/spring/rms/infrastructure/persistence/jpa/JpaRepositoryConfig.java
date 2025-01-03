@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import io.extact.msa.spring.platform.core.condition.ConditionalOnAnyEndsWithProfile;
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfiguration;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.DefaultModelEntityMapper;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemEntity;
@@ -20,30 +21,46 @@ import io.extact.msa.spring.rms.infrastructure.persistence.jpa.user.UserJpaRepos
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.user.UserJpaRepositoryDelegator;
 
 @Configuration(proxyBeanMethods = false)
-@EntityScan(basePackageClasses = JpaRepositoryConfig.class)
-@EnableJpaRepositories(basePackageClasses = JpaRepositoryConfig.class)
+@ConditionalOnAnyEndsWithProfile("jpa")
 @Import(ValidationConfiguration.class)
-@Profile("jpa")
 public class JpaRepositoryConfig {
 
-    @Bean
-    ItemJpaRepository itemJpaRepository(ItemJpaRepositoryDelegator delegator) {
-        return new ItemJpaRepository(
-                delegator,
-                new DefaultModelEntityMapper<>(ItemEntity::from));
+    @Configuration(proxyBeanMethods = false)
+    @Profile("item-jpa")
+    @EntityScan(basePackageClasses = ItemEntity.class)
+    @EnableJpaRepositories(basePackageClasses = ItemJpaRepositoryDelegator.class)
+    static class ItemFileConfiguration {
+        @Bean
+        ItemJpaRepository itemJpaRepository(ItemJpaRepositoryDelegator delegator) {
+            return new ItemJpaRepository(
+                    delegator,
+                    new DefaultModelEntityMapper<>(ItemEntity::from));
+        }
     }
 
-    @Bean
-    ReservationJpaRepository userJpaRepository(ReservationJpaRepositoryDelegator delegator) {
-        return new ReservationJpaRepository(
-                delegator,
-                new DefaultModelEntityMapper<>(ReservationEntity::from));
+    @Configuration(proxyBeanMethods = false)
+    @Profile("reservation-jpa")
+    @EntityScan(basePackageClasses = JpaRepositoryConfig.class)
+    @EnableJpaRepositories(basePackageClasses = JpaRepositoryConfig.class)
+    static class ReservationFileConfiguration {
+        @Bean
+        ReservationJpaRepository reservationJpaRepository(ReservationJpaRepositoryDelegator delegator) {
+            return new ReservationJpaRepository(
+                    delegator,
+                    new DefaultModelEntityMapper<>(ReservationEntity::from));
+        }
     }
 
-    @Bean
-    UserJpaRepository userJpaRepository(UserJpaRepositoryDelegator delegator) {
-        return new UserJpaRepository(
-                delegator,
-                new DefaultModelEntityMapper<>(UserEntity::from));
+    @Configuration(proxyBeanMethods = false)
+    @Profile("user-jpa")
+    @EntityScan(basePackageClasses = JpaRepositoryConfig.class)
+    @EnableJpaRepositories(basePackageClasses = JpaRepositoryConfig.class)
+    static class UserFileConfiguration {
+        @Bean
+        UserJpaRepository userJpaRepository(UserJpaRepositoryDelegator delegator) {
+            return new UserJpaRepository(
+                    delegator,
+                    new DefaultModelEntityMapper<>(UserEntity::from));
+        }
     }
 }

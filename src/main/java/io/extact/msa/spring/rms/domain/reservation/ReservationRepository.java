@@ -32,7 +32,7 @@ public interface ReservationRepository extends GenericRepository<Reservation> {
      * @param rentalItemId レンタル品ID
      * @return 該当予約。該当がない場合は空リスト
      */
-    List<Reservation> findByRentalItemId(ItemId itemId);
+    List<Reservation> findByItemId(ItemId itemId);
 
     /**
      * レンタルの予定期間が重なっている予約を取得する
@@ -55,7 +55,7 @@ public interface ReservationRepository extends GenericRepository<Reservation> {
      * @return 予約。該当がない場合は空リスト
      */
     default List<Reservation> findOverlappingReservations(ItemId itemId, DateTimePeriod period) {
-        return findByRentalItemId(itemId)
+        return findByItemId(itemId)
                 .stream()
                 .filter(r -> r.isOverlappedBy(period))
                 .toList();

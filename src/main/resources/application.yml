@@ -11,8 +11,8 @@ spring:
     default: item-jpa,reservation-jpa,user-jpa
   sql:
     init:
-      schema-locations: classpath:sql/rentalItem-schema.sql
-      data-locations: classpath:sql/rentalItem-data.sql
+      schema-locations: classpath:sql/item-schema.sql
+      data-locations: classpath:sql/item-data.sql
   jpa:
     open-in-view:
       false
@@ -52,3 +52,13 @@ rms:
         type: temporary
         temporary:
           resource: temporary/itemTemp.csv
+    reservation:
+      csv:
+        type: temporary
+        temporary:
+          resource: temporary/reservationTemp.csv
+    user:
+      csv:
+        type: temporary
+        temporary:
+          resource: temporary/userTemp.csv

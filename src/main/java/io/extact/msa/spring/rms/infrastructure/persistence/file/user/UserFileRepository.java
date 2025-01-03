@@ -10,7 +10,7 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 
 public class UserFileRepository extends AbstractFileRepository<User> implements UserRepository {
 
-    public static final String FILE_ENTITY = "user-account";
+    public static final String FILE_ENTITY = "user";
 
     public UserFileRepository(FileOperator fileReadWriter, ModelArrayMapper<User> mapper) {
         super(fileReadWriter, mapper);

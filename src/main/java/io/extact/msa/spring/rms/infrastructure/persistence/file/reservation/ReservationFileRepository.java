@@ -40,7 +40,7 @@ public class ReservationFileRepository extends AbstractFileRepository<Reservatio
     }
 
     @Override
-    public List<Reservation> findByRentalItemId(ItemId itemId) {
+    public List<Reservation> findByItemId(ItemId itemId) {
         return this.findAll().stream()
                 .filter(reservation -> reservation.getItemId().equals(itemId))
                 .toList();

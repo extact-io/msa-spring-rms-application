@@ -1,4 +1,4 @@
-package io.extact.msa.spring.item.infrastructure.jpa;
+package io.extact.msa.spring.rms.application.infrastructure.persistence.jpa;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -9,12 +9,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import io.extact.msa.spring.item.infrastructure.ItemRepositoryTest;
+import io.extact.msa.spring.rms.application.infrastructure.persistence.ItemRepositoryTest;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.JpaRepositoryConfig;
 
 @DataJpaTest
-@ActiveProfiles("jpa")
+@ActiveProfiles("item-jpa")
 class ItemJpaRepositoryTest extends ItemRepositoryTest {
 
     @Autowired

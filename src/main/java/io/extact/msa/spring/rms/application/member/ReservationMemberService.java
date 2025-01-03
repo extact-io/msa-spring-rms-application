@@ -69,7 +69,7 @@ public class ReservationMemberService {
 
     public List<ReservationComposeModel> findReservationByItemId(ItemId itemId) {
         return reservationRepository
-                .findByRentalItemId(itemId)
+                .findByItemId(itemId)
                 .stream()
                 .map(modelComposer::composeModel)
                 .toList();

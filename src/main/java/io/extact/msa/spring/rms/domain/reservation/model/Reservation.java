@@ -1,11 +1,15 @@
 package io.extact.msa.spring.rms.domain.reservation.model;
 
+import static java.time.temporal.ChronoUnit.*;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
 import jakarta.validation.Validator;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.BeforeAfterDateTime;
@@ -14,7 +18,6 @@ import io.extact.msa.spring.platform.fw.domain.constraint.Note;
 import io.extact.msa.spring.platform.fw.domain.constraint.ReserveFromDateTime;
 import io.extact.msa.spring.platform.fw.domain.constraint.ReserveFromDateTimeFuture;
 import io.extact.msa.spring.platform.fw.domain.constraint.ReserveToDateTime;
-import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
 import io.extact.msa.spring.platform.fw.domain.model.DomainModel;
 import io.extact.msa.spring.platform.fw.domain.type.DateTimePeriod;
@@ -31,7 +34,7 @@ import lombok.ToString;
 @BeforeAfterDateTime
 public class Reservation implements DomainModel, BeforeAfterDateTimeValidatable, ReservationReference {
 
-    @RmsId
+    @NotNull @Valid
     private ReservationId id;
     @ReserveFromDateTime
     @ReserveFromDateTimeFuture(groups = Add.class)
@@ -41,9 +44,9 @@ public class Reservation implements DomainModel, BeforeAfterDateTimeValidatable,
     @Note
     private String note;
 
-    @RmsId
+    @NotNull @Valid
     private ItemId itemId;
-    @RmsId
+    @NotNull @Valid
     private UserId reserverId;
 
     private Validator validator;
@@ -51,8 +54,8 @@ public class Reservation implements DomainModel, BeforeAfterDateTimeValidatable,
     public Reservation(ReservationId id, LocalDateTime fromDateTime, LocalDateTime toDateTime, String note,
             ItemId itemId, UserId reserverId) {
         this.id = id;
-        this.fromDateTime = fromDateTime;
-        this.toDateTime = toDateTime;
+        this.fromDateTime = fromDateTime.truncatedTo(MINUTES);
+        this.toDateTime = toDateTime.truncatedTo(MINUTES);
         this.note = note;
         this.itemId = itemId;
         this.reserverId = reserverId;
@@ -90,12 +93,12 @@ public class Reservation implements DomainModel, BeforeAfterDateTimeValidatable,
     public interface ReservationCreatable {
         default Reservation newInstance(
                 ReservationId id,
-                LocalDateTime fromDataTime,
+                LocalDateTime fromDateTime,
                 LocalDateTime toDateTime,
                 String note,
                 ItemId itemId,
                 UserId reserverId) {
-            return new Reservation(id, toDateTime, toDateTime, note, itemId, reserverId);
+            return new Reservation(id, fromDateTime, toDateTime, note, itemId, reserverId);
         }
     }
 }

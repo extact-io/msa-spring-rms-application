@@ -36,7 +36,7 @@ public class UserArrayMapper implements ModelArrayMapper<User>, UserCreatable {
 
         String[] attributes = new String[7];
 
-        attributes[0] = String.valueOf(user.getId());
+        attributes[0] = String.valueOf(user.getId().id());
         attributes[1] = user.getLoginId();
         attributes[2] = user.getPassword();
         attributes[3] = user.getProfile().getUserName();

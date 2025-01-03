@@ -27,7 +27,7 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
     public List<Reservation> findByItemIdAndFromDate(ItemId itemId, LocalDate from) {
         LocalDateTime startOfDay = from.atStartOfDay();
         LocalDateTime endOfDay = from.atTime(LocalTime.MAX);
-        return delegator.findByItemIdAndFromDateTimeBetween(itemId.id(), startOfDay, endOfDay)
+        return delegator.findByItemIdAndFromDateTimeBetweenByOrderByIdAsc(itemId.id(), startOfDay, endOfDay)
                 .stream()
                 .map(ReservationEntity::toModel)
                 .toList();
@@ -35,15 +35,15 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
 
     @Override
     public List<Reservation> findByReserverId(UserId reserverId) {
-        return delegator.findByReserverId(reserverId.id())
+        return delegator.findByReserverIdByOrderByIdAsc(reserverId.id())
                 .stream()
                 .map(ReservationEntity::toModel)
                 .toList();
     }
 
     @Override
-    public List<Reservation> findByRentalItemId(ItemId itemId) {
-        return delegator.findByItemId(itemId.id())
+    public List<Reservation> findByItemId(ItemId itemId) {
+        return delegator.findByItemIdByOrderByIdAsc(itemId.id())
                 .stream()
                 .map(ReservationEntity::toModel)
                 .toList();
