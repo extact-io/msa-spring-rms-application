@@ -20,7 +20,7 @@ import io.extact.msa.spring.rms.domain.user.model.UserId;
 
 @Transactional
 @Rollback
-public abstract class UserRepositoryTest {
+public abstract class AbstractUserRepositoryTest {
 
     protected static final UserCreatable testCreator = new UserCreatable() {};
 

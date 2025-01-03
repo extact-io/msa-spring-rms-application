@@ -26,8 +26,8 @@ public class UserJpaRepository extends AbstractJpaRepository<User, UserEntity> i
     }
 
     @Override
-    public Optional<User> findByLoginIdAndPasswod(String loginId, String password) {
-        return delegator.findByLoginIdAndPasswod(loginId, password)
+    public Optional<User> findByLoginIdAndPassword(String loginId, String password) {
+        return delegator.findByLoginIdAndPassword(loginId, password)
                 .map(entityMapper::toModel);
     }
 }

@@ -29,7 +29,7 @@ public class UserFileRepository extends AbstractFileRepository<User> implements 
     }
 
     @Override
-    public Optional<User> findByLoginIdAndPasswod(String loginId, String password) {
+    public Optional<User> findByLoginIdAndPassword(String loginId, String password) {
         return this.findAll().stream()
                 .filter(account -> account.getLoginId().equals(loginId))
                 .filter(account -> account.getPassword().equals(password))

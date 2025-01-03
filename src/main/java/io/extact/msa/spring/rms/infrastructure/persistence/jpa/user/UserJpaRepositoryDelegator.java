@@ -7,5 +7,5 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.JpaReposi
 public interface UserJpaRepositoryDelegator extends JpaRepositoryDelegator<UserEntity> {
 
     Optional<UserEntity> findByLoginId(String loginId);
-    Optional<UserEntity> findByLoginIdAndPasswod(String loginId, String password);
+    Optional<UserEntity> findByLoginIdAndPassword(String loginId, String password);
 }

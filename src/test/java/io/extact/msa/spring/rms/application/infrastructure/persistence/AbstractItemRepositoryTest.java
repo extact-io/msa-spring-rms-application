@@ -29,7 +29,7 @@ import io.extact.msa.spring.rms.domain.item.model.ItemId;
  */
 @Transactional
 @Rollback
-public abstract class ItemRepositoryTest {
+public abstract class AbstractItemRepositoryTest {
 
     protected static final ItemCreatable testCreator = new ItemCreatable() {};
 

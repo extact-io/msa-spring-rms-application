@@ -16,7 +16,7 @@ public class LoginService {
 
     public UserReference login(String loginId, String password) {
         return repository
-                .findByLoginIdAndPasswod(loginId, password)
+                .findByLoginIdAndPassword(loginId, password)
                 .orElseThrow(() -> new BusinessFlowException("loginId or password is different", CauseType.NOT_FOUND));
     }
 }

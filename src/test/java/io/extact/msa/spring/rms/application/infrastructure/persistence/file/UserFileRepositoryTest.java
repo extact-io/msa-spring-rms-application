@@ -22,7 +22,7 @@ import io.extact.msa.spring.platform.fw.domain.type.UserType;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.LoadPathDeriver;
-import io.extact.msa.spring.rms.application.infrastructure.persistence.UserRepositoryTest;
+import io.extact.msa.spring.rms.application.infrastructure.persistence.AbstractUserRepositoryTest;
 import io.extact.msa.spring.rms.application.infrastructure.persistence.file.UserFileRepositoryTest.TestConfig;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
@@ -34,7 +34,7 @@ import io.extact.msa.spring.test.spring.SelfRootContext;
 
 @SpringBootTest(classes = { SelfRootContext.class, TestConfig.class }, webEnvironment = WebEnvironment.NONE)
 @ActiveProfiles("user-file")
-class UserFileRepositoryTest extends UserRepositoryTest {
+class UserFileRepositoryTest extends AbstractUserRepositoryTest {
 
     private UserRepository repository;
 

@@ -24,7 +24,7 @@ import io.extact.msa.spring.rms.domain.user.model.UserId;
 
 @Transactional
 @Rollback
-public abstract class ReservationRepositoryTest {
+public abstract class AbstractReservationRepositoryTest {
 
     protected static final ReservationCreatable testCreator = new ReservationCreatable() {
     };

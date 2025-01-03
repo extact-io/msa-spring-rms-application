@@ -9,16 +9,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import io.extact.msa.spring.rms.application.infrastructure.persistence.AbstractItemRepositoryTest;
-import io.extact.msa.spring.rms.domain.item.ItemRepository;
+import io.extact.msa.spring.rms.application.infrastructure.persistence.AbstractUserRepositoryTest;
+import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.JpaRepositoryConfig;
 
 @DataJpaTest
-@ActiveProfiles("item-jpa")
-class ItemJpaRepositoryTest extends AbstractItemRepositoryTest {
+@ActiveProfiles("user-jpa")
+class UserJpaRepositoryTest extends AbstractUserRepositoryTest {
 
     @Autowired
-    private ItemRepository repository;
+    private UserRepository repository;
 
     @Configuration(proxyBeanMethods = false)
     @Import(JpaRepositoryConfig.class)
@@ -26,7 +26,7 @@ class ItemJpaRepositoryTest extends AbstractItemRepositoryTest {
     }
 
     @Override
-    protected ItemRepository repository() {
+    protected UserRepository repository() {
         return this.repository;
     }
 

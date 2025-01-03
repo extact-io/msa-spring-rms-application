@@ -11,8 +11,8 @@ spring:
     default: item-jpa,reservation-jpa,user-jpa
   sql:
     init:
-      schema-locations: classpath:sql/item-schema.sql
-      data-locations: classpath:sql/item-data.sql
+      schema-locations: classpath:sql/item-schema.sql,sql/user-schema.sql,sql/reservation-schema.sql
+      data-locations: classpath:sql/item-data.sql,sql/user-data.sql,sql/reservation-data.sql
   jpa:
     open-in-view:
       false

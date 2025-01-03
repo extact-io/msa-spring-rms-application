@@ -7,12 +7,12 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.JpaReposi
 
 public interface ReservationJpaRepositoryDelegator extends JpaRepositoryDelegator<ReservationEntity> {
 
-    List<ReservationEntity> findByItemIdAndFromDateTimeBetweenByOrderByIdAsc(
+    List<ReservationEntity> findByItemIdAndFromDateTimeBetweenOrderByIdAsc(
             int itemId,
-            LocalDateTime startDate,
-            LocalDateTime endDate);
+            LocalDateTime from,
+            LocalDateTime to);
 
-    List<ReservationEntity> findByReserverIdByOrderByIdAsc(int id);
+    List<ReservationEntity> findByReserverIdOrderByIdAsc(int id);
 
-    List<ReservationEntity> findByItemIdByOrderByIdAsc(int id);
+    List<ReservationEntity> findByItemIdOrderByIdAsc(int id);
 }

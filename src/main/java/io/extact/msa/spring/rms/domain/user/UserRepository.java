@@ -15,5 +15,5 @@ public interface UserRepository extends GenericRepository<User>, DuplicationData
      * @param password パスワード
      * @return 該当ユーザ。該当なしはnull
      */
-    Optional<User> findByLoginIdAndPasswod(String loginId, String password);
+    Optional<User> findByLoginIdAndPassword(String loginId, String password);
 }

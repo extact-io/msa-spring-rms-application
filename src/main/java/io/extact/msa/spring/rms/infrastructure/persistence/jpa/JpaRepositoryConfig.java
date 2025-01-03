@@ -40,8 +40,8 @@ public class JpaRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("reservation-jpa")
-    @EntityScan(basePackageClasses = JpaRepositoryConfig.class)
-    @EnableJpaRepositories(basePackageClasses = JpaRepositoryConfig.class)
+    @EntityScan(basePackageClasses = ReservationEntity.class)
+    @EnableJpaRepositories(basePackageClasses = ReservationJpaRepository.class)
     static class ReservationFileConfiguration {
         @Bean
         ReservationJpaRepository reservationJpaRepository(ReservationJpaRepositoryDelegator delegator) {
@@ -53,8 +53,8 @@ public class JpaRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("user-jpa")
-    @EntityScan(basePackageClasses = JpaRepositoryConfig.class)
-    @EnableJpaRepositories(basePackageClasses = JpaRepositoryConfig.class)
+    @EntityScan(basePackageClasses = UserEntity.class)
+    @EnableJpaRepositories(basePackageClasses = UserJpaRepository.class)
     static class UserFileConfiguration {
         @Bean
         UserJpaRepository userJpaRepository(UserJpaRepositoryDelegator delegator) {
