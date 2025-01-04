@@ -1,7 +1,7 @@
 package io.extact.msa.spring.rms.application.admin;
 
-import io.extact.msa.spring.platform.fw.domain.type.UserType;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
+import io.extact.msa.spring.rms.domain.user.model.UserType;
 import lombok.Builder;
 
 /**

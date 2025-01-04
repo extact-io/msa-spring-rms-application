@@ -9,13 +9,12 @@ import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.LoginId;
-import io.extact.msa.spring.platform.fw.domain.constraint.Passowrd;
-import io.extact.msa.spring.platform.fw.domain.constraint.UserTypeConstraint;
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
 import io.extact.msa.spring.platform.fw.domain.model.DomainModel;
-import io.extact.msa.spring.platform.fw.domain.type.UserType;
 import io.extact.msa.spring.platform.fw.exception.RmsConstraintViolationException;
+import io.extact.msa.spring.rms.domain.user.constraints.LoginId;
+import io.extact.msa.spring.rms.domain.user.constraints.Passowrd;
+import io.extact.msa.spring.rms.domain.user.constraints.UserTypeConstraint;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;

@@ -9,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.extact.msa.spring.platform.core.auth.RmsAuthentication;
-import io.extact.msa.spring.platform.fw.domain.type.DateTimePeriod;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
@@ -19,6 +18,7 @@ import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
+import io.extact.msa.spring.rms.domain.reservation.constraint.DateTimePeriod;
 import io.extact.msa.spring.rms.domain.reservation.ReservationDuplicateChecker;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;

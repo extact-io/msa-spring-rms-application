@@ -2,7 +2,7 @@ package io.extact.msa.spring.rms.infrastructure.persistence.jpa.user;
 
 import java.util.Optional;
 
-import io.extact.msa.spring.platform.fw.infrastructure.ModelEntityMapper;
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.ModelEntityMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.AbstractJpaRepository;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;

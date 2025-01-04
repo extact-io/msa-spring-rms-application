@@ -4,11 +4,11 @@ import static io.extact.msa.spring.rms.interfaces.console.common.ClientConstants
 
 import java.util.List;
 
-import io.extact.msa.spring.platform.fw.domain.type.UserType;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
 import io.extact.msa.spring.rms.application.admin.UserUpdateCommand;
 import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
 import io.extact.msa.spring.rms.interfaces.console.textio.RmsStringInputReader.PatternMessage;

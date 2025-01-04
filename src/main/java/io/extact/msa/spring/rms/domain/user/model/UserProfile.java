@@ -1,8 +1,8 @@
 package io.extact.msa.spring.rms.domain.user.model;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.Contact;
-import io.extact.msa.spring.platform.fw.domain.constraint.PhoneNumber;
-import io.extact.msa.spring.platform.fw.domain.constraint.UserName;
+import io.extact.msa.spring.rms.domain.user.constraints.Contact;
+import io.extact.msa.spring.rms.domain.user.constraints.PhoneNumber;
+import io.extact.msa.spring.rms.domain.user.constraints.UserName;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

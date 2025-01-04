@@ -9,13 +9,8 @@ spring:
     encoding: UTF-8
   profiles:
     default: item-jpa,reservation-jpa,user-jpa
-  sql:
-    init:
-      schema-locations: classpath:sql/item-schema.sql,sql/user-schema.sql,sql/reservation-schema.sql
-      data-locations: classpath:sql/item-data.sql,sql/user-data.sql,sql/reservation-data.sql
   jpa:
-    open-in-view:
-      false
+    open-in-view: false
     hibernate:
       ddl-auto: none
     properties:
@@ -52,13 +47,22 @@ rms:
         type: temporary
         temporary:
           resource: temporary/itemTemp.csv
+      sql:
+        schema-locations: classpath:sql/item-schema.sql
+        data-locations: classpath:sql/item-data.sql
     reservation:
       csv:
         type: temporary
         temporary:
           resource: temporary/reservationTemp.csv
+      sql:
+        schema-locations: classpath:sql/reservation-schema.sql
+        data-locations: classpath:sql/reservation-data.sql
     user:
       csv:
         type: temporary
         temporary:
           resource: temporary/userTemp.csv
+      sql:
+        schema-locations: classpath:sql/user-schema.sql
+        data-locations: classpath:sql/user-data.sql

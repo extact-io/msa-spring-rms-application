@@ -1,11 +1,11 @@
 package io.extact.msa.spring.rms.interfaces.webapi.universal;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.Contact;
-import io.extact.msa.spring.platform.fw.domain.constraint.Passowrd;
-import io.extact.msa.spring.platform.fw.domain.constraint.PhoneNumber;
-import io.extact.msa.spring.platform.fw.domain.constraint.UserName;
 import io.extact.msa.spring.platform.fw.domain.model.Transformable;
 import io.extact.msa.spring.rms.application.universal.UserProfileUpdateCommand;
+import io.extact.msa.spring.rms.domain.user.constraints.Contact;
+import io.extact.msa.spring.rms.domain.user.constraints.Passowrd;
+import io.extact.msa.spring.rms.domain.user.constraints.PhoneNumber;
+import io.extact.msa.spring.rms.domain.user.constraints.UserName;
 import lombok.Builder;
 
 /**

@@ -1,5 +1,7 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.jpa;
 
+import static io.extact.msa.spring.platform.fw.infrastructure.framework.profile.PersistenceProfileType.*;
+
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,8 +9,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import io.extact.msa.spring.platform.core.condition.ConditionalOnAnyEndsWithProfile;
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfiguration;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.profile.ConditionalOnAnyPersistenceProfile;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.sqlinit.ProfileBasedDbInitializerConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.DefaultModelEntityMapper;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemEntity;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemJpaRepository;
@@ -21,8 +24,10 @@ import io.extact.msa.spring.rms.infrastructure.persistence.jpa.user.UserJpaRepos
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.user.UserJpaRepositoryDelegator;
 
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnAnyEndsWithProfile("jpa")
-@Import(ValidationConfiguration.class)
+@ConditionalOnAnyPersistenceProfile(JPA)
+@Import({
+        ValidationConfiguration.class,
+        ProfileBasedDbInitializerConfig.class })
 public class JpaRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)

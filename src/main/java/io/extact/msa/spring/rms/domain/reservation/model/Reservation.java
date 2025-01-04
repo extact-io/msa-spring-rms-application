@@ -12,17 +12,17 @@ import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.BeforeAfterDateTime;
-import io.extact.msa.spring.platform.fw.domain.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
-import io.extact.msa.spring.platform.fw.domain.constraint.Note;
-import io.extact.msa.spring.platform.fw.domain.constraint.ReserveFromDateTime;
-import io.extact.msa.spring.platform.fw.domain.constraint.ReserveFromDateTimeFuture;
-import io.extact.msa.spring.platform.fw.domain.constraint.ReserveToDateTime;
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
 import io.extact.msa.spring.platform.fw.domain.model.DomainModel;
-import io.extact.msa.spring.platform.fw.domain.type.DateTimePeriod;
 import io.extact.msa.spring.platform.fw.exception.RmsConstraintViolationException;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
+import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.DateTimePeriod;
+import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
+import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTimeFuture;
+import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,10 +36,10 @@ public class Reservation implements DomainModel, BeforeAfterDateTimeValidatable,
 
     @NotNull @Valid
     private ReservationId id;
-    @ReserveFromDateTime
-    @ReserveFromDateTimeFuture(groups = Add.class)
+    @FromDateTime
+    @FromDateTimeFuture(groups = Add.class)
     private LocalDateTime fromDateTime;
-    @ReserveToDateTime
+    @ToDateTime
     private LocalDateTime toDateTime;
     @Note
     private String note;

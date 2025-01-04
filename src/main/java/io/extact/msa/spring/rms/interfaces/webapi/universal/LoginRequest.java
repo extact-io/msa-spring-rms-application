@@ -1,7 +1,7 @@
 package io.extact.msa.spring.rms.interfaces.webapi.universal;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.LoginId;
-import io.extact.msa.spring.platform.fw.domain.constraint.Passowrd;
+import io.extact.msa.spring.rms.domain.user.constraints.LoginId;
+import io.extact.msa.spring.rms.domain.user.constraints.Passowrd;
 import lombok.Builder;
 
 @Builder

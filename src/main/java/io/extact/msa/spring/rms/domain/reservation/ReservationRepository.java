@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import io.extact.msa.spring.platform.fw.domain.repository.GenericRepository;
-import io.extact.msa.spring.platform.fw.domain.type.DateTimePeriod;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
+import io.extact.msa.spring.rms.domain.reservation.constraint.DateTimePeriod;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 

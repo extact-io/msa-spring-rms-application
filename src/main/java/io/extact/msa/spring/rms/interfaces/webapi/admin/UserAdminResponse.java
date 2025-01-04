@@ -1,7 +1,7 @@
 package io.extact.msa.spring.rms.interfaces.webapi.admin;
 
-import io.extact.msa.spring.platform.fw.domain.type.UserType;
 import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserType;
 
 public record UserAdminResponse(
         int id,

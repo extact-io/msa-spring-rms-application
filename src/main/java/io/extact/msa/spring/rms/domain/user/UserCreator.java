@@ -4,10 +4,10 @@ import jakarta.validation.Validator;
 
 import org.springframework.stereotype.Service;
 
-import io.extact.msa.spring.platform.fw.domain.type.UserType;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
+import io.extact.msa.spring.rms.domain.user.model.UserType;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 

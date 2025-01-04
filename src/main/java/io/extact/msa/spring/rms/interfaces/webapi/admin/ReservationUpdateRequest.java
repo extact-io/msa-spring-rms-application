@@ -2,14 +2,14 @@ package io.extact.msa.spring.rms.interfaces.webapi.admin;
 
 import java.time.LocalDateTime;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.BeforeAfterDateTime;
-import io.extact.msa.spring.platform.fw.domain.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
-import io.extact.msa.spring.platform.fw.domain.constraint.Note;
-import io.extact.msa.spring.platform.fw.domain.constraint.ReserveFromDateTime;
-import io.extact.msa.spring.platform.fw.domain.constraint.ReserveToDateTime;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.domain.model.Transformable;
 import io.extact.msa.spring.rms.application.admin.ReservationUpdateCommand;
+import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
+import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import lombok.Builder;
 
@@ -17,8 +17,8 @@ import lombok.Builder;
 @BeforeAfterDateTime
 record ReservationUpdateRequest(
         @RmsId int id,
-        @ReserveFromDateTime LocalDateTime fromDateTime,
-        @ReserveToDateTime LocalDateTime toDateTime,
+        @FromDateTime LocalDateTime fromDateTime,
+        @ToDateTime LocalDateTime toDateTime,
         @Note String note) implements Transformable, BeforeAfterDateTimeValidatable {
 
     ReservationUpdateCommand toCommand() {

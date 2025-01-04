@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.LoginId;
-import io.extact.msa.spring.platform.fw.domain.constraint.Passowrd;
 import io.extact.msa.spring.platform.fw.web.RmsRestController;
 import io.extact.msa.spring.rms.application.universal.LoginService;
+import io.extact.msa.spring.rms.domain.user.constraints.LoginId;
+import io.extact.msa.spring.rms.domain.user.constraints.Passowrd;
 import lombok.RequiredArgsConstructor;
 
 @RmsRestController("/login")

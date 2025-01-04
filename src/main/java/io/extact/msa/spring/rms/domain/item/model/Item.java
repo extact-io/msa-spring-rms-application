@@ -9,11 +9,11 @@ import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ItemName;
-import io.extact.msa.spring.platform.fw.domain.constraint.SerialNo;
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
 import io.extact.msa.spring.platform.fw.domain.model.DomainModel;
 import io.extact.msa.spring.platform.fw.exception.RmsConstraintViolationException;
+import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
+import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
