@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfiguration;
+import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.profile.ConditionalOnAnyPersistenceProfile;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
@@ -25,7 +25,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.file.user.UserFileRep
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnAnyPersistenceProfile(FILE)
-@Import(ValidationConfiguration.class)
+@Import(ValidationConfig.class)
 public class FileRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)

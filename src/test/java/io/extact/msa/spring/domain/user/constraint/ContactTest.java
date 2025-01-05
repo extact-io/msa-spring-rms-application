@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfiguration;
+import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
 import io.extact.msa.spring.rms.domain.user.constraints.Contact;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
-@SpringBootTest(classes = ValidationConfiguration.class, webEnvironment = WebEnvironment.NONE)
+@SpringBootTest(classes = ValidationConfig.class, webEnvironment = WebEnvironment.NONE)
 class ContactTest {
 
     @Test

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfiguration;
+import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.profile.ConditionalOnAnyPersistenceProfile;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.sqlinit.ProfileBasedDbInitializerConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.DefaultModelEntityMapper;
@@ -26,7 +26,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.jpa.user.UserJpaRepos
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnAnyPersistenceProfile(JPA)
 @Import({
-        ValidationConfiguration.class,
+        ValidationConfig.class,
         ProfileBasedDbInitializerConfig.class })
 public class JpaRepositoryConfig {
 

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfiguration;
+import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.domain.service.SimpleDuplicateChecker;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
@@ -21,7 +21,7 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 
 @Configuration(proxyBeanMethods = false)
 @Import({
-    ValidationConfiguration.class
+    ValidationConfig.class
 })
 public class DominConfig {
 
