@@ -1,4 +1,4 @@
-package io.extact.msa.spring.rms.domain.reservation.constraint;
+package io.extact.msa.spring.rms.domain.reservation.model;
 
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDateTime;

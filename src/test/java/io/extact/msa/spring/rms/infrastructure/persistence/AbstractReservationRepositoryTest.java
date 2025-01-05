@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import io.extact.msa.spring.platform.fw.exception.RmsPersistenceException;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
-import io.extact.msa.spring.rms.domain.reservation.constraint.DateTimePeriod;
+import io.extact.msa.spring.rms.domain.reservation.model.DateTimePeriod;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;

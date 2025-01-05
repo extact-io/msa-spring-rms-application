@@ -17,7 +17,6 @@ import io.extact.msa.spring.platform.fw.domain.model.DomainModel;
 import io.extact.msa.spring.platform.fw.exception.RmsConstraintViolationException;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
-import io.extact.msa.spring.rms.domain.reservation.constraint.DateTimePeriod;
 import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
 import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
 import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTimeFuture;
