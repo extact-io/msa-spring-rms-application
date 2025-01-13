@@ -2,10 +2,11 @@ logging.level:
   org.springframework:
     #transaction: info
     #security: trace
+    context.support.ResourceBundleMessageSource: DEBUG
 
 spring:
   messages:
-    basename: application-messages
+    basename: fw-messages,application-messages
     encoding: UTF-8
   profiles:
     default: item-jpa,reservation-jpa,user-jpa

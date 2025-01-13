@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
@@ -27,8 +28,7 @@ public class ReservationArrayMapper implements ModelArrayMapper<Reservation>, Re
 
         return newInstance(
                 new ReservationId(id),
-                from,
-                to,
+                new ReservationPeriod(from, to),
                 note,
                 new ItemId(itemId),
                 new UserId(reserverId));
@@ -40,8 +40,8 @@ public class ReservationArrayMapper implements ModelArrayMapper<Reservation>, Re
         String[] attributes = new String[7];
 
         attributes[0] = String.valueOf(reservation.getId().id());
-        attributes[1] = DATE_TIME_FORMATTER.format(reservation.getFromDateTime());
-        attributes[2] = DATE_TIME_FORMATTER.format(reservation.getToDateTime());
+        attributes[1] = DATE_TIME_FORMATTER.format(reservation.getPeriod().getFrom());
+        attributes[2] = DATE_TIME_FORMATTER.format(reservation.getPeriod().getTo());
         attributes[3] = reservation.getNote();
         attributes[4] = String.valueOf(reservation.getItemId().id());
         attributes[5] = String.valueOf(reservation.getReserverId().id());

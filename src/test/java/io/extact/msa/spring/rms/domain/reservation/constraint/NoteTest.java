@@ -1,4 +1,4 @@
-package io.extact.msa.spring.domain.user.constraint;
+package io.extact.msa.spring.rms.domain.reservation.constraint;
 
 import java.util.Set;
 
@@ -11,31 +11,31 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
-import io.extact.msa.spring.rms.domain.user.constraints.UserName;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
 @SpringBootTest(classes = ValidationConfig.class, webEnvironment = WebEnvironment.NONE)
-class UserNameTest {
+class NoteTest {
 
     @Test
     void testValidate(@Autowired Validator validator) {
 
-        Data OK= new Data("レンタル太郎");
+        // メモ(64文字以内)
+        Data OK= new Data("１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４"); // 境界値:OK
         Set<ConstraintViolation<Data>> result = validator.validate(OK);
         ConstraintViolationSetAssert.assertThat(result)
             .hasNoViolations();
 
-        // ユーザ名(null)
-        Data NG= new Data(null);
+        // メモ(64文字より以上)
+        Data NG= new Data("12345678901234567890123456789012345678901234567890123456789012345"); // 境界値:NG
         result = validator.validate(NG);
         ConstraintViolationSetAssert.assertThat(result)
             .hasSize(1)
             .hasViolationOnPath("value")
-            .hasMessageEndingWith("NotBlank.message");
+            .hasMessageEndingWith("Size.message");
     }
 
     static record Data(
-            @UserName //
+            @Note //
             String value) {
     }
 }

@@ -1,9 +1,9 @@
 package io.extact.msa.spring.rms.domain.user;
 
-import jakarta.validation.Validator;
-
 import org.springframework.stereotype.Service;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
+import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
@@ -15,13 +15,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserCreator {
 
-    private final UserRepository repository;
-    private final Validator validator; // TODO オレオレのModelValidatorクラスとかで被せてあげるのがよい気がする
-    private final UserCreatable constructorProxy = new UserCreatable() {}; // implementsすると外部に公開してしまうためdelegateで方式にしている
+    private final IdentityGenerator idGenerator;
+    private final ModelValidator validator;
+    // implementsすると外部に公開してしまうためdelegateで方式にしている
+    private final UserCreatable constructorProxy = new UserCreatable() {};
 
     public User create(UserModelAttributes attrs) {
 
-        UserId id = new UserId(repository.nextIdentity());
+        UserId id = new UserId(idGenerator.nextIdentity());
         User user = constructorProxy.newInstance(
                 id,
                 attrs.loginId,
@@ -32,7 +33,7 @@ public class UserCreator {
                 attrs.contact);
 
         user.configureValidator(validator);
-        user.verify();
+        validator.validateModel(user);
 
         return user;
     }

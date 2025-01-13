@@ -7,10 +7,11 @@ import io.extact.msa.spring.platform.fw.domain.model.Transformable;
 import io.extact.msa.spring.rms.application.member.ReserveItemCommand;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
-import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
-import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
-import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
+import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
+import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.Builder;
 
@@ -26,8 +27,7 @@ record ReserveItemRequest(
 
     ReserveItemCommand toCommand() {
         return ReserveItemCommand.builder()
-                .fromDateTime(this.fromDateTime)
-                .toDateTime(this.toDateTime)
+                .period(new ReservationPeriod(fromDateTime, toDateTime))
                 .note(this.note)
                 .itemId(new ItemId(this.id))
                 .reserverId(new UserId(this.reserverId))
@@ -35,12 +35,12 @@ record ReserveItemRequest(
     }
 
     @Override
-    public LocalDateTime getFromDateTime() {
+    public LocalDateTime getFrom() {
         return fromDateTime;
     }
 
     @Override
-    public LocalDateTime getToDateTime() {
+    public LocalDateTime getTo() {
         return toDateTime;
     }
 }

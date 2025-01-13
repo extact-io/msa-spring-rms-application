@@ -26,7 +26,6 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractUserRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.file.FileRepositoryConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.UserFileRepositoryTest.TestConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.user.UserFileRepository;
 import io.extact.msa.spring.test.spring.NopTransactionManager;

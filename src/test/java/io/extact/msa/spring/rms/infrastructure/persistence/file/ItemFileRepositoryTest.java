@@ -25,7 +25,6 @@ import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractItemRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.file.FileRepositoryConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.ItemFileRepositoryTest.TestConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.item.ItemFileRepository;
 import io.extact.msa.spring.test.spring.NopTransactionManager;

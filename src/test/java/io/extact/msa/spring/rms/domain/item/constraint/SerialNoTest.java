@@ -1,4 +1,4 @@
-package io.extact.msa.spring.domain.item.constraint;
+package io.extact.msa.spring.rms.domain.item.constraint;
 
 import java.util.Set;
 
@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
-import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
 @SpringBootTest(classes = ValidationConfig.class, webEnvironment = WebEnvironment.NONE)

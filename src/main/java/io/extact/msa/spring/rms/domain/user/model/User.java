@@ -1,36 +1,43 @@
 package io.extact.msa.spring.rms.domain.user.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.groups.Default;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
-import io.extact.msa.spring.platform.fw.domain.model.DomainModel;
-import io.extact.msa.spring.platform.fw.exception.RmsConstraintViolationException;
+import io.extact.msa.spring.platform.fw.domain.model.EntityModel;
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.rms.domain.user.constraints.LoginId;
 import io.extact.msa.spring.rms.domain.user.constraints.Passowrd;
 import io.extact.msa.spring.rms.domain.user.constraints.UserTypeConstraint;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Getter
-@ToString
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "id")
-public class User implements DomainModel, UserReference {
+@ToString
+public class User implements EntityModel, UserReference {
 
-    private @NotNull @Valid UserId id;
-    private @LoginId String loginId;
-    private @Passowrd String password;
-    private @UserTypeConstraint UserType userType;
-    private @NotNull @Valid UserProfile profile;
+    @Getter
+    @NotNull
+    @Valid
+    private UserId id;
+    @Getter
+    @LoginId
+    private String loginId;
+    @Getter
+    @Passowrd
+    private String password;
+    @Getter
+    @UserTypeConstraint
+    private UserType userType;
+    @Getter
+    @NotNull
+    @Valid
+    private UserProfile profile;
 
-    private Validator validator;
+    private ModelValidator validator;
 
     User(UserId id, String loginId, String password, UserType userType, UserProfile profile) {
         this.id = id;
@@ -40,30 +47,38 @@ public class User implements DomainModel, UserReference {
         this.profile = profile;
     }
 
-    @Override
-    public void configureValidator(Validator validator) {
-        this.validator = validator;
-    }
-
-    @Override
-    public void verify() {
-        // 生々しいのでvalidatorをなにかで被せる
-        Set<ConstraintViolation<User>> result = this.validator.validate(this, Default.class, Add.class);
-        if (!result.isEmpty()) {
-            throw new RmsConstraintViolationException("validation error.", new HashSet<>(result));
-        }
-    }
-
     public boolean isAdmin() {
         return this.userType == UserType.ADMIN;
     }
 
     public void changePassword(String newPassword) {
+        User test = new User();
+        test.password = newPassword;
+        validator.validateField(test, "password");
+
         this.password = newPassword;
     }
 
     public void switchUserType(UserType newUserType) {
+        User test = new User();
+        test.userType = newUserType;
+        validator.validateField(test, "userType");
+
         this.userType = newUserType;
+    }
+
+    public void editProfile(String userName, String phoneNumber, String contact) {
+        User test = new User();
+        UserProfile newProfile = new UserProfile(userName, phoneNumber, contact);
+        test.profile = newProfile;
+        validator.validateField(test, "profile");
+
+        this.profile = newProfile;
+    }
+
+    @Override
+    public void configureValidator(ModelValidator validator) {
+        this.validator = validator;
     }
 
     // コンストラクタを隠蔽するためのインターフェース

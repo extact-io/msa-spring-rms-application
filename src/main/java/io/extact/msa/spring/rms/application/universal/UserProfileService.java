@@ -32,7 +32,7 @@ public class UserProfileService {
 
         User user = getInternalOwnProfile();
         user.changePassword(command.password());
-        user.getProfile().editProfile(
+        user.editProfile(
                 command.userName(),
                 command.phoneNumber(),
                 command.contact());

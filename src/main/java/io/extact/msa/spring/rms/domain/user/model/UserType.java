@@ -1,6 +1,8 @@
 package io.extact.msa.spring.rms.domain.user.model;
 
-public enum UserType {
+import io.extact.msa.spring.platform.fw.domain.model.ValueModel;
+
+public enum UserType implements ValueModel {
 
     ADMIN(true), MEMBER(false);
 

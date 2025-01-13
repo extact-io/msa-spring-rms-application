@@ -4,12 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 import io.extact.msa.spring.platform.fw.domain.repository.GenericRepository;
+import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.reservation.model.DateTimePeriod;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
-public interface ReservationRepository extends GenericRepository<Reservation> {
+public interface ReservationRepository extends GenericRepository<Reservation>, IdentityGenerator {
 
     /**
      * レンタル品IDと利用開始日が一致する予約一覧を取得する。
@@ -40,7 +41,7 @@ public interface ReservationRepository extends GenericRepository<Reservation> {
      * @param period レンタル予定期間
      * @return 予約。該当がない場合は空リスト
      */
-    default List<Reservation> findOverlappingReservations(DateTimePeriod period) {
+    default List<Reservation> findOverlappingReservations(ReservationPeriod period) {
         return findAll()
                 .stream()
                 .filter(r -> r.isOverlappedBy(period))
@@ -54,7 +55,7 @@ public interface ReservationRepository extends GenericRepository<Reservation> {
      * @param period レンタル予定期間
      * @return 予約。該当がない場合は空リスト
      */
-    default List<Reservation> findOverlappingReservations(ItemId itemId, DateTimePeriod period) {
+    default List<Reservation> findOverlappingReservations(ItemId itemId, ReservationPeriod period) {
         return findByItemId(itemId)
                 .stream()
                 .filter(r -> r.isOverlappedBy(period))

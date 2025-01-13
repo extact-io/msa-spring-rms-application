@@ -1,15 +1,17 @@
 package io.extact.msa.spring.rms.domain.reservation;
 
-import java.time.LocalDateTime;
-
-import jakarta.validation.Validator;
+import jakarta.validation.groups.Default;
 
 import org.springframework.stereotype.Service;
 
+import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
+import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +20,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReservationCreator {
 
-    private final ReservationRepository repository;
-    private final Validator validator;
+    private final IdentityGenerator idGenerator;
+    private final ModelValidator Validator;
     private final ReservationCreatable constructorProxy = new ReservationCreatable() {};
 
     public Reservation create(ReservationModelAttributes attrs) {
 
-        ReservationId id = new ReservationId(repository.nextIdentity());
+        ReservationId id = new ReservationId(idGenerator.nextIdentity());
         Reservation reservation = constructorProxy.newInstance(
                 id,
-                attrs.fromDateTime,
-                attrs.toDateTime,
+                attrs.period,
                 attrs.note,
                 attrs.itemId,
-                attrs.reservedUserId);
+                attrs.reserverId);
 
-        reservation.configureValidator(validator);
-        reservation.verify();
+        reservation.configureValidator(Validator);
+        Validator.validateModel(reservation, Default.class, Add.class);
 
         return reservation;
     }
@@ -42,11 +43,10 @@ public class ReservationCreator {
     @Builder
     public static class ReservationModelAttributes {
 
-        private LocalDateTime fromDateTime;
-        private LocalDateTime toDateTime;
+        private ReservationPeriod period;
         private String note;
 
         private ItemId itemId;
-        private UserId reservedUserId;
+        private UserId reserverId;
     }
 }

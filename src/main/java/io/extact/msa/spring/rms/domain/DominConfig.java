@@ -1,14 +1,13 @@
 package io.extact.msa.spring.rms.domain;
 
-import jakarta.validation.Validator;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.domain.service.SimpleDuplicateChecker;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
@@ -21,15 +20,15 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 
 @Configuration(proxyBeanMethods = false)
 @Import({
-    ValidationConfig.class
+    ValidatorConfig.class
 })
 public class DominConfig {
 
     @Bean
     ItemCreator itemCreator(
-                ItemRepository repository,
-                Validator validator) {
-        return new ItemCreator(repository, validator);
+                ItemRepository idGenerator,
+                ModelValidator validator) {
+        return new ItemCreator(idGenerator, validator);
     }
 
     @Bean
@@ -40,7 +39,7 @@ public class DominConfig {
     @Bean
     ReservationCreator reservationCreator(
                 ReservationRepository repository,
-                Validator validator) {
+                ModelValidator validator) {
         return new ReservationCreator(repository, validator);
     }
 
@@ -52,7 +51,7 @@ public class DominConfig {
     @Bean
     UserCreator userCreator(
                 UserRepository repository,
-                Validator validator) {
+                ModelValidator validator) {
         return new UserCreator(repository, validator);
     }
 

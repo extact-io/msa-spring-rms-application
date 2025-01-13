@@ -23,8 +23,8 @@ public interface ModelFormatter<T> {
         public String format(ReservationComposeModel model) {
             return String.format("[%s] %s - %s %s %s %s",
                     model.reservation().getId().id(),
-                    ClientConstants.DATETIME_FORMAT.format(model.reservation().getFromDateTime()),
-                    ClientConstants.DATETIME_FORMAT.format(model.reservation().getToDateTime()),
+                    ClientConstants.DATETIME_FORMAT.format(model.reservation().getPeriod().getFrom()),
+                    ClientConstants.DATETIME_FORMAT.format(model.reservation().getPeriod().getTo()),
                     model.rentalItem().getItemName(),
                     model.reserver().getProfile().getUserName(),
                     model.reservation().getNote());

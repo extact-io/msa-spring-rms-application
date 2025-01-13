@@ -26,9 +26,9 @@ import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractReservationRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.file.FileRepositoryConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.ReservationFileRepositoryTest.TestConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.reservation.ReservationFileRepository;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
@@ -81,8 +81,7 @@ class ReservationFileRepositoryTest extends AbstractReservationRepositoryTest {
         LocalDateTime to = from.plusDays(1);
         repository.add(testCreator.newInstance(
                 new ReservationId(firstTime),
-                from,
-                to,
+                new ReservationPeriod(from, to),
                 "1st",
                 new ItemId(1),
                 new UserId(1)));
@@ -92,8 +91,7 @@ class ReservationFileRepositoryTest extends AbstractReservationRepositoryTest {
         to = to.plusDays(1);
         repository.add(testCreator.newInstance(
                 new ReservationId(secondTime),
-                from,
-                to,
+                new ReservationPeriod(from, to),
                 "2nd",
                 new ItemId(1),
                 new UserId(1)));
@@ -103,8 +101,7 @@ class ReservationFileRepositoryTest extends AbstractReservationRepositoryTest {
         to = to.plusDays(1);
         repository.add(testCreator.newInstance(
                 new ReservationId(thirdTime),
-                from,
-                to,
+                new ReservationPeriod(from, to),
                 "3rd",
                 new ItemId(1),
                 new UserId(1)));

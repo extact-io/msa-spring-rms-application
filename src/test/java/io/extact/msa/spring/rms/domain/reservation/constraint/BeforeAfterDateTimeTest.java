@@ -1,4 +1,4 @@
-package io.extact.msa.spring.domain.reservation.constraint;
+package io.extact.msa.spring.rms.domain.reservation.constraint;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -12,31 +12,40 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
-import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTimeFuture;
+import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
 @SpringBootTest(classes = ValidationConfig.class, webEnvironment = WebEnvironment.NONE)
-class FromDateTimeFutureTest {
+class BeforeAfterDateTimeTest {
 
     @Test
     void testValidate(@Autowired Validator validator) {
 
-        Data OK= new Data(LocalDateTime.now().plusHours(1));
+        Data OK = new Data(LocalDateTime.now().minusHours(1), LocalDateTime.now());
         Set<ConstraintViolation<Data>> result = validator.validate(OK);
         ConstraintViolationSetAssert.assertThat(result)
-            .hasNoViolations();
+                .hasNoViolations();
 
-        // 利用開始日エラー(過去日)
-        Data NG= new Data(LocalDateTime.now().minusDays(1));
+        Data NG = new Data(LocalDateTime.now(), LocalDateTime.now().minusHours(1));
         result = validator.validate(NG);
         ConstraintViolationSetAssert.assertThat(result)
-            .hasSize(1)
-            .hasViolationOnPath("value")
-            .hasMessageEndingWith("Future.message");
+                .hasSize(1)
+                .hasMessageEndingWith("bv.BeforeAfterDateTime.message");
     }
 
+    @BeforeAfterDateTime
     static record Data(
-            @FromDateTimeFuture //
-            LocalDateTime value) {
+            LocalDateTime fromDateTime,
+            LocalDateTime toDateTime) implements BeforeAfterDateTimeValidatable {
+
+        @Override
+        public LocalDateTime getFrom() {
+            return this.fromDateTime;
+        }
+
+        @Override
+        public LocalDateTime getTo() {
+            return this.toDateTime;
+        }
     }
 }

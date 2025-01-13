@@ -20,8 +20,8 @@ public record ReservationAdminResponse(
         }
         return new ReservationAdminResponse(
                 model.reservation().getId().id(),
-                model.reservation().getFromDateTime(),
-                model.reservation().getToDateTime(),
+                model.reservation().getPeriod().getFrom(),
+                model.reservation().getPeriod().getTo(),
                 model.reservation().getNote(),
                 model.reservation().getItemId().id(),
                 model.reservation().getReserverId().id(),

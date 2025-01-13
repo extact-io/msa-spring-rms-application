@@ -20,9 +20,9 @@ import io.extact.msa.spring.rms.domain.reservation.ReservationCreator;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
 import io.extact.msa.spring.rms.domain.reservation.ReservationDuplicateChecker;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
-import io.extact.msa.spring.rms.domain.reservation.model.DateTimePeriod;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
@@ -46,7 +46,7 @@ public class ReservationMemberService {
 
     public List<Item> findCanRentedItemAtPeriod(LocalDateTime from, LocalDateTime to) {
 
-        DateTimePeriod overlapPeriod = new DateTimePeriod(from, to);
+        ReservationPeriod overlapPeriod = new ReservationPeriod(from, to);
         List<ItemId> reservedItemIds = reservationRepository
                 .findOverlappingReservations(overlapPeriod)
                 .stream()
@@ -61,7 +61,7 @@ public class ReservationMemberService {
     }
 
     public boolean canRentedItemAtPeriod(ItemId itemId, LocalDateTime from, LocalDateTime to) {
-        DateTimePeriod overlapPeriod = new DateTimePeriod(from, to);
+        ReservationPeriod overlapPeriod = new ReservationPeriod(from, to);
         return reservationRepository
                 .findOverlappingReservations(itemId, overlapPeriod)
                 .isEmpty();
@@ -99,8 +99,7 @@ public class ReservationMemberService {
     public ReservationComposeModel reserve(ReserveItemCommand command) {
 
         ReservationModelAttributes attrs = ReservationModelAttributes.builder()
-                .fromDateTime(command.fromDateTime())
-                .toDateTime(command.toDateTime())
+                .period(command.period())
                 .note(command.note())
                 .build();
 

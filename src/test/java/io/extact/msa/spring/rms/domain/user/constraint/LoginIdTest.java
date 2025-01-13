@@ -1,4 +1,4 @@
-package io.extact.msa.spring.domain.user.constraint;
+package io.extact.msa.spring.rms.domain.user.constraint;
 
 import java.util.Set;
 
@@ -11,30 +11,46 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
-import io.extact.msa.spring.rms.domain.user.constraints.PhoneNumber;
+import io.extact.msa.spring.rms.domain.user.constraints.LoginId;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
 @SpringBootTest(classes = ValidationConfig.class, webEnvironment = WebEnvironment.NONE)
-class PhoneNumberTest {
+class LoginIdTest {
 
     @Test
     void testValidate(@Autowired Validator validator) {
 
-        Data OK= new Data("1234567890");
+        Data OK= new Data("abcdefg");
         Set<ConstraintViolation<Data>> result = validator.validate(OK);
         ConstraintViolationSetAssert.assertThat(result)
             .hasNoViolations();
 
-        // 電話番号(使用可能文字以外)
-        Data NG= new Data("12345%");
+        // ログインIDエラー(null)
+        Data NG= new Data(null);
         result = validator.validate(NG);
         ConstraintViolationSetAssert.assertThat(result)
             .hasSize(1)
             .hasViolationOnPath("value")
-            .hasMessageEndingWith("bv.PhoneNumberCharacter.message");
+            .hasMessageEndingWith("NotNull.message");
 
-        // 電話番号(14文字より大きい)
-        NG= new Data("123456789012345");
+        // ログインIDエラー(空文字列)
+        NG= new Data("");
+        result = validator.validate(NG);
+        ConstraintViolationSetAssert.assertThat(result)
+            .hasSize(1)
+            .hasViolationOnPath("value")
+            .hasMessageEndingWith("Size.message");
+
+        // ログインIDエラー(5文字未満)
+        NG= new Data("1234");
+        result = validator.validate(NG);
+        ConstraintViolationSetAssert.assertThat(result)
+            .hasSize(1)
+            .hasViolationOnPath("value")
+            .hasMessageEndingWith("Size.message");
+
+        // ログインIDエラー(10文字より以上)
+        NG= new Data("12345678901");
         result = validator.validate(NG);
         ConstraintViolationSetAssert.assertThat(result)
             .hasSize(1)
@@ -43,7 +59,7 @@ class PhoneNumberTest {
     }
 
     static record Data(
-            @PhoneNumber //
+            @LoginId //
             String value) {
     }
 }

@@ -10,6 +10,7 @@ import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.reservation.ReservationEntity;
 
@@ -74,8 +75,9 @@ class ReservationEntityTest {
         // given
         Reservation reservation = testCreater.newInstance(
                 new ReservationId(1),
-                LocalDateTime.of(2025, 1, 1, 10, 0),
-                LocalDateTime.of(2025, 1, 1, 12, 0),
+                new ReservationPeriod(
+                        LocalDateTime.of(2025, 1, 1, 10, 0),
+                        LocalDateTime.of(2025, 1, 1, 12, 0)),
                 "Meeting",
                 new ItemId(101),
                 new UserId(202));
@@ -86,8 +88,8 @@ class ReservationEntityTest {
         // then
         assertThat(reservationEntity).isNotNull();
         assertThat(reservationEntity.getId()).isEqualTo(1);
-        assertThat(reservationEntity.getFromDateTime()).isEqualTo(reservation.getFromDateTime());
-        assertThat(reservationEntity.getToDateTime()).isEqualTo(reservation.getToDateTime());
+        assertThat(reservationEntity.getFromDateTime()).isEqualTo(reservation.getPeriod().getFrom());
+        assertThat(reservationEntity.getToDateTime()).isEqualTo(reservation.getPeriod().getTo());
         assertThat(reservationEntity.getNote()).isEqualTo(reservation.getNote());
         assertThat(reservationEntity.getItemId()).isEqualTo(reservation.getItemId().id());
         assertThat(reservationEntity.getReserverId()).isEqualTo(reservation.getReserverId().id());
@@ -110,8 +112,8 @@ class ReservationEntityTest {
         // then
         assertThat(reservation).isNotNull();
         assertThat(reservation.getId().id()).isEqualTo(1);
-        assertThat(reservation.getFromDateTime()).isEqualTo(LocalDateTime.of(2025, 1, 1, 10, 0));
-        assertThat(reservation.getToDateTime()).isEqualTo(LocalDateTime.of(2025, 1, 1, 12, 0));
+        assertThat(reservation.getPeriod().getFrom()).isEqualTo(LocalDateTime.of(2025, 1, 1, 10, 0));
+        assertThat(reservation.getPeriod().getTo()).isEqualTo(LocalDateTime.of(2025, 1, 1, 12, 0));
         assertThat(reservation.getNote()).isEqualTo("Meeting");
         assertThat(reservation.getItemId().id()).isEqualTo(101);
         assertThat(reservation.getReserverId().id()).isEqualTo(202);

@@ -27,7 +27,7 @@ public class ReservationFileRepository extends AbstractFileRepository<Reservatio
     @Override
     public List<Reservation> findByItemIdAndFromDate(ItemId itemId, LocalDate from) {
         return this.findAll().stream()
-                .filter(reservation -> reservation.getFromDateTime().toLocalDate().equals(from))
+                .filter(reservation -> reservation.getPeriod().getFrom().toLocalDate().equals(from))
                 .filter(reservation -> reservation.getItemId().equals(itemId))
                 .toList();
     }

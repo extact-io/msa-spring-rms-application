@@ -17,7 +17,7 @@ import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTim
 
 @Documented
 @Constraint(validatedBy = { BeforeAfterDateTimeValidator.class })
-@Target({ TYPE, ANNOTATION_TYPE })
+@Target({ TYPE, ANNOTATION_TYPE, FIELD })
 @Retention(RUNTIME)
 public @interface BeforeAfterDateTime {
 
@@ -40,15 +40,15 @@ public @interface BeforeAfterDateTime {
 
     public static class BeforeAfterDateTimeValidator implements ConstraintValidator<BeforeAfterDateTime, BeforeAfterDateTimeValidatable> {
         public boolean isValid(BeforeAfterDateTimeValidatable bean, ConstraintValidatorContext context) {
-            if (bean.getFromDateTime() == null || bean.getToDateTime() == null) {
+            if (bean.getFrom() == null || bean.getTo() == null) {
                 return true; // チェックしない
             }
-            return bean.getFromDateTime().isBefore(bean.getToDateTime());
+            return bean.getFrom().isBefore(bean.getTo());
         }
     }
 
     public interface BeforeAfterDateTimeValidatable {
-        public LocalDateTime getFromDateTime();
-        public LocalDateTime getToDateTime();
+        public LocalDateTime getFrom();
+        public LocalDateTime getTo();
     }
 }

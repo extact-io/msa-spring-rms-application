@@ -1,103 +1,99 @@
 package io.extact.msa.spring.rms.domain.reservation.model;
 
-import static java.time.temporal.ChronoUnit.*;
-
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.groups.Default;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
-import io.extact.msa.spring.platform.fw.domain.model.DomainModel;
-import io.extact.msa.spring.platform.fw.exception.RmsConstraintViolationException;
+import io.extact.msa.spring.platform.fw.domain.model.EntityModel;
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
 import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
-import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
-import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTimeFuture;
-import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
-import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@Getter
-@ToString
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "id")
-@BeforeAfterDateTime
-public class Reservation implements DomainModel, BeforeAfterDateTimeValidatable, ReservationReference {
+@ToString
+public class Reservation implements EntityModel, ReservationReference {
 
-    @NotNull @Valid
+    @NotNull
+    @Valid
+    @Getter
     private ReservationId id;
-    @FromDateTime
-    @FromDateTimeFuture(groups = Add.class)
-    private LocalDateTime fromDateTime;
-    @ToDateTime
-    private LocalDateTime toDateTime;
+    @NotNull
+    @Valid
+    @Getter
+    private ReservationPeriod period;
     @Note
+    @Getter
     private String note;
 
-    @NotNull @Valid
+    @NotNull
+    @Valid
+    @Getter
     private ItemId itemId;
-    @NotNull @Valid
+    @NotNull
+    @Valid
+    @Getter
     private UserId reserverId;
 
-    private Validator validator;
+    private ModelValidator validator;
 
-    public Reservation(ReservationId id, LocalDateTime fromDateTime, LocalDateTime toDateTime, String note,
-            ItemId itemId, UserId reserverId) {
+    Reservation(
+            ReservationId id,
+            ReservationPeriod period,
+            String note,
+            ItemId itemId,
+            UserId reserverId) {
+
         this.id = id;
-        this.fromDateTime = fromDateTime.truncatedTo(MINUTES);
-        this.toDateTime = toDateTime.truncatedTo(MINUTES);
+        this.period = period;
         this.note = note;
         this.itemId = itemId;
         this.reserverId = reserverId;
     }
 
+    public boolean isOverlappedBy(ReservationPeriod otherPeriod) {
+        return this.getPeriod().isOverlappedBy(otherPeriod);
+    }
+
+    public void editReservation(ReservationPeriod period, String note) {
+        this.setReservationPeriod(period);
+        this.setNote(note);
+    }
+
     @Override
-    public void configureValidator(Validator validator) {
+    public void configureValidator(ModelValidator validator) {
         this.validator = validator;
     }
 
-    @Override
-    public void verify() {
-        Set<ConstraintViolation<Reservation>> result = this.validator.validate(this, Default.class, Add.class);
-        if (!result.isEmpty()) {
-            throw new RmsConstraintViolationException("validation error.", new HashSet<>(result));
-        }
+    private void setReservationPeriod(ReservationPeriod newValue) {
+        Reservation test = new Reservation();
+        test.period = newValue;
+        validator.validateField(test, "period");
+
+        this.period = newValue;
     }
 
-    @Override
-    public DateTimePeriod getReservePeriod() {
-        return new DateTimePeriod(fromDateTime, toDateTime);
-    }
+    private void setNote(String newValue) {
+        Reservation test = new Reservation();
+        test.note = newValue;
+        validator.validateField(test, "note");
 
-    public boolean isOverlappedBy(DateTimePeriod otherPeriod) {
-        return this.getReservePeriod().isOverlappedBy(otherPeriod);
+        this.note = newValue;
     }
-
-    public void editReservation(LocalDateTime from, LocalDateTime to, String note) {
-        this.fromDateTime = from;
-        this.toDateTime = to;
-        this.note = note;
-    }
-
 
     public interface ReservationCreatable {
         default Reservation newInstance(
                 ReservationId id,
-                LocalDateTime fromDateTime,
-                LocalDateTime toDateTime,
+                ReservationPeriod period,
                 String note,
                 ItemId itemId,
                 UserId reserverId) {
-            return new Reservation(id, fromDateTime, toDateTime, note, itemId, reserverId);
+            return new Reservation(id, period, note, itemId, reserverId);
         }
     }
 }

@@ -1,27 +1,21 @@
 package io.extact.msa.spring.rms.domain.user.model;
 
+import io.extact.msa.spring.platform.fw.domain.model.ValueModel;
 import io.extact.msa.spring.rms.domain.user.constraints.Contact;
 import io.extact.msa.spring.rms.domain.user.constraints.PhoneNumber;
 import io.extact.msa.spring.rms.domain.user.constraints.UserName;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Value;
 
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-@Getter
-@ToString
-@EqualsAndHashCode
-public class UserProfile implements UserProfileReference {
+@Value
+public class UserProfile implements ValueModel {
 
-    private @UserName String userName;
-    private @PhoneNumber String phoneNumber;
-    private @Contact String contact;
-
-    public void editProfile(String userName, String phoneNumber, String contact) {
-        this.userName = userName;
-        this.phoneNumber = phoneNumber;
-        this.contact = contact;
-    }
+    @UserName
+    private String userName;
+    @PhoneNumber
+    private String phoneNumber;
+    @Contact
+    private String contact;
 }

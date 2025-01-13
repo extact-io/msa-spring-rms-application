@@ -1,5 +1,6 @@
-package io.extact.msa.spring.domain.user.constraint;
+package io.extact.msa.spring.rms.domain.reservation.constraint;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import jakarta.validation.ConstraintViolation;
@@ -11,22 +12,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
-import io.extact.msa.spring.rms.domain.user.constraints.UserTypeConstraint;
-import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
 @SpringBootTest(classes = ValidationConfig.class, webEnvironment = WebEnvironment.NONE)
-class UserTypeConstraintTest {
+class FromDateTimeTest {
 
     @Test
     void testValidate(@Autowired Validator validator) {
 
-        Data OK= new Data(UserType.ADMIN);
+        Data OK= new Data(LocalDateTime.now().plusHours(1));
         Set<ConstraintViolation<Data>> result = validator.validate(OK);
         ConstraintViolationSetAssert.assertThat(result)
             .hasNoViolations();
 
-        // ユーザ区分(null)
+        // 利用開始日エラー(null)
         Data NG= new Data(null);
         result = validator.validate(NG);
         ConstraintViolationSetAssert.assertThat(result)
@@ -36,7 +35,7 @@ class UserTypeConstraintTest {
     }
 
     static record Data(
-            @UserTypeConstraint //
-            UserType value) {
+            @FromDateTime //
+            LocalDateTime value) {
     }
 }

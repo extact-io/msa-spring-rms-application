@@ -11,7 +11,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractReservationRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.jpa.JpaRepositoryConfig;
 
 @DataJpaTest
 @ActiveProfiles("reservation-jpa")

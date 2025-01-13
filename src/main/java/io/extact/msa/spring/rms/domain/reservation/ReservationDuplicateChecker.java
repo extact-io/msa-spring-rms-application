@@ -20,7 +20,7 @@ public class ReservationDuplicateChecker implements DuplicateChecker<Reservation
         List<Reservation> overlapped = repository
                 .findOverlappingReservations(
                         checkReservation.getItemId(),
-                        checkReservation.getReservePeriod());
+                        checkReservation.getPeriod());
 
         overlapped.stream()
                 .filter(Predicate.not(checkReservation::equals)) // 自分自身以外があったら

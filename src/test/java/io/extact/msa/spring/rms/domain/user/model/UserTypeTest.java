@@ -1,10 +1,8 @@
-package io.extact.msa.spring.domain.user.model;
+package io.extact.msa.spring.rms.domain.user.model;
 
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-
-import io.extact.msa.spring.rms.domain.user.model.UserType;
 
 class UserTypeTest {
 

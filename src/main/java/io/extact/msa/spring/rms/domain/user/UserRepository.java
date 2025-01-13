@@ -4,9 +4,10 @@ import java.util.Optional;
 
 import io.extact.msa.spring.platform.fw.domain.repository.GenericRepository;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicationDataFinder;
+import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.user.model.User;
 
-public interface UserRepository extends GenericRepository<User>, DuplicationDataFinder<User> {
+public interface UserRepository extends GenericRepository<User>, DuplicationDataFinder<User>, IdentityGenerator {
 
     /**
      * ログインIDとパスワードに一致するユーザを取得。

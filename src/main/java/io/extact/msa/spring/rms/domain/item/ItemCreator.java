@@ -1,7 +1,7 @@
 package io.extact.msa.spring.rms.domain.item;
 
-import jakarta.validation.Validator;
-
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
+import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
@@ -11,17 +11,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ItemCreator {
 
-    private final ItemRepository repository;
-    private final Validator validator;
+    private final IdentityGenerator idGenerator;
+    private final ModelValidator validator;
     private final ItemCreatable constructorProxy = new ItemCreatable() {};
 
     public Item create(ItemModelAttributes attrs) {
 
-        ItemId id = new ItemId(repository.nextIdentity());
+        ItemId id = new ItemId(idGenerator.nextIdentity());
         Item item = constructorProxy.newInstance(id, attrs.serialNo, attrs.itemName);
 
         item.configureValidator(validator);
-        item.verify();
+        validator.validateModel(item);
 
         return item;
     }

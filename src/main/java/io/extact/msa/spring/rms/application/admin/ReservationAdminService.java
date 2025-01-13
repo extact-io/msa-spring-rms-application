@@ -47,8 +47,7 @@ public class ReservationAdminService {
 
     private void editModel(Reservation reservation, ReservationUpdateCommand command) {
         reservation.editReservation(
-                command.fromDateTime(),
-                command.toDateTime(),
+                command.period(),
                 command.note());
     }
 }

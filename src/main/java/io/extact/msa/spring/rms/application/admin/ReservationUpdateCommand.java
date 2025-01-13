@@ -1,8 +1,7 @@
 package io.extact.msa.spring.rms.application.admin;
 
-import java.time.LocalDateTime;
-
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import lombok.Builder;
 
 /**
@@ -13,7 +12,6 @@ import lombok.Builder;
 @Builder
 public record ReservationUpdateCommand(
         ReservationId id,
-        LocalDateTime fromDateTime,
-        LocalDateTime toDateTime,
+        ReservationPeriod period,
         String note) {
 }

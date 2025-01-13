@@ -6,11 +6,12 @@ import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.domain.model.Transformable;
 import io.extact.msa.spring.rms.application.admin.ReservationUpdateCommand;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
-import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
-import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
-import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
+import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
+import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import lombok.Builder;
 
 @Builder
@@ -24,19 +25,18 @@ record ReservationUpdateRequest(
     ReservationUpdateCommand toCommand() {
         return ReservationUpdateCommand.builder()
                 .id(new ReservationId(this.id))
-                .fromDateTime(this.fromDateTime)
-                .toDateTime(this.toDateTime)
+                .period(new ReservationPeriod(fromDateTime, toDateTime))
                 .note(this.note)
                 .build();
     }
 
     @Override
-    public LocalDateTime getFromDateTime() {
+    public LocalDateTime getFrom() {
         return fromDateTime;
     }
 
     @Override
-    public LocalDateTime getToDateTime() {
+    public LocalDateTime getTo() {
         return toDateTime;
     }
 }

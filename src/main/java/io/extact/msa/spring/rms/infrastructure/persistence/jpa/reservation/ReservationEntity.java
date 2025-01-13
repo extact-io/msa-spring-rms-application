@@ -14,6 +14,7 @@ import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,8 +45,8 @@ public class ReservationEntity implements TableEntity<Reservation>, ReservationC
     public static ReservationEntity from(Reservation model) {
         return new ReservationEntity(
                 model.getId().id(),
-                model.getFromDateTime(),
-                model.getToDateTime(),
+                model.getPeriod().getFrom(),
+                model.getPeriod().getTo(),
                 model.getNote(),
                 model.getItemId().id(),
                 model.getReserverId().id());
@@ -55,8 +56,7 @@ public class ReservationEntity implements TableEntity<Reservation>, ReservationC
     public Reservation toModel() {
         return newInstance(
                 new ReservationId(id),
-                fromDateTime,
-                toDateTime,
+                new ReservationPeriod(fromDateTime, toDateTime),
                 note,
                 new ItemId(itemId),
                 new UserId(reserverId));

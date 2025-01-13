@@ -25,8 +25,8 @@ public record ReservationMemberResponse(
         }
         return new ReservationMemberResponse(
                 model.reservation().getId().id(),
-                model.reservation().getFromDateTime(),
-                model.reservation().getToDateTime(),
+                model.reservation().getPeriod().getFrom(),
+                model.reservation().getPeriod().getTo(),
                 model.reservation().getNote(),
                 model.rentalItem().getId().id(),
                 model.rentalItem().getSerialNo(),

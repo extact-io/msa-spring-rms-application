@@ -11,7 +11,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractUserRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.jpa.JpaRepositoryConfig;
 
 @DataJpaTest
 @ActiveProfiles("user-jpa")

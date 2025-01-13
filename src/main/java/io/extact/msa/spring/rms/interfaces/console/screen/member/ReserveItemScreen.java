@@ -10,6 +10,7 @@ import io.extact.msa.spring.rms.application.member.ReservationMemberService;
 import io.extact.msa.spring.rms.application.member.ReserveItemCommand;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemReference;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserReference;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
@@ -67,8 +68,7 @@ public class ReserveItemScreen implements RmsScreen {
         TextIoUtils.blankLine();
 
         ReserveItemCommand command = ReserveItemCommand.builder()
-                .fromDateTime(fromDateTime)
-                .toDateTime(toDateTime)
+                .period(new ReservationPeriod(fromDateTime, toDateTime))
                 .note(note)
                 .build();
 

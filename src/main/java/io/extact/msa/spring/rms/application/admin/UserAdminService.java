@@ -60,7 +60,7 @@ public class UserAdminService {
     private void editModel(User user, UserUpdateCommand command) {
         user.changePassword(command.password());
         user.switchUserType(command.userType());
-        user.getProfile().editProfile(
+        user.editProfile(
                 command.userName(),
                 command.phoneNumber(),
                 command.contact());

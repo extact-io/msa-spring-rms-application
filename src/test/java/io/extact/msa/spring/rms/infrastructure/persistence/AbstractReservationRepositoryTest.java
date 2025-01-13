@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 import io.extact.msa.spring.platform.fw.exception.RmsPersistenceException;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
-import io.extact.msa.spring.rms.domain.reservation.model.DateTimePeriod;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
 @Transactional
@@ -32,24 +32,27 @@ public abstract class AbstractReservationRepositoryTest {
     private static final Reservation reservation1 = testCreator
             .newInstance(
                     new ReservationId(1),
-                    LocalDateTime.of(2020, 4, 1, 10, 0),
-                    LocalDateTime.of(2020, 4, 1, 12, 0),
+                    new ReservationPeriod(
+                            LocalDateTime.of(2020, 4, 1, 10, 0),
+                            LocalDateTime.of(2020, 4, 1, 12, 0)),
                     "メモ1",
                     new ItemId(3),
                     new UserId(1));
     private static final Reservation reservation2 = testCreator
             .newInstance(
                     new ReservationId(2),
-                    LocalDateTime.of(2020, 4, 1, 16, 0),
-                    LocalDateTime.of(2020, 4, 1, 18, 0),
+                    new ReservationPeriod(
+                            LocalDateTime.of(2020, 4, 1, 16, 0),
+                            LocalDateTime.of(2020, 4, 1, 18, 0)),
                     "メモ2",
                     new ItemId(3),
                     new UserId(2));
     private static final Reservation reservation3 = testCreator
             .newInstance(
                     new ReservationId(3),
-                    LocalDateTime.of(2099, 4, 1, 10, 0),
-                    LocalDateTime.of(2099, 4, 1, 12, 0),
+                    new ReservationPeriod(
+                            LocalDateTime.of(2099, 4, 1, 10, 0),
+                            LocalDateTime.of(2099, 4, 1, 12, 0)),
                     "メモ3",
                     new ItemId(3),
                     new UserId(1));
@@ -91,8 +94,9 @@ public abstract class AbstractReservationRepositoryTest {
         Reservation updateReservation = testCreator
                 .newInstance(
                         new ReservationId(1),
-                        LocalDateTime.of(2024, 10, 30, 10, 0),
-                        LocalDateTime.of(2025, 11, 1, 12, 0),
+                        new ReservationPeriod(
+                                LocalDateTime.of(2024, 10, 30, 10, 0),
+                                LocalDateTime.of(2025, 11, 1, 12, 0)),
                         "UPDATE",
                         new ItemId(1),
                         new UserId(3));
@@ -108,8 +112,9 @@ public abstract class AbstractReservationRepositoryTest {
         Reservation notFoundReservation = testCreator
                 .newInstance(
                         new ReservationId(999),
-                        LocalDateTime.of(2024, 10, 30, 10, 0),
-                        LocalDateTime.of(2025, 11, 1, 12, 0),
+                        new ReservationPeriod(
+                                LocalDateTime.of(2024, 10, 30, 10, 0),
+                                LocalDateTime.of(2025, 11, 1, 12, 0)),
                         "UPDATE",
                         new ItemId(1),
                         new UserId(3));
@@ -131,8 +136,7 @@ public abstract class AbstractReservationRepositoryTest {
         Reservation addReservation = testCreator
                 .newInstance(
                         new ReservationId(4),
-                        from,
-                        to,
+                        new ReservationPeriod(from, to),
                         "ADD",
                         new ItemId(1),
                         new UserId(3));
@@ -160,8 +164,9 @@ public abstract class AbstractReservationRepositoryTest {
         Reservation notFoundReservation = testCreator
                 .newInstance(
                         new ReservationId(999),
-                        LocalDateTime.of(2099, 4, 1, 10, 0),
-                        LocalDateTime.of(2099, 4, 1, 12, 0),
+                        new ReservationPeriod(
+                                LocalDateTime.of(2099, 4, 1, 10, 0),
+                                LocalDateTime.of(2099, 4, 1, 12, 0)),
                         "メモ3",
                         new ItemId(3),
                         new UserId(1));
@@ -287,7 +292,7 @@ public abstract class AbstractReservationRepositoryTest {
         LocalDateTime from = LocalDateTime.of(2020, 4, 1, 11, 00);
         LocalDateTime to = LocalDateTime.of(2020, 4, 1, 14, 00);
         // when
-        List<Reservation> actual = repository().findOverlappingReservations(new DateTimePeriod(from, to));
+        List<Reservation> actual = repository().findOverlappingReservations(new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
@@ -297,7 +302,7 @@ public abstract class AbstractReservationRepositoryTest {
         from = LocalDateTime.of(2020, 4, 1, 9, 00);
         to = LocalDateTime.of(2020, 4, 1, 11, 00);
         // when
-        actual = repository().findOverlappingReservations(new DateTimePeriod(from, to));
+        actual = repository().findOverlappingReservations(new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
@@ -307,7 +312,7 @@ public abstract class AbstractReservationRepositoryTest {
         from = LocalDateTime.of(2020, 4, 1, 9, 00);
         to = LocalDateTime.of(2020, 4, 1, 14, 00);
         // when
-        actual = repository().findOverlappingReservations(new DateTimePeriod(from, to));
+        actual = repository().findOverlappingReservations(new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
@@ -317,7 +322,7 @@ public abstract class AbstractReservationRepositoryTest {
         from = LocalDateTime.of(2020, 4, 1, 10, 30);
         to = LocalDateTime.of(2020, 4, 1, 11, 30);
         // when
-        actual = repository().findOverlappingReservations(new DateTimePeriod(from, to));
+        actual = repository().findOverlappingReservations(new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
@@ -327,7 +332,7 @@ public abstract class AbstractReservationRepositoryTest {
         from = LocalDateTime.of(2020, 4, 1, 0, 0);
         to = LocalDateTime.of(2099, 12, 31, 23, 59);
         // when
-        actual = repository().findOverlappingReservations(new DateTimePeriod(from, to));
+        actual = repository().findOverlappingReservations(new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
     }
@@ -340,7 +345,7 @@ public abstract class AbstractReservationRepositoryTest {
         LocalDateTime from = LocalDateTime.of(2999, 4, 1, 13, 00);
         LocalDateTime to = LocalDateTime.of(2999, 4, 1, 15, 30);
         // when
-        List<Reservation> actual = repository().findOverlappingReservations(new DateTimePeriod(from, to));
+        List<Reservation> actual = repository().findOverlappingReservations(new ReservationPeriod(from, to));
         // then
         assertThat(actual).isEmpty();
     }
@@ -355,7 +360,7 @@ public abstract class AbstractReservationRepositoryTest {
         LocalDateTime from = LocalDateTime.of(2020, 4, 1, 11, 00);
         LocalDateTime to = LocalDateTime.of(2020, 4, 1, 14, 00);
         // when
-        List<Reservation> actual = repository().findOverlappingReservations(itemId, new DateTimePeriod(from, to));
+        List<Reservation> actual = repository().findOverlappingReservations(itemId, new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
@@ -366,7 +371,7 @@ public abstract class AbstractReservationRepositoryTest {
         from = LocalDateTime.of(2020, 4, 1, 9, 00);
         to = LocalDateTime.of(2020, 4, 1, 11, 00);
         // when
-        actual = repository().findOverlappingReservations(itemId, new DateTimePeriod(from, to));
+        actual = repository().findOverlappingReservations(itemId, new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
@@ -377,7 +382,7 @@ public abstract class AbstractReservationRepositoryTest {
         from = LocalDateTime.of(2020, 4, 1, 9, 00);
         to = LocalDateTime.of(2020, 4, 1, 14, 00);
         // when
-        actual = repository().findOverlappingReservations(itemId, new DateTimePeriod(from, to));
+        actual = repository().findOverlappingReservations(itemId, new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
@@ -388,7 +393,7 @@ public abstract class AbstractReservationRepositoryTest {
         from = LocalDateTime.of(2020, 4, 1, 10, 30);
         to = LocalDateTime.of(2020, 4, 1, 11, 30);
         // when
-        actual = repository().findOverlappingReservations(itemId, new DateTimePeriod(from, to));
+        actual = repository().findOverlappingReservations(itemId, new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
@@ -399,7 +404,7 @@ public abstract class AbstractReservationRepositoryTest {
         from = LocalDateTime.of(2020, 4, 1, 0, 0);
         to = LocalDateTime.of(2099, 12, 31, 23, 59);
         // when
-        actual = repository().findOverlappingReservations(itemId, new DateTimePeriod(from, to));
+        actual = repository().findOverlappingReservations(itemId, new ReservationPeriod(from, to));
         // then
         assertThatToString(actual).containsExactlyElementsOf(expected);
     }
@@ -413,7 +418,7 @@ public abstract class AbstractReservationRepositoryTest {
         LocalDateTime from = LocalDateTime.of(2020, 4, 1, 11, 00);
         LocalDateTime to = LocalDateTime.of(2020, 4, 1, 14, 00);
         // when
-        List<Reservation> actual = repository().findOverlappingReservations(itemId, new DateTimePeriod(from, to));
+        List<Reservation> actual = repository().findOverlappingReservations(itemId, new ReservationPeriod(from, to));
         // then
         assertThat(actual).isEmpty();
     }

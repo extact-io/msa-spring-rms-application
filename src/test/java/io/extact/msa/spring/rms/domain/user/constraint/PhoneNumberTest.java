@@ -1,4 +1,4 @@
-package io.extact.msa.spring.domain.reservation.constraint;
+package io.extact.msa.spring.rms.domain.user.constraint;
 
 import java.util.Set;
 
@@ -11,23 +11,30 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
-import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
+import io.extact.msa.spring.rms.domain.user.constraints.PhoneNumber;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
 @SpringBootTest(classes = ValidationConfig.class, webEnvironment = WebEnvironment.NONE)
-class NoteTest {
+class PhoneNumberTest {
 
     @Test
     void testValidate(@Autowired Validator validator) {
 
-        // メモ(64文字以内)
-        Data OK= new Data("１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４５６７８９０１２３４"); // 境界値:OK
+        Data OK= new Data("1234567890");
         Set<ConstraintViolation<Data>> result = validator.validate(OK);
         ConstraintViolationSetAssert.assertThat(result)
             .hasNoViolations();
 
-        // メモ(64文字より以上)
-        Data NG= new Data("12345678901234567890123456789012345678901234567890123456789012345"); // 境界値:NG
+        // 電話番号(使用可能文字以外)
+        Data NG= new Data("12345%");
+        result = validator.validate(NG);
+        ConstraintViolationSetAssert.assertThat(result)
+            .hasSize(1)
+            .hasViolationOnPath("value")
+            .hasMessageEndingWith("bv.PhoneNumberCharacter.message");
+
+        // 電話番号(14文字より大きい)
+        NG= new Data("123456789012345");
         result = validator.validate(NG);
         ConstraintViolationSetAssert.assertThat(result)
             .hasSize(1)
@@ -36,7 +43,7 @@ class NoteTest {
     }
 
     static record Data(
-            @Note //
+            @PhoneNumber //
             String value) {
     }
 }

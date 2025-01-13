@@ -1,4 +1,4 @@
-package io.extact.msa.spring.domain.user.constraint;
+package io.extact.msa.spring.rms.domain.user.constraint;
 
 import java.util.Set;
 
