@@ -3,7 +3,7 @@ package io.extact.msa.spring.rms.domain.reservation.model;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-import io.extact.msa.spring.platform.fw.domain.model.EntityModel;
+import io.extact.msa.spring.platform.fw.domain.model.AbstractEntityModel;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 @ToString
-public class Reservation implements EntityModel, ReservationReference {
+public class Reservation extends AbstractEntityModel implements ReservationReference {
 
     @NotNull
     @Valid

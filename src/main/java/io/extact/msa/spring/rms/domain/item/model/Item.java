@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import io.extact.msa.spring.platform.fw.domain.model.EntityModel;
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupport;
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
 import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
@@ -18,18 +20,23 @@ import lombok.ToString;
 @ToString
 public class Item implements EntityModel, ItemReference {
 
+    @Getter
     @NotNull
     @Valid
-    @Getter
     private ItemId id;
+    @Getter
     @SerialNo
-    @Getter
     private String serialNo;
-    @ItemName
     @Getter
+    @ItemName
     private String itemName;
 
-    private ModelValidator validator;
+    private ModelPropertySupport modelSupport;
+
+    @Override
+    public void configureValidator(ModelValidator validator) {
+        //this.modelSupport = new DefaultModelSetterSupport<>(Item::new, validator, this);
+    }
 
     Item(ItemId id, String serialNo, String itemName) {
         this.id = id;
@@ -42,25 +49,12 @@ public class Item implements EntityModel, ItemReference {
         setItemName(itemName);
     }
 
-    @Override
-    public void configureValidator(ModelValidator validator) {
-        this.validator = validator;
-    }
-
     private void setSerialNo(String newValue) {
-        Item test = new Item();
-        test.serialNo = newValue;
-        validator.validateField(test, "serialNo");
-
-        this.serialNo = newValue;
+        modelSupport.setPropertyWithValidation("serialNo", newValue);
     }
 
     private void setItemName(String newValue) {
-        Item test = new Item();
-        test.itemName = newValue;
-        validator.validateField(test, "itemName");
-
-        this.itemName = newValue;
+        modelSupport.setPropertyWithValidation("itemName", newValue);
     }
 
     public interface ItemCreatable {
@@ -70,5 +64,9 @@ public class Item implements EntityModel, ItemReference {
                 String itemName) {
             return new Item(id, serialNo, itemName);
         }
+    }
+
+    public void configureSupport(ModelPropertySupportFactory<Item> modelSupportFactory) {
+        this.modelSupport = modelSupportFactory.create(Item::new, this);
     }
 }

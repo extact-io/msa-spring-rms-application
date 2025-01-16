@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.domain.service.SimpleDuplicateChecker;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
@@ -28,7 +29,7 @@ public class DominConfig {
     ItemCreator itemCreator(
                 ItemRepository idGenerator,
                 ModelValidator validator) {
-        return new ItemCreator(idGenerator, validator);
+        return new ItemCreator(idGenerator, validator, new DefaultModelPropertySupportFactory<Item>(validator));
     }
 
     @Bean

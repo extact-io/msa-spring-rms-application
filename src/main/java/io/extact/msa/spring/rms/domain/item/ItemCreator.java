@@ -1,5 +1,6 @@
 package io.extact.msa.spring.rms.domain.item;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.model.Item;
@@ -13,6 +14,7 @@ public class ItemCreator {
 
     private final IdentityGenerator idGenerator;
     private final ModelValidator validator;
+    private final ModelPropertySupportFactory<Item> modelSupportFactory;
     private final ItemCreatable constructorProxy = new ItemCreatable() {};
 
     public Item create(ItemModelAttributes attrs) {
@@ -20,7 +22,8 @@ public class ItemCreator {
         ItemId id = new ItemId(idGenerator.nextIdentity());
         Item item = constructorProxy.newInstance(id, attrs.serialNo, attrs.itemName);
 
-        item.configureValidator(validator);
+        //item.configureValidator(validator);
+        item.configureSupport(modelSupportFactory);
         validator.validateModel(item);
 
         return item;
