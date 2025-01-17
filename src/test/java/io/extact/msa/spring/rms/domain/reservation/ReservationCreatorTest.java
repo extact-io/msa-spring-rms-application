@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Scope;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.domain.InMemoryIdentityGenerator;
@@ -38,11 +39,6 @@ class ReservationCreatorTest {
     static class TestConfig {
 
         @Bean
-        ReservationCreator reservationCreator(ModelValidator validator) {
-            return new ReservationCreator(new InMemoryIdentityGenerator(), validator);
-        }
-
-        @Bean
         @Scope("prototype")
         IdentityGenerator identityGenerator() {
             return new InMemoryIdentityGenerator();
@@ -51,7 +47,10 @@ class ReservationCreatorTest {
 
     @BeforeEach
     void beforeEach(@Autowired IdentityGenerator idGenerator, @Autowired ModelValidator validator) {
-        this.reservationCreator = new ReservationCreator(idGenerator, validator);
+        this.reservationCreator = new ReservationCreator(
+                idGenerator,
+                validator,
+                new DefaultModelPropertySupportFactory(validator));
     }
 
     @Test
@@ -83,10 +82,10 @@ class ReservationCreatorTest {
     void testCreateModelOnValidationError() {
 
         // given
-        LocalDateTime from = LocalDateTime.now().plusDays(1);
-        LocalDateTime to = from.plusDays(1);
+        LocalDateTime from = LocalDateTime.now().minusDays(1); // 登録時の過去はエラー
+        LocalDateTime to = from.minusDays(1); // 開始より過去はエラー
         ReservationModelAttributes attrs = ReservationModelAttributes.builder()
-                .period(new ReservationPeriod(to, from)) // fromとtoが逆
+                .period(new ReservationPeriod(from, to))
                 .note("note")
                 .itemId(null)
                 .reserverId(null)
@@ -102,6 +101,7 @@ class ReservationCreatorTest {
                 .verifyMessageHeader()
                 .verifyErrorItemFieldOf(
                         "Reservation.period",
+                        "Reservation.period.from",
                         "Reservation.itemId",
                         "Reservation.reserverId");
     }

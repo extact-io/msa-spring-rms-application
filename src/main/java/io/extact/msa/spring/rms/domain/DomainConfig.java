@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.domain.service.SimpleDuplicateChecker;
@@ -23,13 +24,13 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 @Import({
     ValidatorConfig.class
 })
-public class DominConfig {
+public class DomainConfig {
 
     @Bean
     ItemCreator itemCreator(
                 ItemRepository idGenerator,
                 ModelValidator validator) {
-        return new ItemCreator(idGenerator, validator, new DefaultModelPropertySupportFactory<Item>(validator));
+        return new ItemCreator(idGenerator, validator, modelSupportFactory(validator));
     }
 
     @Bean
@@ -41,7 +42,7 @@ public class DominConfig {
     ReservationCreator reservationCreator(
                 ReservationRepository repository,
                 ModelValidator validator) {
-        return new ReservationCreator(repository, validator);
+        return new ReservationCreator(repository, validator, modelSupportFactory(validator));
     }
 
     @Bean
@@ -53,11 +54,15 @@ public class DominConfig {
     UserCreator userCreator(
                 UserRepository repository,
                 ModelValidator validator) {
-        return new UserCreator(repository, validator);
+        return new UserCreator(repository, validator, modelSupportFactory(validator));
     }
 
     @Bean
     DuplicateChecker<User> userDuplicateChecker(UserRepository repository) {
         return new SimpleDuplicateChecker<User>(repository);
+    }
+
+    private ModelPropertySupportFactory modelSupportFactory(ModelValidator validator) {
+        return new DefaultModelPropertySupportFactory(validator);
     }
 }

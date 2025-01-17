@@ -194,5 +194,25 @@ public abstract class AbstractUserRepositoryTest {
         assertThat(result).isNotPresent();
     }
 
+    @Test
+    void testFindByLoginIdAndPassword() {
+
+        // given
+        String loginId = user1.getLoginId();
+        String password = user1.getPassword();
+        // when
+        Optional<User> result = repository().findByLoginIdAndPassword(loginId, password);
+        // then
+        assertThat(result).isPresent();
+
+        // given
+        loginId = "unknown";
+        password = "unknown";
+        // when
+        result = repository().findByLoginIdAndPassword(loginId, password);
+        // then
+        assertThat(result).isNotPresent();
+    }
+
     protected abstract void testNextIdentity();
 }

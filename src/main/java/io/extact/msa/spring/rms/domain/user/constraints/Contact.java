@@ -14,7 +14,7 @@ import jakarta.validation.constraints.Size;
 /**
  * 連絡先チェックアノテーション。
  * <pre>
- * ・15文字以内であること
+ * ・40文字以内であること
  * </pre>
  */
 @Documented

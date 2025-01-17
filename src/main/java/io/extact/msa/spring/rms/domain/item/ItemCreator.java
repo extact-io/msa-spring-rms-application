@@ -14,7 +14,7 @@ public class ItemCreator {
 
     private final IdentityGenerator idGenerator;
     private final ModelValidator validator;
-    private final ModelPropertySupportFactory<Item> modelSupportFactory;
+    private final ModelPropertySupportFactory modelSupportFactory;
     private final ItemCreatable constructorProxy = new ItemCreatable() {};
 
     public Item create(ItemModelAttributes attrs) {
@@ -22,7 +22,6 @@ public class ItemCreator {
         ItemId id = new ItemId(idGenerator.nextIdentity());
         Item item = constructorProxy.newInstance(id, attrs.serialNo, attrs.itemName);
 
-        //item.configureValidator(validator);
         item.configureSupport(modelSupportFactory);
         validator.validateModel(item);
 

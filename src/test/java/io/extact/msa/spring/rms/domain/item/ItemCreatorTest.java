@@ -44,7 +44,7 @@ class ItemCreatorTest {
         this.itemCreator = new ItemCreator(
                 idGenerator,
                 validator,
-                new DefaultModelPropertySupportFactory<>(validator));
+                new DefaultModelPropertySupportFactory(validator));
     }
 
     @Test

@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Scope;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.domain.InMemoryIdentityGenerator;
@@ -34,11 +35,6 @@ class UserCreatorTest {
     static class TestConfig {
 
         @Bean
-        UserCreator userCreator(ModelValidator validator) {
-            return new UserCreator(new InMemoryIdentityGenerator(), validator);
-        }
-
-        @Bean
         @Scope("prototype")
         IdentityGenerator identityGenerator() {
             return new InMemoryIdentityGenerator();
@@ -47,7 +43,10 @@ class UserCreatorTest {
 
     @BeforeEach
     void beforeEach(@Autowired IdentityGenerator idGenerator, @Autowired ModelValidator validator) {
-        this.userCreator = new UserCreator(idGenerator, validator);
+        this.userCreator = new UserCreator(
+                idGenerator,
+                validator,
+                new DefaultModelPropertySupportFactory(validator));
     }
 
     @Test

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import io.extact.msa.spring.platform.fw.domain.model.EntityModel;
 import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupport;
 import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
-import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
 import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
 import lombok.AccessLevel;
@@ -33,28 +32,20 @@ public class Item implements EntityModel, ItemReference {
 
     private ModelPropertySupport modelSupport;
 
-    @Override
-    public void configureValidator(ModelValidator validator) {
-        //this.modelSupport = new DefaultModelSetterSupport<>(Item::new, validator, this);
-    }
-
     Item(ItemId id, String serialNo, String itemName) {
         this.id = id;
         this.serialNo = serialNo;
         this.itemName = itemName;
     }
 
-    public void editItem(String serialNo, String itemName) {
-        setSerialNo(serialNo);
-        setItemName(itemName);
+    public void editItem(String newSerialNo, String newItemName) {
+        modelSupport.setPropertyWithValidation("serialNo", newSerialNo);
+        modelSupport.setPropertyWithValidation("itemName", newItemName);
     }
 
-    private void setSerialNo(String newValue) {
-        modelSupport.setPropertyWithValidation("serialNo", newValue);
-    }
-
-    private void setItemName(String newValue) {
-        modelSupport.setPropertyWithValidation("itemName", newValue);
+    @Override
+    public void configureSupport(ModelPropertySupportFactory factory) {
+        this.modelSupport = factory.create(Item::new, this);
     }
 
     public interface ItemCreatable {
@@ -64,9 +55,5 @@ public class Item implements EntityModel, ItemReference {
                 String itemName) {
             return new Item(id, serialNo, itemName);
         }
-    }
-
-    public void configureSupport(ModelPropertySupportFactory<Item> modelSupportFactory) {
-        this.modelSupport = modelSupportFactory.create(Item::new, this);
     }
 }

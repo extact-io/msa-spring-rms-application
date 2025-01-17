@@ -3,8 +3,9 @@ package io.extact.msa.spring.rms.domain.reservation.model;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-import io.extact.msa.spring.platform.fw.domain.model.AbstractEntityModel;
-import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
+import io.extact.msa.spring.platform.fw.domain.model.EntityModel;
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupport;
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
@@ -17,7 +18,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "id", callSuper = false)
 @ToString
-public class Reservation extends AbstractEntityModel implements ReservationReference {
+public class Reservation implements EntityModel, ReservationReference {
 
     @NotNull
     @Valid
@@ -40,7 +41,7 @@ public class Reservation extends AbstractEntityModel implements ReservationRefer
     @Getter
     private UserId reserverId;
 
-    private ModelValidator validator;
+    private ModelPropertySupport modelSupport;
 
     Reservation(
             ReservationId id,
@@ -60,30 +61,14 @@ public class Reservation extends AbstractEntityModel implements ReservationRefer
         return this.getPeriod().isOverlappedBy(otherPeriod);
     }
 
-    public void editReservation(ReservationPeriod period, String note) {
-        this.setReservationPeriod(period);
-        this.setNote(note);
+    public void editReservation(ReservationPeriod newPeriod, String newNote) {
+        modelSupport.setPropertyWithValidation("period", newPeriod);
+        modelSupport.setPropertyWithValidation("note", newNote);
     }
 
     @Override
-    public void configureValidator(ModelValidator validator) {
-        this.validator = validator;
-    }
-
-    private void setReservationPeriod(ReservationPeriod newValue) {
-        Reservation test = new Reservation();
-        test.period = newValue;
-        validator.validateField(test, "period");
-
-        this.period = newValue;
-    }
-
-    private void setNote(String newValue) {
-        Reservation test = new Reservation();
-        test.note = newValue;
-        validator.validateField(test, "note");
-
-        this.note = newValue;
+    public void configureSupport(ModelPropertySupportFactory factory) {
+        this.modelSupport = factory.create(Reservation::new, this);
     }
 
     public interface ReservationCreatable {

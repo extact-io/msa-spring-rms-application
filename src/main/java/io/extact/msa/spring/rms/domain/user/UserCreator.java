@@ -2,6 +2,7 @@ package io.extact.msa.spring.rms.domain.user;
 
 import org.springframework.stereotype.Service;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.user.model.User;
@@ -17,7 +18,7 @@ public class UserCreator {
 
     private final IdentityGenerator idGenerator;
     private final ModelValidator validator;
-    // implementsすると外部に公開してしまうためdelegateで方式にしている
+    private final ModelPropertySupportFactory modelSupportFactory;
     private final UserCreatable constructorProxy = new UserCreatable() {};
 
     public User create(UserModelAttributes attrs) {
@@ -32,7 +33,7 @@ public class UserCreator {
                 attrs.phoneNumber,
                 attrs.contact);
 
-        user.configureValidator(validator);
+        user.configureSupport(modelSupportFactory);
         validator.validateModel(user);
 
         return user;

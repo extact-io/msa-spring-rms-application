@@ -25,13 +25,10 @@ import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 
 @Configuration(proxyBeanMethods = false)
-@Import({
-        AsyncConfig.class
-})
+@Import(AsyncConfig.class) // for ReservationModelComposer
 public class ApplicationServiceConfig {
 
     // ---- for admin
-
     @Bean
     ReservationModelComposer modelComposer(
             ItemRepository itemRepository,
@@ -69,7 +66,6 @@ public class ApplicationServiceConfig {
     }
 
     // ---- for member
-
     @Bean
     ReservationMemberService reservationMemberService(
             ReservationCreator modelCreator,
@@ -88,8 +84,8 @@ public class ApplicationServiceConfig {
                 userRepository);
     }
 
-    // ---- for universal
 
+    // ---- for universal
     @Bean
     LoginService loginService(UserRepository repository) {
         return new LoginService(repository);

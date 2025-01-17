@@ -1,5 +1,6 @@
 package io.extact.msa.spring.rms.application.admin;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -28,8 +29,8 @@ public class ItemAdminService {
         this.support = new ApplicationCrudSupport<>(duplicateChecker, repository);
     }
 
-    public List<? extends ItemReference> getAll() {
-        return support.getAll();
+    public List<ItemReference> getAll() {
+        return new ArrayList<>(support.getAll()); // 型をReferenceに制限するため変換
     }
 
     public ItemReference add(ItemAddCommand command) {
