@@ -41,6 +41,7 @@ public class Reservation implements EntityModel, ReservationReference {
     @Getter
     private UserId reserverId;
 
+    @ToString.Exclude
     private ModelPropertySupport modelSupport;
 
     Reservation(

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import io.extact.msa.spring.platform.core.env.ActiveProfileResolver;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.core.env.MainModuleInformation;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
@@ -40,8 +41,9 @@ public class ConsoleConfig {
     @Bean
     MainScreenRunner mainScreenRunner(
             MainScreenController mainController,
-            MainModuleInformation moduleInfo) {
+            MainModuleInformation moduleInfo,
+            ActiveProfileResolver profileResolver) {
 
-        return new MainScreenRunner(mainController, moduleInfo);
+        return new MainScreenRunner(mainController, moduleInfo, profileResolver);
     }
 }

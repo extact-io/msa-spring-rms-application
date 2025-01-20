@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
@@ -105,9 +107,10 @@ class ReservationEntityTest {
                 "Meeting",
                 101,
                 202);
+        ModelPropertySupportFactory dummy = new DefaultModelPropertySupportFactory(null);
 
         // when
-        Reservation reservation = reservationEntity.toModel();
+        Reservation reservation = reservationEntity.toModel(dummy);
 
         // then
         assertThat(reservation).isNotNull();

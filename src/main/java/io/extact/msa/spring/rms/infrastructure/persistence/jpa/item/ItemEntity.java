@@ -6,6 +6,7 @@ import jakarta.persistence.Access;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEntity;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
@@ -34,7 +35,9 @@ public class ItemEntity implements TableEntity<Item>, ItemCreatable {
     }
 
     @Override
-    public Item toModel() {
-        return newInstance(new ItemId(this.id), this.serialNo, this.itemName);
+    public Item toModel(ModelPropertySupportFactory factory) {
+        Item item = newInstance(new ItemId(this.id), this.serialNo, this.itemName);
+        item.configureSupport(factory);
+        return item;
     }
 }

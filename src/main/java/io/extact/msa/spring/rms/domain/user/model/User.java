@@ -38,6 +38,7 @@ public class User implements EntityModel, UserReference {
     @Valid
     private UserProfile profile;
 
+    @ToString.Exclude
     private ModelPropertySupport modelSupport;
 
     User(UserId id, String loginId, String password, UserType userType, UserProfile profile) {

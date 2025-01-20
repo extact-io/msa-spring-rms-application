@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
@@ -77,9 +79,10 @@ class ItemEntityTest {
     void testToModel() {
         // given
         ItemEntity itemEntity = new ItemEntity(1, "SN12345", "Laptop");
+        ModelPropertySupportFactory dummy = new DefaultModelPropertySupportFactory(null);
 
         // when
-        Item iItem = itemEntity.toModel();
+        Item iItem = itemEntity.toModel(dummy);
 
         // then
         assertThat(iItem).isNotNull();

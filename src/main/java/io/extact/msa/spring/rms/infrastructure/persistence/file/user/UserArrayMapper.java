@@ -1,14 +1,17 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.file.user;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class UserArrayMapper implements ModelArrayMapper<User>, UserCreatable {
 
-    public static final UserArrayMapper INSTANCE = new UserArrayMapper();
+    private final ModelPropertySupportFactory modelSupportFactory;
 
     @Override
     public User toModel(String[] attributes) {
@@ -21,7 +24,7 @@ public class UserArrayMapper implements ModelArrayMapper<User>, UserCreatable {
         String contact = attributes[5];
         UserType userType = UserType.valueOf(attributes[6]);
 
-        return newInstance(
+        User user = newInstance(
                 new UserId(id),
                 loginId,
                 password,
@@ -29,6 +32,8 @@ public class UserArrayMapper implements ModelArrayMapper<User>, UserCreatable {
                 userName,
                 phoneNumber,
                 contact);
+        user.configureSupport(modelSupportFactory);
+        return user;
     }
 
     @Override

@@ -2,6 +2,7 @@ package io.extact.msa.spring.rms.application.member;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
+import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
 import io.extact.msa.spring.rms.domain.reservation.ReservationDuplicateChecker;
@@ -40,11 +42,11 @@ public class ReservationMemberService {
     private final UserRepository userRepository;
 
 
-    public List<Item> getItemAll() {
-        return itemRepository.findAll();
+    public List<ItemReference> getItemAll() {
+        return new ArrayList<>(itemRepository.findAll()); // 型をReferenceに制限するため変換
     }
 
-    public List<Item> findCanRentedItemAtPeriod(LocalDateTime from, LocalDateTime to) {
+    public List<ItemReference> findCanRentedItemAtPeriod(LocalDateTime from, LocalDateTime to) {
 
         ReservationPeriod overlapPeriod = new ReservationPeriod(from, to);
         List<ItemId> reservedItemIds = reservationRepository
@@ -53,11 +55,12 @@ public class ReservationMemberService {
                 .map(Reservation::getItemId)
                 .toList();
 
-        return itemRepository
+        List<Item> items = itemRepository
                 .findAll()
                 .stream()
                 .filter(item -> !reservedItemIds.contains(item.getId()))
                 .toList();
+        return new ArrayList<>(items); // 型をReferenceに制限するため変換
     }
 
     public boolean canRentedItemAtPeriod(ItemId itemId, LocalDateTime from, LocalDateTime to) {
@@ -101,12 +104,16 @@ public class ReservationMemberService {
         ReservationModelAttributes attrs = ReservationModelAttributes.builder()
                 .period(command.period())
                 .note(command.note())
+                .itemId(command.itemId())
+                .reserverId(command.reserverId())
                 .build();
 
         Reservation newReservation = modelCreator.create(attrs);
 
         duplicateChecker.check(newReservation);
         valiateRelation(newReservation.getItemId(), newReservation.getReserverId());
+
+        reservationRepository.add(newReservation);
 
         return modelComposer.composeModel(newReservation);
     }
@@ -136,12 +143,12 @@ public class ReservationMemberService {
 
         Optional<Item> shouldExistItem = itemRepository.find(itemId);
         if (shouldExistItem.isEmpty()) {
-            throw new BusinessFlowException("RentalItem does not exist for rentalItemId.", CauseType.NOT_FOUND);
+            throw new BusinessFlowException("Item does not exist for itemId.", CauseType.NOT_FOUND);
         }
 
         Optional<User> shouldExistUser = userRepository.find(reserverId);
         if (shouldExistUser.isEmpty()) {
-            throw new BusinessFlowException("UserAccount does not exist for userAccountId.", CauseType.NOT_FOUND);
+            throw new BusinessFlowException("User does not exist for reserverId.", CauseType.NOT_FOUND);
         }
     }
 

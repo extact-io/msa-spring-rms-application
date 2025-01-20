@@ -9,6 +9,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEntity;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
@@ -53,12 +54,14 @@ public class ReservationEntity implements TableEntity<Reservation>, ReservationC
     }
 
     @Override
-    public Reservation toModel() {
-        return newInstance(
+    public Reservation toModel(ModelPropertySupportFactory factory) {
+        Reservation r = newInstance(
                 new ReservationId(id),
                 new ReservationPeriod(fromDateTime, toDateTime),
                 note,
                 new ItemId(itemId),
                 new UserId(reserverId));
+        r.configureSupport(factory);
+        return r;
     }
 }

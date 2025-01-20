@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import io.extact.msa.spring.platform.core.auth.configure.AuthorizeHttpRequestCustomizer;
 import io.extact.msa.spring.platform.core.auth.jwt.RmsJwtAuthConfig;
+import io.extact.msa.spring.platform.core.env.ActiveProfileResolver;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.core.env.MainModuleInformation;
 import io.extact.msa.spring.platform.fw.web.RestControllerConfig;
@@ -31,8 +32,8 @@ import io.extact.msa.spring.rms.interfaces.webapi.member.ReservationMemberContro
 public class WebApiConfig implements WebMvcConfigurer {
 
     @Bean
-    StartupLogRunner startupLogRunner(MainModuleInformation moduleInfo) {
-        return new StartupLogRunner(moduleInfo);
+    StartupLogRunner startupLogRunner(MainModuleInformation moduleInfo, ActiveProfileResolver profileResolver) {
+        return new StartupLogRunner(moduleInfo, profileResolver);
     }
 
     @Bean

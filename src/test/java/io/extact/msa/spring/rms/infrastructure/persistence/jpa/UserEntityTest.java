@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
@@ -107,9 +109,10 @@ class UserEntityTest {
                 "123-456-7890",
                 "john.doe@example.com",
                 UserType.ADMIN);
+        ModelPropertySupportFactory dummy = new DefaultModelPropertySupportFactory(null);
 
         // when
-        User user = userEntity.toModel();
+        User user = userEntity.toModel(dummy);
 
         // then
         assertThat(user).isNotNull();

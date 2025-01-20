@@ -8,8 +8,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.profile.ConditionalOnAnyPersistenceProfile;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.LoadPathDeriver;
@@ -25,15 +28,15 @@ import io.extact.msa.spring.rms.infrastructure.persistence.file.user.UserFileRep
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnAnyPersistenceProfile(FILE)
-@Import(ValidationConfig.class)
+@Import(ValidatorConfig.class)
 public class FileRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("item-file")
-    static class ItemFileConfiguration {
+    class ItemFileConfiguration {
         @Bean
-        ModelArrayMapper<Item> rentalItemArrayMapper() {
-            return ItemArrayMapper.INSTANCE;
+        ModelArrayMapper<Item> rentalItemArrayMapper(ModelValidator validator) {
+            return new ItemArrayMapper(modelSupportFactory(validator));
         }
         @Bean
         ItemFileRepository itemFileRepository(Environment env, ModelArrayMapper<Item> mapper) {
@@ -45,10 +48,10 @@ public class FileRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("reservation-file")
-    static class ReservationFileConfiguration {
+    class ReservationFileConfiguration {
         @Bean
-        ModelArrayMapper<Reservation> reservationArrayMapper() {
-            return ReservationArrayMapper.INSTANCE;
+        ModelArrayMapper<Reservation> reservationArrayMapper(ModelValidator validator) {
+            return new ReservationArrayMapper(modelSupportFactory(validator));
         }
         @Bean
         ReservationFileRepository reservationFileRepository(Environment env, ModelArrayMapper<Reservation> mapper) {
@@ -60,10 +63,10 @@ public class FileRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("user-file")
-    static class UserFileConfiguration {
+    class UserFileConfiguration {
         @Bean
-        ModelArrayMapper<User> userAccountArrayMapper() {
-            return UserArrayMapper.INSTANCE;
+        ModelArrayMapper<User> userAccountArrayMapper(ModelValidator validator) {
+            return new UserArrayMapper(modelSupportFactory(validator));
         }
         @Bean
         UserFileRepository userFileRepository(Environment env, ModelArrayMapper<User> mapper) {
@@ -71,5 +74,9 @@ public class FileRepositoryConfig {
             FileOperator fileOperator = new FileOperator(pathDeriver.derive(UserFileRepository.FILE_ENTITY));
             return new UserFileRepository(fileOperator, mapper);
         }
+    }
+
+    private ModelPropertySupportFactory modelSupportFactory(ModelValidator validator) {
+        return new DefaultModelPropertySupportFactory(validator);
     }
 }

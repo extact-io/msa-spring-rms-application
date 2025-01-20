@@ -16,11 +16,13 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
         implements ReservationRepository {
 
     private final ReservationJpaRepositoryDelegator delegator;
+    private final ModelEntityMapper<Reservation, ReservationEntity> entityMapper;
 
     public ReservationJpaRepository(ReservationJpaRepositoryDelegator delegator,
             ModelEntityMapper<Reservation, ReservationEntity> entityMapper) {
         super(delegator, entityMapper);
         this.delegator = delegator;
+        this.entityMapper = entityMapper;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
         LocalDateTime endOfDay = from.atTime(LocalTime.MAX);
         return delegator.findByItemIdAndFromDateTimeBetweenOrderByIdAsc(itemId.id(), startOfDay, endOfDay)
                 .stream()
-                .map(ReservationEntity::toModel)
+                .map(entityMapper::toModel)
                 .toList();
     }
 
@@ -37,7 +39,7 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
     public List<Reservation> findByReserverId(UserId reserverId) {
         return delegator.findByReserverIdOrderByIdAsc(reserverId.id())
                 .stream()
-                .map(ReservationEntity::toModel)
+                .map(entityMapper::toModel)
                 .toList();
     }
 
@@ -45,7 +47,7 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
     public List<Reservation> findByItemId(ItemId itemId) {
         return delegator.findByItemIdOrderByIdAsc(itemId.id())
                 .stream()
-                .map(ReservationEntity::toModel)
+                .map(entityMapper::toModel)
                 .toList();
     }
 }

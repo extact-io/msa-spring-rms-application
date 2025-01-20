@@ -30,6 +30,7 @@ public class Item implements EntityModel, ItemReference {
     @ItemName
     private String itemName;
 
+    @ToString.Exclude
     private ModelPropertySupport modelSupport;
 
     Item(ItemId id, String serialNo, String itemName) {

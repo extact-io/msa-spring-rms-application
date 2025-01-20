@@ -4,6 +4,7 @@ import static io.extact.msa.spring.rms.interfaces.console.common.ClientConstants
 
 import org.springframework.boot.CommandLineRunner;
 
+import io.extact.msa.spring.platform.core.env.ActiveProfileResolver;
 import io.extact.msa.spring.platform.core.env.MainModuleInformation;
 import io.extact.msa.spring.platform.fw.StartupLog;
 import io.extact.msa.spring.platform.fw.exception.RmsServiceUnavailableException;
@@ -26,11 +27,14 @@ public class MainScreenRunner implements CommandLineRunner {
             """;
     private final MainScreenController mainController;
 
-    public MainScreenRunner(MainScreenController mainController, MainModuleInformation info) {
+    public MainScreenRunner(
+            MainScreenController mainController,
+            MainModuleInformation info,
+            ActiveProfileResolver profileResolver ) {
 
         this.mainController = mainController;
 
-        StartupLog.startupLog(info);
+        StartupLog.startupLog(info, profileResolver);
         TextIoUtils.println(START_UP_LOGO);
     }
 

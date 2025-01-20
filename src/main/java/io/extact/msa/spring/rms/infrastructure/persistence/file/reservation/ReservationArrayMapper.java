@@ -3,18 +3,21 @@ package io.extact.msa.spring.rms.infrastructure.persistence.file.reservation;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class ReservationArrayMapper implements ModelArrayMapper<Reservation>, ReservationCreatable {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
-    public static final ReservationArrayMapper INSTANCE = new ReservationArrayMapper();
+    private final ModelPropertySupportFactory modelSupportFactory;
 
     @Override
     public Reservation toModel(String[] attributes) {
@@ -26,12 +29,14 @@ public class ReservationArrayMapper implements ModelArrayMapper<Reservation>, Re
         int itemId = Integer.parseInt(attributes[4]);
         int reserverId = Integer.parseInt(attributes[5]);
 
-        return newInstance(
+        Reservation r = newInstance(
                 new ReservationId(id),
                 new ReservationPeriod(from, to),
                 note,
                 new ItemId(itemId),
                 new UserId(reserverId));
+        r.configureSupport(modelSupportFactory);
+        return r;
     }
 
     @Override
