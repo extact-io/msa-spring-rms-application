@@ -2,9 +2,7 @@ package io.extact.msa.spring.rms.application.universal;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import io.extact.msa.spring.platform.core.auth.RmsAuthentication;
+import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
@@ -22,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class UserProfileService {
 
+    private final LoginContext loginContext;
     private final UserRepository repository;
 
     public UserReference getOwnProfile() {
@@ -43,16 +42,10 @@ public class UserProfileService {
     }
 
     private User getInternalOwnProfile() {
+        int loginUserId = loginContext.getLoginUser().getUserId();
         return repository
-                .find(getLoginUserId())
+                .find(new UserId(loginUserId))
                 .orElseThrow(() -> new BusinessFlowException(
                         "target does not exist for id", CauseType.NOT_FOUND));
-    }
-
-    private UserId getLoginUserId() {
-        // TODO アプリ向けの被せものを作る
-        RmsAuthentication auth = (RmsAuthentication) SecurityContextHolder.getContext().getAuthentication();
-        int userId = auth.getLoginUser().getUserId();
-        return new UserId(userId);
     }
 }

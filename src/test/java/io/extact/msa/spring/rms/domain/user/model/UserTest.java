@@ -21,12 +21,12 @@ import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultMo
 import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.ConstraintAnnotationAsserter;
 import io.extact.msa.spring.rms.RmsValidationExceptionAsserter;
-import io.extact.msa.spring.rms.domain.user.constraints.Contact;
-import io.extact.msa.spring.rms.domain.user.constraints.LoginId;
-import io.extact.msa.spring.rms.domain.user.constraints.Passowrd;
-import io.extact.msa.spring.rms.domain.user.constraints.PhoneNumber;
-import io.extact.msa.spring.rms.domain.user.constraints.UserName;
-import io.extact.msa.spring.rms.domain.user.constraints.UserTypeConstraint;
+import io.extact.msa.spring.rms.domain.user.constraint.Contact;
+import io.extact.msa.spring.rms.domain.user.constraint.LoginId;
+import io.extact.msa.spring.rms.domain.user.constraint.Passowrd;
+import io.extact.msa.spring.rms.domain.user.constraint.PhoneNumber;
+import io.extact.msa.spring.rms.domain.user.constraint.UserName;
+import io.extact.msa.spring.rms.domain.user.constraint.UserTypeConstraint;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 class UserTest {

@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Import;
 
 import io.extact.msa.spring.platform.core.async.AsyncConfig;
 import io.extact.msa.spring.platform.core.async.AsyncInvoker;
+import io.extact.msa.spring.platform.core.auth.context.DefaultLoginContext;
+import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
@@ -68,6 +70,7 @@ public class ApplicationServiceConfig {
     // ---- for member
     @Bean
     ReservationMemberService reservationMemberService(
+            LoginContext loginContext,
             ReservationCreator modelCreator,
             ReservationModelComposer modelComposer,
             ReservationDuplicateChecker duplicateChecker,
@@ -76,6 +79,7 @@ public class ApplicationServiceConfig {
             UserRepository userRepository) {
 
         return new ReservationMemberService(
+                loginContext,
                 modelCreator,
                 modelComposer,
                 duplicateChecker,
@@ -92,7 +96,15 @@ public class ApplicationServiceConfig {
     }
 
     @Bean
-    UserProfileService userProfileService(UserRepository repository) {
-        return new UserProfileService(repository);
+    UserProfileService userProfileService(LoginContext loginContext, UserRepository repository) {
+        return new UserProfileService(loginContext, repository);
     }
+
+
+    // ---- for etc.
+    @Bean
+    LoginContext loginContext() {
+        return new DefaultLoginContext();
+    }
+
 }

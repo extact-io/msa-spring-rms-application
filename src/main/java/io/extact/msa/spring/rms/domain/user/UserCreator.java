@@ -6,9 +6,9 @@ import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.user.model.User;
-import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
+import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 

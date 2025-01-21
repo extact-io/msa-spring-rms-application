@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.extact.msa.spring.platform.core.auth.RmsAuthentication;
+import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
@@ -19,9 +18,9 @@ import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator;
-import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
 import io.extact.msa.spring.rms.domain.reservation.ReservationDuplicateChecker;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
+import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
@@ -34,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class ReservationMemberService {
 
+    private final LoginContext loginContext;
     private final ReservationCreator modelCreator;
     private final ReservationModelComposer modelComposer;
     private final ReservationDuplicateChecker duplicateChecker;
@@ -95,7 +95,7 @@ public class ReservationMemberService {
     }
 
     public List<ReservationComposeModel> getOwnReservations() {
-        int userId = getLoginUserId();
+        int userId = loginContext.getLoginUser().getUserId();
         return this.findReservationByReserverId(new UserId(userId));
     }
 
@@ -126,7 +126,7 @@ public class ReservationMemberService {
         }
 
         Reservation cancelTarget = optCancelTarget.get();
-        int cancelingUser = getLoginUserId();
+        int cancelingUser = loginContext.getLoginUser().getUserId();
 
         if (cancelTarget.getReserverId().id() != cancelingUser) {
             throw new BusinessFlowException(
@@ -150,12 +150,5 @@ public class ReservationMemberService {
         if (shouldExistUser.isEmpty()) {
             throw new BusinessFlowException("User does not exist for reserverId.", CauseType.NOT_FOUND);
         }
-    }
-
-    private int getLoginUserId() {
-        // TODO アプリ向けの被せものを作る
-        RmsAuthentication auth = (RmsAuthentication)SecurityContextHolder.getContext().getAuthentication();
-        int userId = auth.getLoginUser().getUserId();
-        return userId;
     }
 }

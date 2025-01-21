@@ -4,8 +4,8 @@ import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory
 import io.extact.msa.spring.platform.fw.exception.RmsSystemException;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.rms.domain.item.model.Item;
-import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
+import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

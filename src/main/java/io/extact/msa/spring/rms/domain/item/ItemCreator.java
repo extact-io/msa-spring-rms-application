@@ -4,8 +4,8 @@ import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.model.Item;
-import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
+import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 

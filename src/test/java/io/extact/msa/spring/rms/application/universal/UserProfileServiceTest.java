@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.application.universal;
 
-import static io.extact.msa.spring.rms.application.PersistedTestData.*;
+import static io.extact.msa.spring.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import io.extact.msa.spring.platform.core.auth.context.DefaultLoginContext;
+import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
@@ -41,9 +43,15 @@ class UserProfileServiceTest {
     @Configuration(proxyBeanMethods = false)
     @Import({ PersistenceConfig.class })
     static class TestConfig {
+
         @Bean
-        UserProfileService userProfileService(UserRepository repository) {
-            return new UserProfileService(repository);
+        LoginContext loginContext() {
+            return new DefaultLoginContext();
+        }
+
+        @Bean
+        UserProfileService userProfileService(LoginContext loginContext, UserRepository repository) {
+            return new UserProfileService(loginContext, repository);
         }
     }
 

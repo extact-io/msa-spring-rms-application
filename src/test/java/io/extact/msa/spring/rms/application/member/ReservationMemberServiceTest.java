@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.application.member;
 
-import static io.extact.msa.spring.rms.application.PersistedTestData.*;
+import static io.extact.msa.spring.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +22,8 @@ import org.springframework.context.annotation.Import;
 
 import io.extact.msa.spring.platform.core.async.AsyncConfig;
 import io.extact.msa.spring.platform.core.async.AsyncInvoker;
+import io.extact.msa.spring.platform.core.auth.context.DefaultLoginContext;
+import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
@@ -63,6 +65,11 @@ class ReservationMemberServiceTest {
     static class TestConfig {
 
         @Bean
+        LoginContext loginContext() {
+            return new DefaultLoginContext();
+        }
+
+        @Bean
         ReservationModelComposer modelComposer(
                 ItemRepository itemRepository,
                 UserRepository userRepository,
@@ -72,6 +79,7 @@ class ReservationMemberServiceTest {
 
         @Bean
         ReservationMemberService reservationMemberService(
+                LoginContext loginContext,
                 ReservationCreator modelCreator,
                 ReservationModelComposer modelComposer,
                 ReservationDuplicateChecker duplicateChecker,
@@ -80,6 +88,7 @@ class ReservationMemberServiceTest {
                 UserRepository userRepository) {
 
             return new ReservationMemberService(
+                    loginContext,
                     modelCreator,
                     modelComposer,
                     duplicateChecker,

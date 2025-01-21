@@ -3,9 +3,9 @@ package io.extact.msa.spring.rms.infrastructure.persistence.file.user;
 import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.rms.domain.user.model.User;
-import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
+import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

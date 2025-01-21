@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
-import io.extact.msa.spring.rms.domain.user.constraints.UserTypeConstraint;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
