@@ -9,7 +9,7 @@ import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.domain.service.SimpleDuplicateChecker;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
@@ -22,14 +22,14 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 
 @Configuration(proxyBeanMethods = false)
 @Import({
-    ValidatorConfig.class
+        ModelConfig.class
 })
 public class DomainConfig {
 
     @Bean
     ItemCreator itemCreator(
-                ItemRepository idGenerator,
-                ModelValidator validator) {
+            ItemRepository idGenerator,
+            ModelValidator validator) {
         return new ItemCreator(idGenerator, validator, modelSupportFactory(validator));
     }
 
@@ -40,8 +40,8 @@ public class DomainConfig {
 
     @Bean
     ReservationCreator reservationCreator(
-                ReservationRepository repository,
-                ModelValidator validator) {
+            ReservationRepository repository,
+            ModelValidator validator) {
         return new ReservationCreator(repository, validator, modelSupportFactory(validator));
     }
 
@@ -52,8 +52,8 @@ public class DomainConfig {
 
     @Bean
     UserCreator userCreator(
-                UserRepository repository,
-                ModelValidator validator) {
+            UserRepository repository,
+            ModelValidator validator) {
         return new UserCreator(repository, validator, modelSupportFactory(validator));
     }
 

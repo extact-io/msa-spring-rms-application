@@ -12,9 +12,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.profile.ConditionalOnAnyPersistenceProfile;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.sqlinit.ProfileBasedDbInitializerConfig;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.DefaultModelEntityMapper;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemEntity;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemJpaRepository;
@@ -29,7 +29,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.jpa.user.UserJpaRepos
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnAnyPersistenceProfile(JPA)
 @Import({
-        ValidatorConfig.class,
+        ModelConfig.class,
         ProfileBasedDbInitializerConfig.class })
 public class JpaRepositoryConfig {
 

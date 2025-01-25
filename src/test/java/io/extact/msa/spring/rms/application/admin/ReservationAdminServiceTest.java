@@ -50,9 +50,9 @@ class ReservationAdminServiceTest {
 
     @Configuration(proxyBeanMethods = false)
     @Import({
-        PersistenceConfig.class,
-        DomainConfig.class,
-        AsyncConfig.class})
+            PersistenceConfig.class,
+            DomainConfig.class,
+            AsyncConfig.class })
     static class TestConfig {
 
         @Bean

@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RmsValidationExceptionAsserter {
 
-    static String VALIDATION_ERROR_MESSAGE = "バリデーションエラーが発生しました";
+    static String VALIDATION_ERROR_MESSAGE = "パラメーターエラーが発生しました";
 
     private final RmsValidationException e;
 

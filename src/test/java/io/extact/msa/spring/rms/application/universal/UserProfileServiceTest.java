@@ -24,6 +24,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseTyp
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
 import io.extact.msa.spring.platform.test.stub.auth.TestAuthUtils;
 import io.extact.msa.spring.rms.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
@@ -41,7 +42,9 @@ class UserProfileServiceTest {
     private UserProfileService service;
 
     @Configuration(proxyBeanMethods = false)
-    @Import({ PersistenceConfig.class })
+    @Import({
+            PersistenceConfig.class,
+            DomainConfig.class })
     static class TestConfig {
 
         @Bean

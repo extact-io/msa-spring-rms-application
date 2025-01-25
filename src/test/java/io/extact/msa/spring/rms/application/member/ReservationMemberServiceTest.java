@@ -59,9 +59,9 @@ class ReservationMemberServiceTest {
 
     @Configuration(proxyBeanMethods = false)
     @Import({
-        PersistenceConfig.class,
-        DomainConfig.class,
-        AsyncConfig.class})
+            PersistenceConfig.class,
+            DomainConfig.class,
+            AsyncConfig.class })
     static class TestConfig {
 
         @Bean
@@ -122,6 +122,7 @@ class ReservationMemberServiceTest {
         // then
         ToStringAssert.assertThatToString(items).containsExactly(item1, item2, item4);
     }
+
     @Test
     void testFindCanRentedItemAtPeriodOnResultAll() { // 全件該当
         // given

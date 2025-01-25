@@ -43,7 +43,9 @@ class UserAdminServiceTest {
     private UserAdminService service;
 
     @Configuration(proxyBeanMethods = false)
-    @Import({ PersistenceConfig.class, DomainConfig.class })
+    @Import({
+            PersistenceConfig.class,
+            DomainConfig.class })
     static class TestConfig {
         @Bean
         UserAdminService userAdminService(
@@ -220,7 +222,7 @@ class UserAdminServiceTest {
 
         // then
         RmsValidationExceptionAsserter.asserterTo(exception)
-            .verifyErrorItemFieldOf("User.password");
+                .verifyErrorItemFieldOf("User.password");
         // 永続化確認
         Optional<User> persisted = forResultAssert.find(user1.getId());
         assertThat(persisted)

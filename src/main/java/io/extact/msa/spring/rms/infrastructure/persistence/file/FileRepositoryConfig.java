@@ -11,8 +11,8 @@ import org.springframework.core.env.Environment;
 import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.profile.ConditionalOnAnyPersistenceProfile;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.LoadPathDeriver;
@@ -28,7 +28,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.file.user.UserFileRep
 
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnAnyPersistenceProfile(FILE)
-@Import(ValidatorConfig.class)
+@Import(ModelConfig.class)
 public class FileRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)

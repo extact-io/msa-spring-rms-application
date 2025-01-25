@@ -49,7 +49,9 @@ class ItemAdminServiceTest {
     private ItemAdminService service;
 
     @Configuration(proxyBeanMethods = false)
-    @Import({ PersistenceConfig.class, DomainConfig.class })
+    @Import({
+            PersistenceConfig.class,
+            DomainConfig.class })
     static class TestConfig {
 
         @Bean
@@ -130,7 +132,7 @@ class ItemAdminServiceTest {
 
         // then
         RmsValidationExceptionAsserter.asserterTo(exception)
-            .verifyErrorItemFieldOf("Item.serialNo");
+                .verifyErrorItemFieldOf("Item.serialNo");
         // commitされていないことの確認(4件のまま)
         List<Item> items = forResultAssert.findAll();
         assertThat(items).hasSize(4);
@@ -220,7 +222,7 @@ class ItemAdminServiceTest {
 
         // then
         RmsValidationExceptionAsserter.asserterTo(exception)
-            .verifyErrorItemFieldOf("Item.serialNo");
+                .verifyErrorItemFieldOf("Item.serialNo");
         // commitされていないことの確認("updateItem"にはならずitem1がそのまま)
         Optional<Item> persisted = forResultAssert.find(item1.getId());
         assertThat(persisted)

@@ -18,7 +18,7 @@ import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
 import io.extact.msa.spring.rms.ConstraintAnnotationAsserter;
 import io.extact.msa.spring.rms.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
@@ -39,7 +39,7 @@ class ItemTest {
     private Validator beanValidator;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(ValidatorConfig.class)
+    @Import(ModelConfig.class)
     static class TestConfig {
     }
 

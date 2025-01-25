@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
-@SpringBootTest(classes = ValidationConfig.class, webEnvironment = WebEnvironment.NONE)
+@SpringBootTest(classes = ValidatorConfig.class, webEnvironment = WebEnvironment.NONE)
 class UserNameTest {
 
     @Test

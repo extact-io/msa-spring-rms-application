@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
+import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.UserReference;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
@@ -25,7 +26,9 @@ class LoginServiceTest {
     private LoginService service;
 
     @Configuration(proxyBeanMethods = false)
-    @Import({ PersistenceConfig.class })
+    @Import({
+            PersistenceConfig.class,
+            DomainConfig.class })
     static class TestConfig {
         @Bean
         LoginService loginService(UserRepository repository) {

@@ -17,7 +17,7 @@ import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
 import io.extact.msa.spring.rms.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.domain.InMemoryIdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.ItemCreator.ItemModelAttributes;
@@ -30,7 +30,7 @@ class ItemCreatorTest {
     private ItemCreator itemCreator;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(ValidatorConfig.class)
+    @Import(ModelConfig.class)
     static class TestConfig {
         @Bean
         @Scope("prototype")

@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Import;
 
 import io.extact.msa.spring.platform.core.CoreConfig;
 import io.extact.msa.spring.rms.application.ApplicationServiceConfig;
-import io.extact.msa.spring.rms.boundary.console.ConsoleConfig;
 import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
+import io.extact.msa.spring.rms.interfaces.console.ConsoleConfig;
 
 @Configuration // @SpringBootConfigurationは複数存在させられない
 @EnableAutoConfiguration
