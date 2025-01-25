@@ -2,119 +2,60 @@ package io.extact.msa.spring.rms.boundary.webapi.admin;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.Set;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
+import jakarta.validation.metadata.BeanDescriptor;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
+import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
+import io.extact.msa.spring.platform.fw.domain.constraint.ValidationConfig;
+import io.extact.msa.spring.rms.ConstraintAnnotationAsserter;
+import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
+import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
+
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
 class ItemUpdateRequestTest {
 
-    private static Validator validator;
+    @Autowired
+    private Validator validator;
 
-    @BeforeAll
-    static void setUpValidator() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+    @Configuration(proxyBeanMethods = false)
+    @Import(ValidationConfig.class)
+    static class TestConfig {
     }
 
     @Test
-    void whenValidRequest_thenNoViolations() {
+    void testBuilder() {
+        // given
+        Integer id = 123;
+        String serialNo = "serialNo";
+        String itemName = "itemName";
+
+        // when
         ItemUpdateRequest request = ItemUpdateRequest.builder()
-                .id(1)
-                .serialNo("ABC12345")
-                .itemName("Laptop")
+                .id(id)
+                .serialNo(serialNo)
+                .itemName(itemName)
                 .build();
 
-        Set<ConstraintViolation<ItemUpdateRequest>> violations = validator.validate(request);
-
-        assertThat(violations).isEmpty();
+        // then
+        assertThat(request.id()).isEqualTo(id);
+        assertThat(request.serialNo()).isEqualTo(serialNo);
+        assertThat(request.itemName()).isEqualTo(itemName);
     }
 
     @Test
-    void whenIdIsNull_thenViolationOccurs() {
-        ItemUpdateRequest request = ItemUpdateRequest.builder()
-                .id(null) // Invalid
-                .serialNo("ABC12345")
-                .itemName("Laptop")
-                .build();
+    void testApplyAnnotationCorrectly() {
 
-        Set<ConstraintViolation<ItemUpdateRequest>> violations = validator.validate(request);
-
-        assertThat(violations).hasSize(1);
-        assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("{jakarta.validation.constraints.NotNull.message}");
-    }
-
-    @Test
-    void whenIdIsLessThanMin_thenViolationOccurs() {
-        ItemUpdateRequest request = ItemUpdateRequest.builder()
-                .id(0) // Invalid
-                .serialNo("ABC12345")
-                .itemName("Laptop")
-                .build();
-
-        Set<ConstraintViolation<ItemUpdateRequest>> violations = validator.validate(request);
-
-        assertThat(violations).hasSize(1);
-        assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("{jakarta.validation.constraints.Min.message}");
-    }
-
-    @Test
-    void whenSerialNoIsBlank_thenViolationOccurs() {
-        ItemUpdateRequest request = ItemUpdateRequest.builder()
-                .id(1)
-                .serialNo("") // Invalid
-                .itemName("Laptop")
-                .build();
-
-        Set<ConstraintViolation<ItemUpdateRequest>> violations = validator.validate(request);
-
-        assertThat(violations).hasSize(1);
-        assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("{jakarta.validation.constraints.NotBlank.message}");
-    }
-
-    @Test
-    void whenSerialNoExceedsMaxLength_thenViolationOccurs() {
-        ItemUpdateRequest request = ItemUpdateRequest.builder()
-                .id(1)
-                .serialNo("1234567890123456") // Invalid
-                .itemName("Laptop")
-                .build();
-
-        Set<ConstraintViolation<ItemUpdateRequest>> violations = validator.validate(request);
-
-        assertThat(violations).hasSize(1);
-        assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("{jakarta.validation.constraints.Size.message}");
-    }
-
-    @Test
-    void whenItemNameIsBlank_thenViolationOccurs() {
-        ItemUpdateRequest request = ItemUpdateRequest.builder()
-                .id(1)
-                .serialNo("ABC12345")
-                .itemName("") // blank ok
-                .build();
-
-        Set<ConstraintViolation<ItemUpdateRequest>> violations = validator.validate(request);
-
-        assertThat(violations).isEmpty();
-    }
-
-    @Test
-    void whenItemNameExceedsMaxLength_thenViolationOccurs() {
-        ItemUpdateRequest request = ItemUpdateRequest.builder()
-                .id(1)
-                .serialNo("ABC12345")
-                .itemName("ThisIsAVeryLongItemName") // Invalid
-                .build();
-
-        Set<ConstraintViolation<ItemUpdateRequest>> violations = validator.validate(request);
-
-        assertThat(violations).hasSize(1);
-        assertThat(violations.iterator().next().getMessageTemplate()).isEqualTo("{jakarta.validation.constraints.Size.message}");
+        BeanDescriptor bd = validator.getConstraintsForClass(ItemUpdateRequest.class);
+        ConstraintAnnotationAsserter.asserterTo(bd)
+                .verifyPropertyAnnotations("id", RmsId.class)
+                .verifyPropertyAnnotations("serialNo", SerialNo.class)
+                .verifyPropertyAnnotations("itemName", ItemName.class);
     }
 }

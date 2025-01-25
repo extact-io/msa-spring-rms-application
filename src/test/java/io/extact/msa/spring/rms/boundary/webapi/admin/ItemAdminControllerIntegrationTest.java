@@ -31,8 +31,11 @@ import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.annotation.PutExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import io.extact.msa.spring.platform.core.auth.client.LoginUserHeaderRequestInitializer;
+import io.extact.msa.spring.PersistedTestData;
+import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
+import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
+import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
@@ -41,7 +44,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorH
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
 import io.extact.msa.spring.platform.test.stub.auth.TestAuthUtils;
 import io.extact.msa.spring.rms.WebApiApplication;
-import io.extact.msa.spring.rms.boundary.webapi.member.ItemMemberResponse;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 /**
@@ -56,21 +58,23 @@ import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
  */
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @EnableAutoConfigurationWithoutJpa
-@ActiveProfiles({ "file", "test" })
+@ActiveProfiles({ "file-all", "test" })
 @TestMethodOrder(OrderAnnotation.class)
 public class ItemAdminControllerIntegrationTest {
 
-    private static final ItemMemberResponse item1 = new ItemMemberResponse(1, "A0001", "レンタル品1号");
-    private static final ItemMemberResponse item2 = new ItemMemberResponse(2, "A0002", "レンタル品2号");
-    private static final ItemMemberResponse item3 = new ItemMemberResponse(3, "A0003", "レンタル品3号");
-    private static final ItemMemberResponse item4 = new ItemMemberResponse(4, "A0004", "レンタル品4号");
+    private static final ItemAdminResponse item1 = ItemAdminResponse.from(PersistedTestData.item1);
+    private static final ItemAdminResponse item2 = ItemAdminResponse.from(PersistedTestData.item2);
+    private static final ItemAdminResponse item3 = ItemAdminResponse.from(PersistedTestData.item3);
+    private static final ItemAdminResponse item4 = ItemAdminResponse.from(PersistedTestData.item4);
 
     @Autowired
     private RentalItemClient client;
 
     @Configuration(proxyBeanMethods = false)
     @EnableWebSecurity(debug = true)
-    @Import(WebApiApplication.class)
+    @Import({
+        WebApiApplication.class,
+        JwtEncodeConfig.class })
     static class TestConfig {
 
         @Bean
@@ -79,7 +83,7 @@ public class ItemAdminControllerIntegrationTest {
             RestClient restClient = RestClient.builder()
                     .uriBuilderFactory(new LocalHostUriBuilderFactory(env))
                     .defaultStatusHandler(new RestClientErrorHandler(new ErrorMessageDeserializer()))
-                    .requestInitializer(new LoginUserHeaderRequestInitializer())
+                    .requestInitializer(new BearerTokenRequestInitializer())
                     .build();
 
             RestClientAdapter adapter = RestClientAdapter.create(restClient);
@@ -89,8 +93,8 @@ public class ItemAdminControllerIntegrationTest {
     }
 
     @BeforeEach
-    void beforeEach() {
-        TestAuthUtils.signin(1, "MEMBER");
+    void beforeEach(@Autowired JsonWebTokenGenerator generator) {
+        TestAuthUtils.signinByJwt(generator, 1, "MEMBER");
     }
 
     @AfterEach
@@ -102,9 +106,9 @@ public class ItemAdminControllerIntegrationTest {
     @Order(1)
     void testGetAll() {
         // given
-        List<ItemMemberResponse> expected = List.of(item1, item2, item3, item4);
+        List<ItemAdminResponse> expected = List.of(item1, item2, item3, item4);
         // when
-        List<ItemMemberResponse> actual = client.getAll();
+        List<ItemAdminResponse> actual = client.getAll();
         // then
         assertThat(actual).containsExactlyElementsOf(expected);
     }
@@ -122,52 +126,6 @@ public class ItemAdminControllerIntegrationTest {
     }
 
     @Test
-    @Order(2)
-    void testGetOne() {
-        // given
-        int existId = 3; // 該当あり
-        // when
-        ItemMemberResponse actual = client.get(existId);
-        // then
-        assertThat(actual).isEqualTo(item3);
-    }
-
-    @Test
-    void testGetOneNotFound() {
-        // given
-        int noExistId = 999; // 該当なし
-        // when
-        ItemMemberResponse actual = client.get(noExistId);
-        // then
-        assertThat(actual).isNull();
-    }
-
-    @Test
-    void testGetOneOnAuthenticationError() {
-        // given
-        SecurityContextHolder.clearContext();
-        // when
-        assertThatThrownBy(() -> client.get(1))
-                // then
-                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
-                    assertThat(thrown).hasMessageContaining("認証エラー");
-                });
-    }
-
-    @Test
-    void testGetOneOnParameterError() {
-        // given
-        int errorId = -1;
-        // when
-        assertThatThrownBy(() -> client.get(errorId))
-                // then
-                .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown).hasMessageContaining("パラメーターエラー");
-                    assertThat(thrown.getDetailMessage()).contains("itemId", "1 以上");
-                });
-    }
-
-    @Test
     @Order(3)
     void testAdd() {
         // given
@@ -176,9 +134,9 @@ public class ItemAdminControllerIntegrationTest {
                 .itemName("追加アイテム")
                 .build();
         // when
-        ItemMemberResponse actual = client.add(request);
+        ItemAdminResponse actual = client.add(request);
         // then
-        assertThat(actual).isEqualTo(new ItemMemberResponse(5, "newNo", "追加アイテム"));
+        assertThat(actual).isEqualTo(new ItemAdminResponse(5, "newNo", "追加アイテム"));
     }
 
     @Test
@@ -236,9 +194,9 @@ public class ItemAdminControllerIntegrationTest {
                 .itemName("UPDATE-2")
                 .build();
         // when
-        ItemMemberResponse actual = client.update(request);
+        ItemAdminResponse actual = client.update(request);
         // then
-        assertThat(actual).isEqualTo(new ItemMemberResponse(2, "UPDATE-1", "UPDATE-2"));
+        assertThat(actual).isEqualTo(new ItemAdminResponse(2, "UPDATE-1", "UPDATE-2"));
     }
 
     @Test
@@ -313,7 +271,11 @@ public class ItemAdminControllerIntegrationTest {
         // when
         client.delete(deleteId);
         // then
-        assertThat(client.get(deleteId)).isNull();
+        ItemAdminResponse deleted = client.getAll().stream()
+                .filter(item -> item.id().equals(deleteId))
+                .findFirst()
+                .orElse(null);
+        assertThat(deleted).isNull();
     }
 
     @Test
@@ -354,58 +316,22 @@ public class ItemAdminControllerIntegrationTest {
                 });
     }
 
-    @Test
-    void testExist() {
-        // given
-        int existId = 2;
-        // when
-        boolean ret = client.exists(existId);
-        // then
-        assertThat(ret).isTrue();
-
-        // given
-        int notExistId = 999;
-        // when
-        ret = client.exists(notExistId);
-        // then
-        assertThat(ret).isFalse();
-    }
-
-    @Test
-    void testExistOnAuthenticationError() {
-        // given
-        SecurityContextHolder.clearContext();
-        int existId = 2;
-        // when
-        assertThatThrownBy(() -> client.exists(existId))
-                // then
-                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
-                    assertThat(thrown).hasMessageContaining("認証エラー");
-                });
-    }
-
 
     // ---------------------------------------------------- inner classes.
 
-    @HttpExchange("/items")
+    @HttpExchange("/admin/items")
     public interface RentalItemClient {
 
         @GetExchange
-        List<ItemMemberResponse> getAll();
-
-        @GetExchange("/{id}")
-        ItemMemberResponse get(@PathVariable("id") Integer itemId);
+        List<ItemAdminResponse> getAll();
 
         @PostExchange
-        ItemMemberResponse add(@RequestBody ItemAddRequest request);
+        ItemAdminResponse add(@RequestBody ItemAddRequest request);
 
         @PutExchange
-        ItemMemberResponse update(@RequestBody ItemUpdateRequest request);
+        ItemAdminResponse update(@RequestBody ItemUpdateRequest request);
 
         @DeleteExchange("/{id}")
         void delete(@PathVariable("id") Integer itemId);
-
-        @GetExchange("/exists/{id}")
-        boolean exists(@PathVariable("id") Integer itemId);
     }
 }

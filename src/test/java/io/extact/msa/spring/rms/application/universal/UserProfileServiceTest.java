@@ -70,7 +70,7 @@ class UserProfileServiceTest {
                 .phoneNumber("090-5555-5555")
                 .contact("update@example.com")
                 .build();
-        TestAuthUtils.signin(1, "MEMBER");
+        TestAuthUtils.signinByHeader(1, "MEMBER");
 
         // when
         UserReference actual = service.updateOwnProfile(command);
@@ -101,7 +101,7 @@ class UserProfileServiceTest {
                 .phoneNumber("090-5555-5555")
                 .contact("update@example.com")
                 .build();
-        TestAuthUtils.signin(99, "MEMBER");
+        TestAuthUtils.signinByHeader(99, "MEMBER");
 
         // when
         BusinessFlowException exception = assertThrows(BusinessFlowException.class, () -> {
@@ -121,7 +121,7 @@ class UserProfileServiceTest {
                 .phoneNumber("090-5555-5555")
                 .contact("update@example.com")
                 .build();
-        TestAuthUtils.signin(1, "MEMBER");
+        TestAuthUtils.signinByHeader(1, "MEMBER");
 
         // when
         RmsValidationException exception = assertThrows(RmsValidationException.class, () -> {

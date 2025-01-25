@@ -9,7 +9,10 @@ spring:
     basename: fw-messages,application-messages
     encoding: UTF-8
   profiles:
-    default: item-jpa,reservation-jpa,user-jpa
+    group:
+      jpa-all: item-jpa,reservation-jpa,user-jpa
+      file-all: item-file,reservation-file,user-file
+    default: jpa-all
   jpa:
     open-in-view: false
     hibernate:
@@ -34,14 +37,13 @@ management:
       validate-group-membership: false # groupにindicatorが存在しない場合もエラーにしない設定
 
 rms:
-  debug:
-    configdump:
-      enable: false
-      #system-properties: on
-      #system-environment: on
   log:
     server:
       enable: false
+  jwt-deencode:
+    public-key: classpath:/jwt.pub.key
+    claim:
+      issuer: ${rms.jwt-encode.claim.issuer}
   persistence:
     item:
       csv:

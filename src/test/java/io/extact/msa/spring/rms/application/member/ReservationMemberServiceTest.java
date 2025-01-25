@@ -232,7 +232,7 @@ class ReservationMemberServiceTest {
     void testGetOwnReservations() {
         // given
         int reserverId = 1;
-        TestAuthUtils.signin(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
 
         // when
         List<ReservationComposeModel> reservations = service.getOwnReservations();
@@ -244,7 +244,7 @@ class ReservationMemberServiceTest {
     void testGetOwnReservationsOnNotFound() {
         // given
         int reserverId = 3;
-        TestAuthUtils.signin(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
 
         // when
         List<ReservationComposeModel> reservations = service.getOwnReservations();
@@ -399,7 +399,7 @@ class ReservationMemberServiceTest {
         // given
         ReservationId cancelId = reservation3.getId();
         int reserverId = 1;
-        TestAuthUtils.signin(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
 
         // when
         service.cancel(cancelId);
@@ -414,7 +414,7 @@ class ReservationMemberServiceTest {
         // given
         ReservationId cancelId = reservation1.getId();
         int reserverId = 3;
-        TestAuthUtils.signin(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
 
         // when
         BusinessFlowException exception = assertThrows(BusinessFlowException.class, () -> {
@@ -433,7 +433,7 @@ class ReservationMemberServiceTest {
         // given
         ReservationId cancelId = new ReservationId(99);
         int reserverId = 1;
-        TestAuthUtils.signin(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
 
         // when
         BusinessFlowException exception = assertThrows(BusinessFlowException.class, () -> {

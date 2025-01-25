@@ -1,14 +1,31 @@
 package io.extact.msa.spring.rms;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
-@SpringBootApplication
-@Profile("console")
+import io.extact.msa.spring.platform.core.CoreConfig;
+import io.extact.msa.spring.rms.application.ApplicationServiceConfig;
+import io.extact.msa.spring.rms.boundary.console.ConsoleConfig;
+import io.extact.msa.spring.rms.domain.DomainConfig;
+import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
+
+@Configuration // @SpringBootConfigurationは複数存在させられない
+@EnableAutoConfiguration
+@Import({
+        CoreConfig.class,
+        ApplicationServiceConfig.class,
+        DomainConfig.class,
+        PersistenceConfig.class,
+        ConsoleConfig.class })
 public class ConsoleApplication {
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(WebApiApplication.class, args);
+        new SpringApplicationBuilder()
+                .sources(ConsoleApplication.class)
+                .web(WebApplicationType.NONE)
+                .run(args);
     }
 }
