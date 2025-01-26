@@ -4,24 +4,26 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.domain.user.model.UserProfile;
 import io.extact.msa.spring.rms.domain.user.model.UserReference;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
-import io.extact.msa.spring.rms.interfaces.webapi.universal.LoginUserResponse;
 
 class LoginUserResponseTest {
+
+    private static final UserCreatable testCreator = new UserCreatable() {};
 
     @Test
     void testFrom() {
         // given
-        UserReference user = new UserReference(
+        UserReference user = testCreator.newInstance(
                 new UserId(1),
                 "testLoginId",
                 "testPassword",
                 UserType.ADMIN,
-                new UserProfile("John Doe", "123-456-7890", "john.doe@example.com")
-        );
+                "John Doe",
+                "123-456-7890",
+                "john.doe@example.com");
 
         // when
         LoginUserResponse response = LoginUserResponse.from(user);
@@ -41,10 +43,8 @@ class LoginUserResponseTest {
     void testFromNull() {
         // given
         UserReference user = null;
-
         // when
         LoginUserResponse response = LoginUserResponse.from(user);
-
         // then
         assertThat(response).isNull();
     }

@@ -52,7 +52,7 @@ import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 @EnableAutoConfigurationWithoutJpa
 @ActiveProfiles({ "file-all", "test" })
 @TestMethodOrder(OrderAnnotation.class)
-public class UserAdminControllerIntegrationTest {
+class UserAdminControllerIntegrationTest {
 
     private static final UserAdminResponse user1 = UserAdminResponse.from(PersistedTestData.user1);
     private static final UserAdminResponse user2 = UserAdminResponse.from(PersistedTestData.user2);

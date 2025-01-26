@@ -11,8 +11,8 @@ public record ReservationAdminResponse(
         String note,
         int itemId,
         int reserverId,
-        ItemAdminResponse itemResponse,
-        UserAdminResponse reserverReseponse) {
+        ItemAdminResponse item,
+        UserAdminResponse reserver) {
 
     static ReservationAdminResponse from(ReservationComposeModel model) {
         if (model == null) {

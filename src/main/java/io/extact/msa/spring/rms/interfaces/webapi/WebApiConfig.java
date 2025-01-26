@@ -3,9 +3,6 @@ package io.extact.msa.spring.rms.interfaces.webapi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.method.HandlerTypePredicate;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import io.extact.msa.spring.platform.core.env.ActiveProfileResolver;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
@@ -14,10 +11,15 @@ import io.extact.msa.spring.platform.fw.web.RestControllerConfig;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
+import io.extact.msa.spring.rms.application.member.ReservationMemberService;
+import io.extact.msa.spring.rms.application.universal.LoginService;
+import io.extact.msa.spring.rms.application.universal.UserProfileService;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ItemAdminController;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationAdminController;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserAdminController;
 import io.extact.msa.spring.rms.interfaces.webapi.member.ReservationMemberController;
+import io.extact.msa.spring.rms.interfaces.webapi.universal.LoginController;
+import io.extact.msa.spring.rms.interfaces.webapi.universal.UserProfileController;
 
 @Configuration(proxyBeanMethods = false)
 @Import({
@@ -25,12 +27,14 @@ import io.extact.msa.spring.rms.interfaces.webapi.member.ReservationMemberContro
         RestControllerConfig.class,
         WebSecurityConfig.class
 })
-public class WebApiConfig implements WebMvcConfigurer {
+public class WebApiConfig {
 
     @Bean
     StartupLogRunner startupLogRunner(MainModuleInformation moduleInfo, ActiveProfileResolver profileResolver) {
         return new StartupLogRunner(moduleInfo, profileResolver);
     }
+
+    // --- for admin
 
     @Bean
     ItemAdminController itemAdminController(ItemAdminService service) {
@@ -47,17 +51,22 @@ public class WebApiConfig implements WebMvcConfigurer {
         return new UserAdminController(service);
     }
 
-    @Override
-    public void configurePathMatch(PathMatchConfigurer configurer) {
+    // --- for member
 
-        configurer.addPathPrefix("/admin",
-                HandlerTypePredicate.forAssignableType(
-                        ItemAdminController.class,
-                        ReservationAdminController.class,
-                        UserAdminController.class));
+    @Bean
+    ReservationMemberController reservationMemberController(ReservationMemberService service) {
+        return new ReservationMemberController(service);
+    }
 
-        configurer.addPathPrefix("/member",
-                HandlerTypePredicate.forAssignableType(
-                        ReservationMemberController.class));
+    // --- for universal
+
+    @Bean
+    LoginController loginController(LoginService service) {
+        return new LoginController(service);
+    }
+
+    @Bean
+    UserProfileController userProfileController(UserProfileService service) {
+        return new UserProfileController(service);
     }
 }

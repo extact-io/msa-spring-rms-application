@@ -39,7 +39,7 @@ public class ReservationAdminController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@RmsId @PathVariable("id") Integer itemId) {
-        service.delete(new ReservationId(itemId));
+    public void delete(@RmsId @PathVariable("id") Integer reservationId) {
+        service.delete(new ReservationId(reservationId));
     }
 }

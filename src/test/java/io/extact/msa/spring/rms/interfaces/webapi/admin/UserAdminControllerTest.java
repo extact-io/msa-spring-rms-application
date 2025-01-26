@@ -67,7 +67,7 @@ class UserAdminControllerTest {
                 .thenReturn(List.of(user1, user2));
 
         // when
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/admin/users"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
@@ -88,7 +88,7 @@ class UserAdminControllerTest {
         when(userService.getAll()).thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/admin/users"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
@@ -101,7 +101,7 @@ class UserAdminControllerTest {
         // @WithMockUserなし
 
         // when
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/admin/users"))
                 .andExpect(status().isUnauthorized());
 
         // then
@@ -128,7 +128,7 @@ class UserAdminControllerTest {
                     req.contact()));
 
         // when
-        mockMvc.perform(post("/users")
+        mockMvc.perform(post("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -152,7 +152,7 @@ class UserAdminControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/users")
+        mockMvc.perform(post("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -182,7 +182,7 @@ class UserAdminControllerTest {
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
         // when
-        mockMvc.perform(post("/users")
+        mockMvc.perform(post("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -199,7 +199,7 @@ class UserAdminControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/users")
+        mockMvc.perform(post("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -231,7 +231,7 @@ class UserAdminControllerTest {
                         req.contact()));
 
         // when
-        mockMvc.perform(put("/users")
+        mockMvc.perform(put("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -255,7 +255,7 @@ class UserAdminControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/users")
+        mockMvc.perform(put("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -284,7 +284,7 @@ class UserAdminControllerTest {
                 .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
         // when
-        mockMvc.perform(put("/users")
+        mockMvc.perform(put("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -301,7 +301,7 @@ class UserAdminControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/users")
+        mockMvc.perform(put("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -318,7 +318,7 @@ class UserAdminControllerTest {
         doNothing().when(userService).delete(new UserId(userId));
 
         // when
-        mockMvc.perform(delete("/users/{id}", userId))
+        mockMvc.perform(delete("/admin/users/{id}", userId))
                 // then
                 .andExpect(status().isOk());
     }
@@ -331,7 +331,7 @@ class UserAdminControllerTest {
         int invalidId = -1;
 
         // when
-        mockMvc.perform(delete("/users/{id}", invalidId))
+        mockMvc.perform(delete("/admin/users/{id}", invalidId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest())
@@ -349,12 +349,11 @@ class UserAdminControllerTest {
 
         // given
         int userId = 999;
-
         doThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND))
                 .when(userService).delete(new UserId(userId));
 
         // when
-        mockMvc.perform(delete("/users/{id}", userId))
+        mockMvc.perform(delete("/admin/users/{id}", userId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isNotFound())
@@ -368,7 +367,7 @@ class UserAdminControllerTest {
         int userId = 1;
 
         // when
-        mockMvc.perform(delete("/users/{id}", userId))
+        mockMvc.perform(delete("/admin/users/{id}", userId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());

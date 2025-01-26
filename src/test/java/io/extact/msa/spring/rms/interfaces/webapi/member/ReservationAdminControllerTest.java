@@ -1,4 +1,4 @@
-package io.extact.msa.spring.rms.interfaces.webapi.admin;
+package io.extact.msa.spring.rms.interfaces.webapi.member;
 
 import static io.extact.msa.spring.PersistedTestData.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -27,8 +27,8 @@ import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.web.RestControllerConfig;
-import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationUpdateCommand;
+import io.extact.msa.spring.rms.application.member.ReservationMemberService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
@@ -36,7 +36,7 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationUpdateRequest.ReservationUpdateRequestBuilder;
 
-@WebMvcTest(ReservationAdminController.class)
+@WebMvcTest(ReservationMemberController.class)
 class ReservationAdminControllerTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};
@@ -46,7 +46,7 @@ class ReservationAdminControllerTest {
     @Autowired
     private ObjectMapper mapper;
     @MockBean
-    private ReservationAdminService reservationService;
+    private ReservationMemberService reservationService;
 
     @Configuration(proxyBeanMethods = false)
     @Import({
@@ -55,53 +55,39 @@ class ReservationAdminControllerTest {
             WebSecurityConfig.class })
     static class TestConfig {
         @Bean
-        ReservationAdminController reservationAdminController(ReservationAdminService service) {
-            return new ReservationAdminController(service);
+        ReservationMemberController reservationMemberController(ReservationMemberService service) {
+            return new ReservationMemberController(service);
         }
     }
 
     @Test
     @WithMockUser
-    void testGetAll() throws Exception {
+    void testGetItemAll() throws Exception {
 
         // given
-        when(reservationService.getAll())
-            .thenReturn(List.of(model1, model2, model3));
+        when(reservationService.getItemAll())
+            .thenReturn(List.of(item1, item2, item3, item4));
 
         // when
-        mockMvc.perform(get("/admin/reservations"))
+        mockMvc.perform(get("/member/reservations"))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(3))
-                .andExpect(jsonPath("$[0].id").value(1))
-                // TODO コンバーターと一緒に直す
-                //.andExpect(jsonPath("$[0].fromDateTime").value(model1.reservation().getPeriod().getFrom()))
-                //.andExpect(jsonPath("$[0].toDateTime").value(model1.reservation().getPeriod().getTo()))
-                .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
-                .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
-                .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id()))
-                .andExpect(jsonPath("$[0].item.id").value(model1.rentalItem().getId().id()))
-                .andExpect(jsonPath("$[0].item.serialNo").value(model1.rentalItem().getSerialNo()))
-                .andExpect(jsonPath("$[0].item.itemName").value(model1.rentalItem().getItemName()))
-                .andExpect(jsonPath("$[0].reserver.id").value(model1.reserver().getId().id()))
-                .andExpect(jsonPath("$[0].reserver.loginId").value(model1.reserver().getLoginId()))
-                .andExpect(jsonPath("$[0].reserver.password").value(model1.reserver().getPassword()))
-                .andExpect(jsonPath("$[0].reserver.userType").value(model1.reserver().getUserType().name()))
-                .andExpect(jsonPath("$[0].reserver.userName").value(model1.reserver().getProfile().getUserName()))
-                .andExpect(jsonPath("$[0].reserver.phoneNumber").value(model1.reserver().getProfile().getPhoneNumber()))
-                .andExpect(jsonPath("$[0].reserver.contact").value(model1.reserver().getProfile().getContact()));
+                .andExpect(jsonPath("$.length()").value(4))
+                .andExpect(jsonPath("$[0].id").value(item1.getId().id()))
+                .andExpect(jsonPath("$[0].serialNo").value(item1.getSerialNo()))
+                .andExpect(jsonPath("$[0].itemName").value(item1.getItemName())); // 2件目以降の確認は省略
     }
 
     @Test
     @WithMockUser
-    void testGetAllReturnEmpty() throws Exception {
+    void testGetItemAllReturnEmpty() throws Exception {
 
         // given
-        when(reservationService.getAll())
+        when(reservationService.getItemAll()))
             .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/admin/reservations"))
+        mockMvc.perform(get("/member/reservations"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));

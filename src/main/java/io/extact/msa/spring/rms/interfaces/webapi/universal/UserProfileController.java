@@ -3,7 +3,7 @@ package io.extact.msa.spring.rms.interfaces.webapi.universal;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import io.extact.msa.spring.platform.fw.web.RmsRestController;
@@ -23,7 +23,7 @@ public class UserProfileController {
                 .transform(UserProfileResponse::from);
     }
 
-    @PostMapping("/own")
+    @PutMapping("/own")
     public UserProfileResponse updateOwnProfile(@Valid @RequestBody UserProfileUpdateRequest request) {
         return service
                 .updateOwnProfile(request.toCommand())

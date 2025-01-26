@@ -76,7 +76,7 @@ class ItemAdminControllerTest {
         when(itemService.getAll())
                 .thenReturn(List.of(item1, item2, item3, item4));
         // when
-        mockMvc.perform(get("/items"))
+        mockMvc.perform(get("/admin/items"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(4))
@@ -93,7 +93,7 @@ class ItemAdminControllerTest {
         when(itemService.getAll())
                 .thenReturn(List.of());
         // when
-        mockMvc.perform(get("/items"))
+        mockMvc.perform(get("/admin/items"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
@@ -106,7 +106,7 @@ class ItemAdminControllerTest {
         // @WithMockUserなし
 
         // when
-        mockMvc.perform(get("/items"))
+        mockMvc.perform(get("/admin/items"))
                 // then
                 .andExpect(status().isUnauthorized());
 
@@ -130,7 +130,7 @@ class ItemAdminControllerTest {
                 .thenReturn(testCreator.newInstance(new ItemId(5), req.serialNo(), req.itemName()));
 
         // when
-        mockMvc.perform(post("/items")
+        mockMvc.perform(post("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 // then
@@ -150,7 +150,7 @@ class ItemAdminControllerTest {
         String body = mapper.writeValueAsString(request);
 
         // when
-        mockMvc.perform(post("/items")
+        mockMvc.perform(post("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 // then
@@ -181,7 +181,7 @@ class ItemAdminControllerTest {
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
         // when
-        mockMvc.perform(post("/items")
+        mockMvc.perform(post("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 // then
@@ -201,7 +201,7 @@ class ItemAdminControllerTest {
         String body = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/items")
+        mockMvc.perform(post("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 // then
@@ -229,7 +229,7 @@ class ItemAdminControllerTest {
                 .thenReturn(testCreator.newInstance(new ItemId(5), req.serialNo(), req.itemName()));
 
         // when
-        mockMvc.perform(put("/items")
+        mockMvc.perform(put("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 // then
@@ -251,7 +251,7 @@ class ItemAdminControllerTest {
         String body = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/items")
+        mockMvc.perform(put("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 // then
@@ -283,7 +283,7 @@ class ItemAdminControllerTest {
         when(itemService.update(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
-        mockMvc.perform(put("/items")
+        mockMvc.perform(put("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 // then
@@ -307,7 +307,7 @@ class ItemAdminControllerTest {
         when(itemService.update(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
-        mockMvc.perform(put("/items")
+        mockMvc.perform(put("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 // then
@@ -327,7 +327,7 @@ class ItemAdminControllerTest {
                 .build();
         String body = mapper.writeValueAsString(req);
 
-        mockMvc.perform(put("/items")
+        mockMvc.perform(put("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
                 // then
@@ -347,7 +347,7 @@ class ItemAdminControllerTest {
         Mockito.doNothing().when(itemService).delete(new ItemId(deleteId));
 
         // when
-        mockMvc.perform(delete("/items/{id}", deleteId))
+        mockMvc.perform(delete("/admin/items/{id}", deleteId))
                 // then
                 .andExpect(status().isOk());
     }
@@ -360,7 +360,7 @@ class ItemAdminControllerTest {
         int deleteId = -1;
 
         // when
-        mockMvc.perform(delete("/items/{id}", deleteId))
+        mockMvc.perform(delete("/admin/items/{id}", deleteId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest())
@@ -382,7 +382,7 @@ class ItemAdminControllerTest {
                 .when(itemService).delete(new ItemId(deleteId));
 
         // when
-        mockMvc.perform(delete("/items/{id}", deleteId))
+        mockMvc.perform(delete("/admin/items/{id}", deleteId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isNotFound())
@@ -396,7 +396,7 @@ class ItemAdminControllerTest {
         int deleteId = 1;
 
         // when
-        mockMvc.perform(delete("/items/{id}", deleteId))
+        mockMvc.perform(delete("/admin/items/{id}", deleteId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());

@@ -60,7 +60,7 @@ import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 @EnableAutoConfigurationWithoutJpa
 @ActiveProfiles({ "file-all", "test" })
 @TestMethodOrder(OrderAnnotation.class)
-public class ItemAdminControllerIntegrationTest {
+class ItemAdminControllerIntegrationTest {
 
     private static final ItemAdminResponse item1 = ItemAdminResponse.from(PersistedTestData.item1);
     private static final ItemAdminResponse item2 = ItemAdminResponse.from(PersistedTestData.item2);

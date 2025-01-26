@@ -1,4 +1,4 @@
-package io.extact.msa.spring.rms.interfaces.webapi.admin;
+package io.extact.msa.spring.rms.interfaces.webapi.member;
 
 import static io.extact.msa.spring.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;

@@ -1,4 +1,4 @@
-package io.extact.msa.spring.rms.interfaces.webapi.admin;
+package io.extact.msa.spring.rms.interfaces.webapi.member;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,7 +19,7 @@ import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 
-class ReservationAdminResponseTest {
+class ReservationMemberResponseTest {
 
     private static final ItemCreatable itemCreator = new ItemCreatable() {};
     private static final UserCreatable userCreator = new UserCreatable() {};
@@ -31,8 +31,8 @@ class ReservationAdminResponseTest {
         Reservation reservation = reservationCreator.newInstance(
                 new ReservationId(1),
                 new ReservationPeriod(
-                        LocalDateTime.of(2025, 1, 1, 10, 0),
-                        LocalDateTime.of(2025, 1, 1, 12, 0)),
+                        LocalDateTime.of(2099, 1, 1, 10, 0),
+                        LocalDateTime.of(2099, 1, 1, 12, 0)),
                 "Test Note",
                 new ItemId(101),
                 new UserId(201));
@@ -44,23 +44,18 @@ class ReservationAdminResponseTest {
         ReservationComposeModel model = new ReservationComposeModel(reservation, item, reserver);
 
         // when
-        ReservationAdminResponse response = ReservationAdminResponse.from(model);
+        ReservationMemberResponse response = ReservationMemberResponse.from(model);
 
         // then
         assertThat(response).isNotNull();
         assertThat(response.id()).isEqualTo(1);
-        assertThat(response.fromDateTime()).isEqualTo(LocalDateTime.of(2025, 1, 1, 10, 0));
-        assertThat(response.toDateTime()).isEqualTo(LocalDateTime.of(2025, 1, 1, 12, 0));
+        assertThat(response.fromDateTime()).isEqualTo(LocalDateTime.of(2099, 1, 1, 10, 0));
+        assertThat(response.toDateTime()).isEqualTo(LocalDateTime.of(2099, 1, 1, 12, 0));
         assertThat(response.note()).isEqualTo("Test Note");
         assertThat(response.itemId()).isEqualTo(101);
+        assertThat(response.serialNo()).isEqualTo("Item 101");
+        assertThat(response.itemName()).isEqualTo("name");
         assertThat(response.reserverId()).isEqualTo(201);
-
-        // Nested responses
-        assertThat(response.item()).isNotNull();
-        assertThat(response.item()).isEqualTo(ItemAdminResponse.from(item));
-
-        assertThat(response.reserver()).isNotNull();
-        assertThat(response.reserver()).isEqualTo(UserAdminResponse.from(reserver));
     }
 
     @Test
@@ -68,7 +63,7 @@ class ReservationAdminResponseTest {
         // given
         ReservationComposeModel model = null;
         // when
-        ReservationAdminResponse response = ReservationAdminResponse.from(model);
+        ReservationMemberResponse response = ReservationMemberResponse.from(model);
         // then
         assertThat(response).isNull();
     }
