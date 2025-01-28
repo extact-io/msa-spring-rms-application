@@ -10,7 +10,7 @@ import io.extact.msa.spring.platform.core.env.MainModuleInformation;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
-import io.extact.msa.spring.rms.application.member.ReservationMemberService;
+import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.interfaces.console.screen.MainScreenController;
 
@@ -26,7 +26,7 @@ public class ConsoleConfig {
             ItemAdminService itemAdminService,
             ReservationAdminService reservationAdminService,
             UserAdminService userAdminService,
-            ReservationMemberService reservationMemberService,
+            ItemReservationService reservationMemberService,
             MainModuleInformation moduleInfo) {
 
         return new MainScreenController(

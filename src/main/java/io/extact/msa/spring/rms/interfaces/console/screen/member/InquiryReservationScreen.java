@@ -5,7 +5,7 @@ import static io.extact.msa.spring.rms.interfaces.console.common.ClientConstants
 import java.time.LocalDate;
 import java.util.List;
 
-import io.extact.msa.spring.rms.application.member.ReservationMemberService;
+import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.ItemReference;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InquiryReservationScreen implements RmsScreen {
 
-    private final ReservationMemberService service;
+    private final ItemReservationService service;
 
     @Override
     public Transition play(UserReference loginUser, boolean printHeader) {

@@ -15,97 +15,89 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.web.RmsRestController;
-import io.extact.msa.spring.rms.application.member.ReservationMemberService;
+import io.extact.msa.spring.rms.application.member.ItemReservationService;
+import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.RequiredArgsConstructor;
 
-@RmsRestController("/rental-items")
+@RmsRestController
 @RequiredArgsConstructor
-public class ReservationMemberController {
+public class ItemReservationController {
 
-    private final ReservationMemberService service;
+    private final ItemReservationService service;
 
-    @GetMapping
-    public List<ItemMemberResponse> getItemAll() {
+    @GetMapping("/items")
+    public List<ItemResponse> getItemAll() {
         return service
                 .getItemAll()
                 .stream()
-                .map(ItemMemberResponse::from)
+                .map(ItemResponse::from)
                 .toList();
     }
 
-    @GetMapping("/rentable")
-    public List<ItemMemberResponse> findCanRentedItemAtPeriod(
+    @GetMapping("/items/rentable")
+    public List<ItemResponse> findRentableItemAtPeriod(
             @RequestParam("from") @NotNull LocalDateTime from,
             @RequestParam("to") @NotNull LocalDateTime to) {
 
         return service
-                .findCanRentedItemAtPeriod(from, to)
+                .findRentableItemAtPeriod(from, to)
                 .stream()
-                .map(ItemMemberResponse::from)
+                .map(ItemResponse::from)
                 .toList();
     }
 
-    @GetMapping("/{itemId}/rentable")
-    public boolean canRentedItemAtPeriod(
+    @GetMapping("/items/{itemId}/rentable")
+    public boolean isRentableItemAtPeriod(
             @PathParam("itemId") @RmsId int itemId,
             @RequestParam("from") @NotNull LocalDateTime from,
             @RequestParam("to") @NotNull LocalDateTime to) {
 
         return service
-                .canRentedItemAtPeriod(new ItemId(itemId), from, to);
+                .isRentableItemAtPeriod(new ItemId(itemId), from, to);
     }
 
-    @GetMapping("/{itemId}/reservations")
-    public List<ReservationMemberResponse> findReservationByItemId(
-            @PathParam("itemId") @RmsId int itemId) {
-
-        return service
-                .findReservationByItemId(new ItemId(itemId))
-                .stream()
-                .map(ReservationMemberResponse::from)
-                .toList();
-    }
-
-    @GetMapping("/{itemId}/reservations/")
-    public List<ReservationMemberResponse> findReservationByItemIdAndFromDate(
+    @GetMapping("/reservations/items/{itemId}")
+    public List<ReserveItemResponse> findReservationByItemId(
             @PathParam("itemId") @RmsId int itemId,
-            @RequestParam("from") @NotNull LocalDate from) {
+            @RequestParam("from-date") LocalDate from) {
 
-        return service
-                .findReservationByItemIdAndFromDate(new ItemId(itemId), from)
-                .stream()
-                .map(ReservationMemberResponse::from)
+        List<ReservationComposeModel> models = from != null
+                ? service.findReservationByItemIdAndFromDate(new ItemId(itemId), from)
+                : service.findReservationByItemId(new ItemId(itemId));
+
+        return models.stream()
+                .map(ReserveItemResponse::from)
                 .toList();
     }
 
-    @GetMapping("/reservations/reserver/{reserverId}")
-    public List<ReservationMemberResponse> findReservationByReserverId(
+    @GetMapping("/reservations/reservers/{reserverId}")
+    public List<ReserveItemResponse> findReservationByReserverId(
             @PathParam("reserverId") @RmsId int reserverId) {
 
         return service
                 .findReservationByReserverId(new UserId(reserverId))
                 .stream()
-                .map(ReservationMemberResponse::from)
+                .map(ReserveItemResponse::from)
                 .toList();
     }
 
     @GetMapping("/reservations/own")
-    public List<ReservationMemberResponse> getOwnReservations() {
+    public List<ReserveItemResponse> getOwnReservations() {
         return service
                 .getOwnReservations()
                 .stream()
-                .map(ReservationMemberResponse::from)
+                .map(ReserveItemResponse::from)
                 .toList();
     }
 
     @PostMapping("/reservations")
-    public ReservationMemberResponse reserve(@Valid ReserveItemRequest request) {
+    public ReserveItemResponse reserve(@Valid ReserveItemRequest request) {
         return service
                 .reserve(request.toCommand())
-                .transform(ReservationMemberResponse::from);
+                .transform(ReserveItemResponse::from);
     }
 
     @DeleteMapping("/reservations/{reservationId}")

@@ -49,13 +49,13 @@ import io.extact.msa.spring.test.assertj.ToStringAssert;
 
 @DataJpaTest
 @TestMethodOrder(OrderAnnotation.class)
-class ReservationMemberServiceTest {
+class ItemReservationServiceTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};
     private static final int WITH_SIDE_EFFECT_CASE = 99;
 
     @Autowired
-    private ReservationMemberService service;
+    private ItemReservationService service;
 
     @Configuration(proxyBeanMethods = false)
     @Import({
@@ -78,7 +78,7 @@ class ReservationMemberServiceTest {
         }
 
         @Bean
-        ReservationMemberService reservationMemberService(
+        ItemReservationService reservationMemberService(
                 LoginContext loginContext,
                 ReservationCreator modelCreator,
                 ReservationModelComposer modelComposer,
@@ -87,7 +87,7 @@ class ReservationMemberServiceTest {
                 ItemRepository itemRepository,
                 UserRepository userRepository) {
 
-            return new ReservationMemberService(
+            return new ItemReservationService(
                     loginContext,
                     modelCreator,
                     modelComposer,
@@ -118,7 +118,7 @@ class ReservationMemberServiceTest {
         LocalDateTime to = LocalDateTime.of(2020, 4, 2, 23, 59, 0);
 
         // when
-        List<ItemReference> items = service.findCanRentedItemAtPeriod(from, to);
+        List<ItemReference> items = service.findRentableItemAtPeriod(from, to);
         // then
         ToStringAssert.assertThatToString(items).containsExactly(item1, item2, item4);
     }
@@ -130,7 +130,7 @@ class ReservationMemberServiceTest {
         LocalDateTime to = LocalDateTime.now().plusHours(1);
 
         // when
-        List<ItemReference> items = service.findCanRentedItemAtPeriod(from, to);
+        List<ItemReference> items = service.findRentableItemAtPeriod(from, to);
         // then
         ToStringAssert.assertThatToString(items).containsExactly(item1, item2, item3, item4);
     }
@@ -143,7 +143,7 @@ class ReservationMemberServiceTest {
         LocalDateTime to = LocalDateTime.of(2020, 4, 2, 12, 0, 0);
 
         // when
-        boolean result = service.canRentedItemAtPeriod(itemId, from, to);
+        boolean result = service.isRentableItemAtPeriod(itemId, from, to);
         // then
         assertThat(result).isTrue();
     }
@@ -156,7 +156,7 @@ class ReservationMemberServiceTest {
         LocalDateTime to = LocalDateTime.of(2020, 4, 1, 12, 0, 0);
 
         // when
-        boolean result = service.canRentedItemAtPeriod(itemId, from, to);
+        boolean result = service.isRentableItemAtPeriod(itemId, from, to);
         // then
         assertThat(result).isFalse();
     }

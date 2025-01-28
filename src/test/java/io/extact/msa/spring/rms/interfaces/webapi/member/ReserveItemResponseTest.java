@@ -19,7 +19,7 @@ import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 
-class ReservationMemberResponseTest {
+class ReserveItemResponseTest {
 
     private static final ItemCreatable itemCreator = new ItemCreatable() {};
     private static final UserCreatable userCreator = new UserCreatable() {};
@@ -44,7 +44,7 @@ class ReservationMemberResponseTest {
         ReservationComposeModel model = new ReservationComposeModel(reservation, item, reserver);
 
         // when
-        ReservationMemberResponse response = ReservationMemberResponse.from(model);
+        ReserveItemResponse response = ReserveItemResponse.from(model);
 
         // then
         assertThat(response).isNotNull();
@@ -63,7 +63,7 @@ class ReservationMemberResponseTest {
         // given
         ReservationComposeModel model = null;
         // when
-        ReservationMemberResponse response = ReservationMemberResponse.from(model);
+        ReserveItemResponse response = ReserveItemResponse.from(model);
         // then
         assertThat(response).isNull();
     }

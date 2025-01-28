@@ -5,7 +5,7 @@ import static io.extact.msa.spring.rms.interfaces.console.common.ClientConstants
 import java.util.List;
 
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
-import io.extact.msa.spring.rms.application.member.ReservationMemberService;
+import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.user.model.UserReference;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CancelReservationScreen implements RmsScreen {
 
-    private final ReservationMemberService service;
+    private final ItemReservationService service;
 
     @Override
     public Transition play(UserReference loginUser, boolean printHeader) {

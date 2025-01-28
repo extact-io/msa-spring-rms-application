@@ -9,7 +9,7 @@ import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
  * 会員機能では自分の予約しか扱わないため、ユーザの詳細情報は不要となる。
  * よって、会員機能とは異なり必要なデータだけをフラットな構造で持つようにしている。
  */
-public record ReservationMemberResponse(
+public record ReserveItemResponse(
         int id,
         LocalDateTime fromDateTime,
         LocalDateTime toDateTime,
@@ -19,11 +19,11 @@ public record ReservationMemberResponse(
         String itemName,
         int reserverId) {
 
-    static ReservationMemberResponse from(ReservationComposeModel model) {
+    static ReserveItemResponse from(ReservationComposeModel model) {
         if (model == null) {
             return null;
         }
-        return new ReservationMemberResponse(
+        return new ReserveItemResponse(
                 model.reservation().getId().id(),
                 model.reservation().getPeriod().getFrom(),
                 model.reservation().getPeriod().getTo(),

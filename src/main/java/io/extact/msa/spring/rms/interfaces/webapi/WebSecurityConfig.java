@@ -14,7 +14,7 @@ import io.extact.msa.spring.platform.core.auth.jwt.RmsJwtAuthConfig;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ItemAdminController;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationAdminController;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserAdminController;
-import io.extact.msa.spring.rms.interfaces.webapi.member.ReservationMemberController;
+import io.extact.msa.spring.rms.interfaces.webapi.member.ItemReservationController;
 
 @Configuration(proxyBeanMethods = false)
 @Import(RmsJwtAuthConfig.class)
@@ -31,7 +31,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
         configurer.addPathPrefix("/member",
                 HandlerTypePredicate.forAssignableType(
-                        ReservationMemberController.class));
+                        ItemReservationController.class));
     }
 
     @Bean

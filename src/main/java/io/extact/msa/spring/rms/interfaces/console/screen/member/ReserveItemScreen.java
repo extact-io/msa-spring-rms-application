@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
-import io.extact.msa.spring.rms.application.member.ReservationMemberService;
+import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.member.ReserveItemCommand;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemReference;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReserveItemScreen implements RmsScreen {
 
-    private final ReservationMemberService service;
+    private final ItemReservationService service;
 
     @Override
     public Transition play(UserReference loginUser, boolean printHeader) {

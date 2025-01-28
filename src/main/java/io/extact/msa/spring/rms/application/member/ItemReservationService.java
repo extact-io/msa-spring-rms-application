@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Transactional
-public class ReservationMemberService {
+public class ItemReservationService {
 
     private final LoginContext loginContext;
     private final ReservationCreator modelCreator;
@@ -46,7 +46,7 @@ public class ReservationMemberService {
         return new ArrayList<>(itemRepository.findAll()); // 型をReferenceに制限するため変換
     }
 
-    public List<ItemReference> findCanRentedItemAtPeriod(LocalDateTime from, LocalDateTime to) {
+    public List<ItemReference> findRentableItemAtPeriod(LocalDateTime from, LocalDateTime to) {
 
         ReservationPeriod overlapPeriod = new ReservationPeriod(from, to);
         List<ItemId> reservedItemIds = reservationRepository
@@ -63,7 +63,7 @@ public class ReservationMemberService {
         return new ArrayList<>(items); // 型をReferenceに制限するため変換
     }
 
-    public boolean canRentedItemAtPeriod(ItemId itemId, LocalDateTime from, LocalDateTime to) {
+    public boolean isRentableItemAtPeriod(ItemId itemId, LocalDateTime from, LocalDateTime to) {
         ReservationPeriod overlapPeriod = new ReservationPeriod(from, to);
         return reservationRepository
                 .findOverlappingReservations(itemId, overlapPeriod)

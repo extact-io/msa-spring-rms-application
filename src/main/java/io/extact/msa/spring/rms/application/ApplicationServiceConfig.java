@@ -12,7 +12,7 @@ import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
-import io.extact.msa.spring.rms.application.member.ReservationMemberService;
+import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.application.universal.UserProfileService;
@@ -69,7 +69,7 @@ public class ApplicationServiceConfig {
 
     // ---- for member
     @Bean
-    ReservationMemberService reservationMemberService(
+    ItemReservationService reservationMemberService(
             LoginContext loginContext,
             ReservationCreator modelCreator,
             ReservationModelComposer modelComposer,
@@ -78,7 +78,7 @@ public class ApplicationServiceConfig {
             ItemRepository itemRepository,
             UserRepository userRepository) {
 
-        return new ReservationMemberService(
+        return new ItemReservationService(
                 loginContext,
                 modelCreator,
                 modelComposer,

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,15 +29,16 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.web.RestControllerConfig;
 import io.extact.msa.spring.rms.application.admin.ReservationUpdateCommand;
-import io.extact.msa.spring.rms.application.member.ReservationMemberService;
+import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationUpdateRequest.ReservationUpdateRequestBuilder;
 
-@WebMvcTest(ReservationMemberController.class)
+@WebMvcTest(ItemReservationController.class)
 class ReservationAdminControllerTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};
@@ -46,7 +48,7 @@ class ReservationAdminControllerTest {
     @Autowired
     private ObjectMapper mapper;
     @MockBean
-    private ReservationMemberService reservationService;
+    private ItemReservationService reservationService;
 
     @Configuration(proxyBeanMethods = false)
     @Import({
@@ -55,8 +57,8 @@ class ReservationAdminControllerTest {
             WebSecurityConfig.class })
     static class TestConfig {
         @Bean
-        ReservationMemberController reservationMemberController(ReservationMemberService service) {
-            return new ReservationMemberController(service);
+        ItemReservationController reservationMemberController(ItemReservationService service) {
+            return new ItemReservationController(service);
         }
     }
 
@@ -69,7 +71,7 @@ class ReservationAdminControllerTest {
             .thenReturn(List.of(item1, item2, item3, item4));
 
         // when
-        mockMvc.perform(get("/member/reservations"))
+        mockMvc.perform(get("/member/items"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(4))
@@ -83,28 +85,309 @@ class ReservationAdminControllerTest {
     void testGetItemAllReturnEmpty() throws Exception {
 
         // given
-        when(reservationService.getItemAll()))
+        when(reservationService.getItemAll())
             .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/reservations"))
+        mockMvc.perform(get("/member/items"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }
 
     @Test
-    void testGetAllOnAuthenticationError() throws Exception {
+    void testGetItemAllOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUserなし
 
         // when
-        mockMvc.perform(get("/admin/reservations"))
+        mockMvc.perform(get("/member/items"))
                 .andExpect(status().isUnauthorized());
 
         // then
-        verify(reservationService, never()).getAll();
+        verify(reservationService, never()).getItemAll();
+    }
+
+    @Test
+    @WithMockUser
+    void testFindRentableItemAtPeriod() throws Exception {
+
+        // given
+        LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
+        LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
+        when(reservationService.findRentableItemAtPeriod(from, to))
+            .thenReturn(List.of(item2, item4));
+
+        // when
+        mockMvc.perform(get("/member/rentable")
+                .param("from", from.toString())
+                .param("to", to.toString()))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(item1.getId().id()))
+                .andExpect(jsonPath("$[0].serialNo").value(item1.getSerialNo()))
+                .andExpect(jsonPath("$[0].itemName").value(item1.getItemName())); // 2件目以降の確認は省略
+    }
+
+    @Test
+    @WithMockUser
+    void testFindRentableItemAtPeriodReturnEmpty() throws Exception {
+
+        // given
+        LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
+        LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
+        when(reservationService.findRentableItemAtPeriod(from, to))
+                .thenReturn(List.of());
+
+        // when
+        mockMvc.perform(get("/member/rentable")
+                .param("from", from.toString())
+                .param("to", to.toString()))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    @WithMockUser
+    void testFindRentableItemAtPeriodOnParameterError() throws Exception {
+
+        // given
+        // when
+        mockMvc.perform(get("/member/rentable")
+                .param("from", ""))
+                // then
+                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(allOf(
+                        containsString("パラメーターエラーが発生しました"),
+                        containsString("from"),
+                        containsString("to") //
+                )));
+
+        // then
+        verify(reservationService, never()).findRentableItemAtPeriod(any(), any());
+    }
+
+    @Test
+    void testFindRentableItemAtPeriodOnAuthenticationError() throws Exception {
+
+        // given
+        // @WithMockUserなし
+        LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
+        LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
+
+        // when
+        mockMvc.perform(get("/member/rentable")
+                .param("from", from.toString())
+                .param("to", to.toString()))
+                .andExpect(status().isUnauthorized());
+
+        // then
+        verify(reservationService, never()).findRentableItemAtPeriod(any(), any());
+    }
+
+
+    @Test
+    @WithMockUser
+    void testIsRentableItemAtPeriod() throws Exception {
+
+        // given
+        ItemId itemid = new ItemId(1);
+        LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
+        LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
+        when(reservationService.isRentableItemAtPeriod(itemid, from, to))
+            .thenReturn(false);
+
+        // when
+        mockMvc.perform(get("/items/{itemId}/rentable", itemid.id())
+                .param("from", from.toString())
+                .param("to", to.toString()))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
+    }
+
+    @Test
+    @WithMockUser
+    void testFindRentableItemAtPeriodReturnEmpty() throws Exception {
+
+        // given
+        LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
+        LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
+        when(reservationService.findRentableItemAtPeriod(from, to))
+                .thenReturn(List.of());
+
+        // when
+        mockMvc.perform(get("/member/rentable")
+                .param("from", from.toString())
+                .param("to", to.toString()))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    @WithMockUser
+    void testFindRentableItemAtPeriodOnParameterError() throws Exception {
+
+        // given
+        // when
+        mockMvc.perform(get("/member/rentable")
+                .param("from", ""))
+                // then
+                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(allOf(
+                        containsString("パラメーターエラーが発生しました"),
+                        containsString("from"),
+                        containsString("to") //
+                )));
+
+        // then
+        verify(reservationService, never()).findRentableItemAtPeriod(any(), any());
+    }
+
+    @Test
+    void testFindRentableItemAtPeriodOnAuthenticationError() throws Exception {
+
+        // given
+        // @WithMockUserなし
+        LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
+        LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
+
+        // when
+        mockMvc.perform(get("/admin/rentable")
+                .param("from", from.toString())
+                .param("to", to.toString()))
+                .andExpect(status().isUnauthorized());
+
+        // then
+        verify(reservationService, never()).findRentableItemAtPeriod(any(), any());
+    }
+
+    @Test
+    @WithMockUser
+    void testFindReservationByItemId() throws Exception {
+
+        // given
+        ItemId itemId = new ItemId(1);
+        when(reservationService.findReservationByItemId(itemId))
+                .thenReturn(List.of(model1, model2));
+
+        // when
+        mockMvc.perform(get("/reservations/items/{itemId}", itemId.id()))
+                // then
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
+        // TODO コンバーターと一緒に直す
+        //.andExpect(jsonPath("$[0].fromDateTime").value(model1.reservation().getPeriod().getFrom()))
+        //.andExpect(jsonPath("$[0].toDateTime").value(model1.reservation().getPeriod().getTo()))
+        .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
+        .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
+        .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
+        .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
+        .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
+    }
+
+    @Test
+    @WithMockUser
+    void testFindReservationByItemIdWithFromDate() throws Exception {
+
+        // given
+        ItemId itemId = new ItemId(1);
+        LocalDate fromDate = LocalDate.of(2024, 1, 1);
+        when(reservationService.findReservationByItemIdAndFromDate(itemId, fromDate))
+                .thenReturn(List.of(model1, model2));
+
+        // when
+        mockMvc.perform(get("/reservations/items/{itemId}", itemId.id())
+                .param("from-date", fromDate.toString()))
+                // then
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
+                // TODO コンバーターと一緒に直す
+                //.andExpect(jsonPath("$[0].fromDateTime").value(model1.reservation().getPeriod().getFrom()))
+                //.andExpect(jsonPath("$[0].toDateTime").value(model1.reservation().getPeriod().getTo()))
+                .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
+                .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
+                .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
+                .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
+                .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
+    }
+
+    @Test
+    @WithMockUser
+    void testFindReservationByItemIdWithFromDateNull() throws Exception {
+
+        // given
+        ItemId itemId = new ItemId(1);
+        LocalDate fromDate = LocalDate.of(2024, 1, 1);
+        when(reservationService.findReservationByItemIdAndFromDate(itemId, fromDate))
+                .thenReturn(List.of(model1, model2));
+
+        // when
+        mockMvc.perform(get("/reservations/items/{itemId}", itemId.id())
+                .param("from-date", ""))
+                // then
+                .andExpect(jsonPath("$.length()").value(2)); // 以降省略
+    }
+
+    @Test
+    @WithMockUser
+    void testFindReservationByItemIdReturnEmpty() throws Exception {
+
+        // given
+        ItemId itemId = new ItemId(1);
+        LocalDate fromDate = LocalDate.of(2024, 1, 1);
+        when(reservationService.findReservationByItemIdAndFromDate(itemId, fromDate))
+            .thenReturn(List.of());
+
+        // when
+        mockMvc.perform(get("/reservations/items/{itemId}", itemId.id())
+                .param("from-date", fromDate.toString()))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    @WithMockUser
+    void testFindReservationByItemIdOnParameterError() throws Exception {
+
+        // given
+        ItemId itemId = new ItemId(-1);
+
+        // when
+        mockMvc.perform(get("/reservations/items/{itemId}", itemId.id()))
+                // then
+                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(allOf(
+                        containsString("パラメーターエラーが発生しました"),
+                        containsString("itemId") //
+                )));
+
+        // then
+        verify(reservationService, never()).findReservationByItemId(any());
+    }
+
+    @Test
+    void testFindReservationByItemIdOnAuthenticationError() throws Exception {
+
+        // given
+        // @WithMockUserなし
+        ItemId itemId = new ItemId(-1);
+
+        // when
+        mockMvc.perform(get("/reservations/items/{itemId}", itemId.id()))
+                // then
+                .andExpect(status().isUnauthorized());
+
+        // then
+        verify(reservationService, never()).findReservationByItemId(any());
     }
 
     @Test

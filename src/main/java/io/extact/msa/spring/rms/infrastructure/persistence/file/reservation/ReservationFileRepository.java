@@ -25,10 +25,16 @@ public class ReservationFileRepository extends AbstractFileRepository<Reservatio
     }
 
     @Override
-    public List<Reservation> findByItemIdAndFromDate(ItemId itemId, LocalDate from) {
+    public List<Reservation> findByItemId(ItemId itemId) {
         return this.findAll().stream()
-                .filter(reservation -> reservation.getPeriod().getFrom().toLocalDate().equals(from))
                 .filter(reservation -> reservation.getItemId().equals(itemId))
+                .toList();
+    }
+
+    @Override
+    public List<Reservation> findByItemIdAndFromDate(ItemId itemId, LocalDate from) {
+        return this.findByItemId(itemId).stream()
+                .filter(reservation -> reservation.getPeriod().getFrom().toLocalDate().equals(from))
                 .toList();
     }
 
@@ -36,13 +42,6 @@ public class ReservationFileRepository extends AbstractFileRepository<Reservatio
     public List<Reservation> findByReserverId(UserId reserverId) {
         return this.findAll().stream()
                 .filter(reservation -> reservation.getReserverId().equals(reserverId))
-                .toList();
-    }
-
-    @Override
-    public List<Reservation> findByItemId(ItemId itemId) {
-        return this.findAll().stream()
-                .filter(reservation -> reservation.getItemId().equals(itemId))
                 .toList();
     }
 }
