@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.websocket.server.PathParam;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
@@ -39,8 +39,8 @@ public class ItemReservationController {
 
     @GetMapping("/items/rentable")
     public List<ItemResponse> findRentableItemAtPeriod(
-            @RequestParam("from") @NotNull LocalDateTime from,
-            @RequestParam("to") @NotNull LocalDateTime to) {
+            @RequestParam("from") LocalDateTime from,
+            @RequestParam("to") LocalDateTime to) {
 
         return service
                 .findRentableItemAtPeriod(from, to)
@@ -51,9 +51,9 @@ public class ItemReservationController {
 
     @GetMapping("/items/{itemId}/rentable")
     public boolean isRentableItemAtPeriod(
-            @PathParam("itemId") @RmsId int itemId,
-            @RequestParam("from") @NotNull LocalDateTime from,
-            @RequestParam("to") @NotNull LocalDateTime to) {
+            @PathVariable("itemId") @RmsId Integer itemId,
+            @RequestParam("from") LocalDateTime from,
+            @RequestParam("to") LocalDateTime to) {
 
         return service
                 .isRentableItemAtPeriod(new ItemId(itemId), from, to);
@@ -61,8 +61,8 @@ public class ItemReservationController {
 
     @GetMapping("/reservations/items/{itemId}")
     public List<ReserveItemResponse> findReservationByItemId(
-            @PathParam("itemId") @RmsId int itemId,
-            @RequestParam("from-date") LocalDate from) {
+            @PathVariable("itemId") @RmsId Integer itemId,
+            @RequestParam(value = "from-date", required = false) LocalDate from) {
 
         List<ReservationComposeModel> models = from != null
                 ? service.findReservationByItemIdAndFromDate(new ItemId(itemId), from)
@@ -75,7 +75,7 @@ public class ItemReservationController {
 
     @GetMapping("/reservations/reservers/{reserverId}")
     public List<ReserveItemResponse> findReservationByReserverId(
-            @PathParam("reserverId") @RmsId int reserverId) {
+            @PathVariable("reserverId") @RmsId Integer reserverId) {
 
         return service
                 .findReservationByReserverId(new UserId(reserverId))
@@ -94,7 +94,7 @@ public class ItemReservationController {
     }
 
     @PostMapping("/reservations")
-    public ReserveItemResponse reserve(@Valid ReserveItemRequest request) {
+    public ReserveItemResponse reserve(@Valid @RequestBody ReserveItemRequest request) {
         return service
                 .reserve(request.toCommand())
                 .transform(ReserveItemResponse::from);
@@ -102,7 +102,7 @@ public class ItemReservationController {
 
     @DeleteMapping("/reservations/{reservationId}")
     public void cancel(
-            @PathParam("reservationId") @RmsId int reservationId) {
+            @PathVariable("reservationId") @RmsId Integer reservationId) {
         service.cancel(new ReservationId(reservationId));
     }
 }

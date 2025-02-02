@@ -19,6 +19,7 @@ import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.Valid
 import io.extact.msa.spring.rms.ConstraintAnnotationAsserter;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
 import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTimeFuture;
 import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
 import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
 
@@ -40,7 +41,6 @@ class ReserveItemRequestTest {
         LocalDateTime toDateTime = fromDateTime.plusDays(1);
         String note = "Test Note";
         int itemId = 456;
-        int reserverId = 789;
 
         // when
         ReserveItemRequest request = ReserveItemRequest.builder()
@@ -48,7 +48,6 @@ class ReserveItemRequestTest {
                 .toDateTime(toDateTime)
                 .note(note)
                 .itemId(itemId)
-                .reserverId(reserverId)
                 .build();
 
         // then
@@ -56,7 +55,6 @@ class ReserveItemRequestTest {
         assertThat(request.toDateTime()).isEqualTo(toDateTime);
         assertThat(request.note()).isEqualTo(note);
         assertThat(request.itemId()).isEqualTo(itemId);
-        assertThat(request.reserverId()).isEqualTo(reserverId);
     }
 
     @Test
@@ -67,10 +65,9 @@ class ReserveItemRequestTest {
         // then
         ConstraintAnnotationAsserter.asserterTo(descriptor)
                 .verifyClassAnnotations(BeforeAfterDateTime.class)
-                .verifyPropertyAnnotations("fromDateTime", FromDateTime.class)
+                .verifyPropertyAnnotations("fromDateTime", FromDateTime.class, FromDateTimeFuture.class)
                 .verifyPropertyAnnotations("toDateTime", ToDateTime.class)
                 .verifyPropertyAnnotations("note", Note.class)
-                .verifyPropertyAnnotations("itemId", RmsId.class)
-                .verifyPropertyAnnotations("reserverId", RmsId.class);
+                .verifyPropertyAnnotations("itemId", RmsId.class);
     }
 }

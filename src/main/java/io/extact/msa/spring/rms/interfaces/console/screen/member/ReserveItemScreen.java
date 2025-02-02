@@ -9,6 +9,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.member.ReserveItemCommand;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserReference;
@@ -70,6 +71,7 @@ public class ReserveItemScreen implements RmsScreen {
         ReserveItemCommand command = ReserveItemCommand.builder()
                 .period(new ReservationPeriod(fromDateTime, toDateTime))
                 .note(note)
+                .itemId(new ItemId(selectedItem))
                 .build();
 
         // レンタル品予約の実行

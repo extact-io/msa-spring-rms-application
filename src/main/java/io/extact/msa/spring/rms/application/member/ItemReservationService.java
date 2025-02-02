@@ -18,9 +18,9 @@ import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator;
+import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
 import io.extact.msa.spring.rms.domain.reservation.ReservationDuplicateChecker;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
-import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
@@ -105,7 +105,7 @@ public class ItemReservationService {
                 .period(command.period())
                 .note(command.note())
                 .itemId(command.itemId())
-                .reserverId(command.reserverId())
+                .reserverId(new UserId(loginContext.getLoginUser().getUserId()))
                 .build();
 
         Reservation newReservation = modelCreator.create(attrs);

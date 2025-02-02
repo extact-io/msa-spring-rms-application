@@ -32,9 +32,9 @@ public class ReservationAdminController {
     }
 
     @PutMapping
-    public ReservationAdminResponse update(@Valid @RequestBody ReservationUpdateRequest request) {
+    public ReservationAdminResponse update(@Valid @RequestBody ReservationUpdateRequest req) {
         return service
-                .update(request.toCommand())
+                .update(req.toCommand())
                 .transform(ReservationAdminResponse::from);
     }
 

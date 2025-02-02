@@ -1,8 +1,8 @@
 logging.level:
-  org.springframework:
+  org.springframework: info
     #transaction: info
     #security: trace
-    context.support.ResourceBundleMessageSource: DEBUG
+    #context.support.ResourceBundleMessageSource: DEBUG
 
 spring:
   messages:

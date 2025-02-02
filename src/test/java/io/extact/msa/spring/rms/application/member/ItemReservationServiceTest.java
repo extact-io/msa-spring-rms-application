@@ -257,14 +257,15 @@ class ItemReservationServiceTest {
     @Order(WITH_SIDE_EFFECT_CASE)
     void testReserve(@Autowired ReservationRepository forResultAssert) {
         // given
+        int reserverId = 1;
         ReserveItemCommand command = ReserveItemCommand.builder()
                 .period(new ReservationPeriod(
                         LocalDateTime.now().plusDays(1),
                         LocalDateTime.now().plusDays(2)))
                 .note("note")
                 .itemId(new ItemId(1))
-                .reserverId(new UserId(1))
                 .build();
+        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
 
         // when
         ReservationComposeModel actual = service.reserve(command);
@@ -275,7 +276,7 @@ class ItemReservationServiceTest {
                 command.period(),
                 command.note(),
                 command.itemId(),
-                command.reserverId());
+                new UserId(reserverId));
         ReservationComposeModel expected = new ReservationComposeModel(added, item1, user1);
         ToStringAssert.assertThatToString(actual).isEqualTo(expected);
         // commitされているか確認するため読み返し
@@ -289,13 +290,14 @@ class ItemReservationServiceTest {
     void testReserveOnDuplicate(@Autowired ReservationRepository forResultAssert) {
 
         // -- 事前条件
+        int reserverId = 1;
+        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
         LocalDateTime from = LocalDateTime.now().plusHours(1);
         LocalDateTime to = from.plusHours(2);
         ReserveItemCommand preCommand = ReserveItemCommand.builder()
                 .period(new ReservationPeriod(from, to))
                 .note("note")
                 .itemId(new ItemId(3))
-                .reserverId(new UserId(3))
                 .build();
         ReservationComposeModel preCondition = service.reserve(preCommand);
 
@@ -306,7 +308,6 @@ class ItemReservationServiceTest {
                         preCondition.reservation().getPeriod().getTo().plusHours(1)))
                 .note("note")
                 .itemId(new ItemId(3))
-                .reserverId(new UserId(3))
                 .build();
 
         // when
@@ -328,13 +329,13 @@ class ItemReservationServiceTest {
     @Test
     void testReserveOnValidationErrorOfProperty(@Autowired ReservationRepository forResultAssert) {
         // given
+        TestAuthUtils.signinByHeader(1, "MEMBER");
         ReserveItemCommand command = ReserveItemCommand.builder()
                 .period(new ReservationPeriod(
                         LocalDateTime.now().minusDays(1), // 過去日付エラー
                         LocalDateTime.now()))
                 .note("note")
                 .itemId(new ItemId(1))
-                .reserverId(new UserId(1))
                 .build();
 
         // when
@@ -353,13 +354,13 @@ class ItemReservationServiceTest {
     @Test
     void testReserveOnItemNotExist(@Autowired ReservationRepository forResultAssert) {
         // given
+        TestAuthUtils.signinByHeader(1, "MEMBER");
         ReserveItemCommand command = ReserveItemCommand.builder()
                 .period(new ReservationPeriod(
                         LocalDateTime.now().plusHours(1),
                         LocalDateTime.now().plusHours(2)))
                 .note("note")
                 .itemId(new ItemId(999)) // unknown item
-                .reserverId(new UserId(1))
                 .build();
 
         // when
@@ -375,13 +376,14 @@ class ItemReservationServiceTest {
     @Test
     void testReserveOnUserNotExist(@Autowired ReservationRepository forResultAssert) {
         // given
+        int reserverId = 999;  // unknown user
+        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
         ReserveItemCommand command = ReserveItemCommand.builder()
                 .period(new ReservationPeriod(
                         LocalDateTime.now().plusHours(1),
                         LocalDateTime.now().plusHours(2)))
                 .note("note")
                 .itemId(new ItemId(1))
-                .reserverId(new UserId(999)) // unknown user
                 .build();
 
         // when
@@ -411,7 +413,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testCancelOnOthreUserReservationCancel(@Autowired ReservationRepository forResultAssert) {
+    void testCancelOnOthreUserReservation(@Autowired ReservationRepository forResultAssert) {
         // given
         ReservationId cancelId = reservation1.getId();
         int reserverId = 3;
@@ -430,7 +432,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testDeleteOnNotFound(@Autowired ReservationRepository forResultAssert) {
+    void testCancelOnNotFound(@Autowired ReservationRepository forResultAssert) {
         // given
         ReservationId cancelId = new ReservationId(99);
         int reserverId = 1;
