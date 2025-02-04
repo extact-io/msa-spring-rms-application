@@ -35,7 +35,6 @@ import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
-import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
@@ -72,9 +71,7 @@ class ItemAdminControllerIntegrationTest {
 
     @Configuration(proxyBeanMethods = false)
     @EnableWebSecurity(debug = true)
-    @Import({
-        WebApiApplication.class,
-        JwtEncodeConfig.class })
+    @Import(WebApiApplication.class)
     static class TestConfig {
 
         @Bean
@@ -94,7 +91,7 @@ class ItemAdminControllerIntegrationTest {
 
     @BeforeEach
     void beforeEach(@Autowired JsonWebTokenGenerator generator) {
-        TestAuthUtils.signinByJwt(generator, 1, "MEMBER");
+        TestAuthUtils.signinByJwt(generator, 1, "ADMIN");
     }
 
     @AfterEach
@@ -114,14 +111,22 @@ class ItemAdminControllerIntegrationTest {
     }
 
     @Test
-    void testGetAllOnAuthenticationError() {
-        // given
+    void testGetAllOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         // when
         assertThatThrownBy(client::getAll)
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+        // given -- 認証エラー
+        TestAuthUtils.signinByJwt(generator, 1, "MEMBER");
+        // when
+        assertThatThrownBy(client::getAll)
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 
@@ -169,8 +174,8 @@ class ItemAdminControllerIntegrationTest {
     }
 
     @Test
-    void testAddOnAuthenticationError() {
-        // given
+    void testAddOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         ItemAddRequest request = ItemAddRequest.builder()
                 .serialNo("newNo")
@@ -181,6 +186,15 @@ class ItemAdminControllerIntegrationTest {
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 1, "MEMBER");
+        // when
+        assertThatThrownBy(() -> client.add(request))
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 
@@ -247,8 +261,8 @@ class ItemAdminControllerIntegrationTest {
     }
 
     @Test
-    void testUpdateOnAuthenticationError() {
-        // given
+    void testUpdateOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         ItemUpdateRequest request = ItemUpdateRequest.builder()
                 .id(2)
@@ -260,6 +274,15 @@ class ItemAdminControllerIntegrationTest {
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 1, "MEMBER");
+        // when
+        assertThatThrownBy(() -> client.update(request))
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 
@@ -304,8 +327,8 @@ class ItemAdminControllerIntegrationTest {
     }
 
     @Test
-    void testDeleteOnAuthenticationError() {
-        // given
+    void testDeleteOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         int deleteId = 1;
         // when
@@ -313,6 +336,15 @@ class ItemAdminControllerIntegrationTest {
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 1, "MEMBER");
+        // when
+        assertThatThrownBy(() -> client.delete(deleteId))
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 

@@ -233,7 +233,7 @@ class ItemReservationServiceTest {
     void testGetOwnReservations() {
         // given
         int reserverId = 1;
-        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
 
         // when
         List<ReservationComposeModel> reservations = service.getOwnReservations();
@@ -245,7 +245,7 @@ class ItemReservationServiceTest {
     void testGetOwnReservationsOnNotFound() {
         // given
         int reserverId = 3;
-        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
 
         // when
         List<ReservationComposeModel> reservations = service.getOwnReservations();
@@ -265,7 +265,7 @@ class ItemReservationServiceTest {
                 .note("note")
                 .itemId(new ItemId(1))
                 .build();
-        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
 
         // when
         ReservationComposeModel actual = service.reserve(command);
@@ -291,7 +291,7 @@ class ItemReservationServiceTest {
 
         // -- 事前条件
         int reserverId = 1;
-        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
         LocalDateTime from = LocalDateTime.now().plusHours(1);
         LocalDateTime to = from.plusHours(2);
         ReserveItemCommand preCommand = ReserveItemCommand.builder()
@@ -329,7 +329,7 @@ class ItemReservationServiceTest {
     @Test
     void testReserveOnValidationErrorOfProperty(@Autowired ReservationRepository forResultAssert) {
         // given
-        TestAuthUtils.signinByHeader(1, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(1, "MEMBER");
         ReserveItemCommand command = ReserveItemCommand.builder()
                 .period(new ReservationPeriod(
                         LocalDateTime.now().minusDays(1), // 過去日付エラー
@@ -354,7 +354,7 @@ class ItemReservationServiceTest {
     @Test
     void testReserveOnItemNotExist(@Autowired ReservationRepository forResultAssert) {
         // given
-        TestAuthUtils.signinByHeader(1, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(1, "MEMBER");
         ReserveItemCommand command = ReserveItemCommand.builder()
                 .period(new ReservationPeriod(
                         LocalDateTime.now().plusHours(1),
@@ -377,7 +377,7 @@ class ItemReservationServiceTest {
     void testReserveOnUserNotExist(@Autowired ReservationRepository forResultAssert) {
         // given
         int reserverId = 999;  // unknown user
-        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
         ReserveItemCommand command = ReserveItemCommand.builder()
                 .period(new ReservationPeriod(
                         LocalDateTime.now().plusHours(1),
@@ -402,7 +402,7 @@ class ItemReservationServiceTest {
         // given
         ReservationId cancelId = reservation3.getId();
         int reserverId = 1;
-        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
 
         // when
         service.cancel(cancelId);
@@ -417,7 +417,7 @@ class ItemReservationServiceTest {
         // given
         ReservationId cancelId = reservation1.getId();
         int reserverId = 3;
-        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
 
         // when
         BusinessFlowException exception = assertThrows(BusinessFlowException.class, () -> {
@@ -436,7 +436,7 @@ class ItemReservationServiceTest {
         // given
         ReservationId cancelId = new ReservationId(99);
         int reserverId = 1;
-        TestAuthUtils.signinByHeader(reserverId, "MEMBER");
+        TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
 
         // when
         BusinessFlowException exception = assertThrows(BusinessFlowException.class, () -> {

@@ -37,8 +37,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     @Bean
     AuthorizeHttpRequestCustomizer authorizeRequestCustomizer() {
         return (AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry configurer) -> configurer
-                .requestMatchers("/admin").hasRole("admin")
-                .requestMatchers("/member").hasRole("member")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/member/**").hasRole("MEMBER")
                 .requestMatchers("/profile").authenticated()
                 .requestMatchers("/login").permitAll()
                 .anyRequest().authenticated();

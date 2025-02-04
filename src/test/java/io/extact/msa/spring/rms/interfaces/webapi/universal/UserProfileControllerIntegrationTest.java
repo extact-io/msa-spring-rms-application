@@ -27,7 +27,6 @@ import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
-import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
@@ -52,10 +51,7 @@ class UserProfileControllerIntegrationTest {
     private ProfileClient client;
 
     @Configuration(proxyBeanMethods = false)
-    @Import({
-            WebApiApplication.class,
-            JwtEncodeConfig.class
-    })
+    @Import(WebApiApplication.class)
     static class TestConfig {
         @Bean
         ProfileClient userClient(Environment env) {

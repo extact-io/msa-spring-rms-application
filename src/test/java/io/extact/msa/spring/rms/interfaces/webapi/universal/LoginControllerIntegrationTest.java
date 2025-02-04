@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +27,6 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
-import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
@@ -46,10 +47,7 @@ class LoginControllerIntegrationTest {
     private LoginClient client;
 
     @Configuration(proxyBeanMethods = false)
-    @Import({
-        WebApiApplication.class,
-        JwtEncodeConfig.class
-    })
+    @Import(WebApiApplication.class)
     static class TestConfig {
         @Bean
         LoginClient userClient(Environment env) {
@@ -71,10 +69,10 @@ class LoginControllerIntegrationTest {
         String loginId = "member2";
         String password = "member2";
         // when
-        LoginUserResponse actual = client.login(loginId, password);
+        ResponseEntity<LoginUserResponse> actual = client.login(loginId, password);
         // then
-        // TODO jwtの発行も確認
-        assertThat(actual).isEqualTo(user2);
+        assertThat(actual.getHeaders().get(HttpHeaders.AUTHORIZATION)).hasSize(1);
+        assertThat(actual.getBody()).isEqualTo(user2);
     }
 
     @Test
@@ -111,10 +109,10 @@ class LoginControllerIntegrationTest {
         String password = "member2";
         LoginRequest req = new LoginRequest(loginId, password);
         // when
-        LoginUserResponse actual = client.login(req);
+        ResponseEntity<LoginUserResponse> actual = client.login(req);
         // then
-        // TODO jwtの発行も確認
-        assertThat(actual).isEqualTo(user2);
+        assertThat(actual.getHeaders().get(HttpHeaders.AUTHORIZATION)).hasSize(1);
+        assertThat(actual.getBody()).isEqualTo(user2);
     }
 
     @Test
@@ -150,9 +148,11 @@ class LoginControllerIntegrationTest {
     @HttpExchange("/login")
     public interface LoginClient {
         @GetExchange
-        LoginUserResponse login(@RequestParam("loginId") String loginId, @RequestParam("password") String password);
+        ResponseEntity<LoginUserResponse> login(
+                @RequestParam("loginId") String loginId,
+                @RequestParam("password") String password);
 
         @PostExchange
-        LoginUserResponse login(@RequestBody LoginRequest request);
+        ResponseEntity<LoginUserResponse> login(@RequestBody LoginRequest request);
     }
 }

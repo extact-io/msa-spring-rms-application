@@ -38,7 +38,6 @@ import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
-import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
@@ -75,10 +74,7 @@ class ItemReservationControllerIntegrationTest {
     private int defaultLoginUserId = 1;
 
     @Configuration(proxyBeanMethods = false)
-    @Import({
-        WebApiApplication.class,
-        JwtEncodeConfig.class
-    })
+    @Import(WebApiApplication.class)
     static class TestConfig {
         @Bean
         ReservationClient reservationClient(Environment env) {
@@ -117,14 +113,23 @@ class ItemReservationControllerIntegrationTest {
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testGetItemAllOnAuthenticationError() {
-        // given
+    void testGetItemAllOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         // when
         assertThatThrownBy(client::getItemAll)
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        // when
+        assertThatThrownBy(client::getItemAll)
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 
@@ -158,8 +163,8 @@ class ItemReservationControllerIntegrationTest {
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testFindRentableItemAtPeriodOnAuthenticationError() {
-        // given
+    void testFindRentableItemAtPeriodOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         LocalDateTime from = LocalDateTime.of(2020, 4, 1, 9, 0);
         LocalDateTime to = LocalDateTime.of(2020, 4, 1, 11, 0);
@@ -168,6 +173,15 @@ class ItemReservationControllerIntegrationTest {
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        // when
+        assertThatThrownBy(() -> client.findRentableItemAtPeriod(from, to))
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 
@@ -228,8 +242,8 @@ class ItemReservationControllerIntegrationTest {
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testIsRentableItemAtPeriodOnAuthenticationError() {
-        // given
+    void testIsRentableItemAtPeriodOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         int itemId = 1;
         LocalDateTime from = LocalDateTime.of(2020, 4, 1, 9, 0);
@@ -239,6 +253,15 @@ class ItemReservationControllerIntegrationTest {
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        // when
+        assertThatThrownBy(() -> client.isRentableItemAtPeriod(itemId, from, to))
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 
@@ -302,8 +325,8 @@ class ItemReservationControllerIntegrationTest {
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testFindReservationByItemIdOnAuthenticationError() {
-        // given
+    void testFindReservationByItemIdOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         int itemId = 3;
         LocalDate fromDate = LocalDate.of(2020, 4, 1);
@@ -312,6 +335,15 @@ class ItemReservationControllerIntegrationTest {
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        // when
+        assertThatThrownBy(() -> client.findReservationByItemId(itemId, fromDate))
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 
@@ -350,8 +382,8 @@ class ItemReservationControllerIntegrationTest {
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testFindReservationByReserverIdOnAuthenticationError() {
-        // given
+    void testFindReservationByReserverIdOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         int reserverId = 1;
         // when
@@ -359,6 +391,15 @@ class ItemReservationControllerIntegrationTest {
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        // when
+        assertThatThrownBy(() -> client.findReservationByReserverId(reserverId))
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 
@@ -378,7 +419,7 @@ class ItemReservationControllerIntegrationTest {
     void testGetOwnReservationsOnReturnEmpty(@Autowired JsonWebTokenGenerator generator) {
         // given
         TestAuthUtils.signoutQuietly();
-        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        TestAuthUtils.signinByJwt(generator, 3, "MEMBER");
         // when
         List<ReserveItemResponse> actual = client.getOwnReservations();
         // then
@@ -387,14 +428,23 @@ class ItemReservationControllerIntegrationTest {
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testGetOwnReservationsOnAuthenticationError() {
-        // given
+    void testGetOwnReservationsOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         // when
         assertThatThrownBy(() -> client.getOwnReservations())
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        // when
+        assertThatThrownBy(() -> client.getOwnReservations())
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 
@@ -498,8 +548,8 @@ class ItemReservationControllerIntegrationTest {
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testReserveOnAuthenticationError() {
-        // given
+    void testReserveOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         ReserveItemRequest request = reserveItemRequestBuilder().build();
         // when
@@ -508,16 +558,30 @@ class ItemReservationControllerIntegrationTest {
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
                 });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        // when
+        assertThatThrownBy(() -> client.reserve(request))
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
+                });
     }
 
     @Test
     @Order(WITH_SIDE_EFFECT_CASE)
-    void testCancel() {
+    void testCancel(@Autowired JsonWebTokenGenerator generator) {
+
         // given
         int cancelId = 1;
         // when
         client.cancel(cancelId);
+
         // then
+        // getReservationAllForAssertUseはADMIN機能を使っているのでロールを切り替える
+        TestAuthUtils.signoutQuietly();
+        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
         ReservationAdminResponse deleted = client.getReservationAllForAssertUse().stream()
                 .filter(r -> r.id() == cancelId)
                 .findFirst()
@@ -544,7 +608,7 @@ class ItemReservationControllerIntegrationTest {
     void testCancelOnOthreUserReservation(@Autowired JsonWebTokenGenerator generator) {
         // given
         TestAuthUtils.signoutQuietly();
-        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        TestAuthUtils.signinByJwt(generator, 3, "MEMBER");
         int cancelId = 1;
         // when
         assertThatThrownBy(() -> client.cancel(cancelId))
@@ -556,7 +620,7 @@ class ItemReservationControllerIntegrationTest {
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testDeleteOnNotFound() {
+    void testCancelOnNotFound() {
         // given
         int notExistId = 999;
         // when
@@ -569,8 +633,8 @@ class ItemReservationControllerIntegrationTest {
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testDeleteOnAuthenticationError() {
-        // given
+    void testCancelOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        // given -- 認証エラー
         SecurityContextHolder.clearContext();
         int cancelId = 1;
         // when
@@ -578,6 +642,15 @@ class ItemReservationControllerIntegrationTest {
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
+                });
+
+        // given -- 認可エラー
+        TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
+        // when
+        assertThatThrownBy(() -> client.cancel(cancelId))
+                // then
+                .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("認可エラー");
                 });
     }
 

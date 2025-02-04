@@ -63,7 +63,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testGetItemAll() throws Exception {
 
         // given
@@ -81,7 +81,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testGetItemAllReturnEmpty() throws Exception {
 
         // given
@@ -99,7 +99,7 @@ class ItemReservationControllerTest {
     void testGetItemAllOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUserなし
+        // @WithMockUser(roles = "MEMBER")なし
 
         // when
         mockMvc.perform(get("/member/items"))
@@ -110,7 +110,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindRentableItemAtPeriod() throws Exception {
 
         // given
@@ -132,7 +132,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindRentableItemAtPeriodReturnEmpty() throws Exception {
 
         // given
@@ -151,7 +151,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindRentableItemAtPeriodOnParameterError() throws Exception {
 
         // given
@@ -174,7 +174,7 @@ class ItemReservationControllerTest {
     void testFindRentableItemAtPeriodOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUserなし
+        // @WithMockUser(roles = "MEMBER")なし
         LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
 
@@ -190,7 +190,7 @@ class ItemReservationControllerTest {
 
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testIsRentableItemAtPeriod() throws Exception {
 
         // given
@@ -211,7 +211,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testIsRentableItemAtPeriodOnPathVariableError() throws Exception {
 
         // given
@@ -236,7 +236,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testIsRentableItemAtPeriodOnRequestPrameterError() throws Exception {
 
         // given
@@ -264,7 +264,7 @@ class ItemReservationControllerTest {
     void testIsRentableItemAtPeriodOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUserなし
+        // @WithMockUser(roles = "MEMBER")なし
         ItemId itemid = new ItemId(1);
         LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
@@ -280,7 +280,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindReservationByItemId() throws Exception {
 
         // given
@@ -304,7 +304,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindReservationByItemIdWithFromDate() throws Exception {
 
         // given
@@ -330,7 +330,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindReservationByItemIdWithFromDateNull() throws Exception {
 
         // given
@@ -346,7 +346,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindReservationByItemIdReturnEmpty() throws Exception {
 
         // given
@@ -364,7 +364,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindReservationByItemIdOnParameterError() throws Exception {
 
         // given
@@ -388,7 +388,7 @@ class ItemReservationControllerTest {
     void testFindReservationByItemIdOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUserなし
+        // @WithMockUser(roles = "MEMBER")なし
         ItemId itemId = new ItemId(1);
 
         // when
@@ -401,7 +401,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindReservationByReserverId() throws Exception {
 
         // given
@@ -425,7 +425,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindReservationByReserverIdReturnEmpty() throws Exception {
 
         // given
@@ -441,7 +441,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testFindReservationByReserverIdOnParameterError() throws Exception {
 
         // given
@@ -465,7 +465,7 @@ class ItemReservationControllerTest {
     void testFindReservationByReserverIdOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUserなし
+        // @WithMockUser(roles = "MEMBER")なし
         UserId reserverId = new UserId(1);
 
         // when
@@ -479,7 +479,7 @@ class ItemReservationControllerTest {
 
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testGetOwnReservations() throws Exception {
 
         // given
@@ -502,7 +502,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testGetOwnReservationsReturnEmpty() throws Exception {
 
         // given
@@ -520,7 +520,7 @@ class ItemReservationControllerTest {
     void testGetOwnReservationsOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUserなし
+        // @WithMockUser(roles = "MEMBER")なし
 
         // when
         mockMvc.perform(get("/member/reservations/own"))
@@ -532,7 +532,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testReserve() throws Exception {
 
         // given
@@ -571,7 +571,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testReserveOnParameterError() throws Exception {
 
         // given
@@ -598,7 +598,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testReserveOnDuplicate() throws Exception {
 
         ReserveItemRequest req = createReserveItemRequest();
@@ -637,7 +637,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testCancel() throws Exception {
 
         // given
@@ -651,7 +651,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testCancelOnParameterError() throws Exception {
 
         // given
@@ -671,7 +671,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testCancelOnOthreUserReservation() throws Exception {
 
         // given
@@ -688,7 +688,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "MEMBER")
     void testDeleteOnNotFound() throws Exception {
 
         // given

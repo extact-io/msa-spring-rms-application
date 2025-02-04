@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import;
 import io.extact.msa.spring.platform.core.env.ActiveProfileResolver;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.core.env.MainModuleInformation;
+import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.web.RestControllerConfig;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
@@ -25,7 +26,8 @@ import io.extact.msa.spring.rms.interfaces.webapi.universal.UserProfileControlle
 @Import({
         EnvConfig.class,
         RestControllerConfig.class,
-        WebSecurityConfig.class
+        WebSecurityConfig.class,
+        JwtEncodeConfig.class, // for LoginController
 })
 public class WebApiConfig {
 

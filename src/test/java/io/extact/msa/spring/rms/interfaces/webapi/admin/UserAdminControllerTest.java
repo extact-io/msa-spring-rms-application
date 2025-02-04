@@ -59,7 +59,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testGetAll() throws Exception {
 
         // given
@@ -81,7 +81,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testGetAllReturnEmpty() throws Exception {
 
         // given
@@ -98,7 +98,7 @@ class UserAdminControllerTest {
     void testGetAllOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUserなし
+        // @WithMockUser(roles = "ADMIN")なし
 
         // when
         mockMvc.perform(get("/admin/users"))
@@ -109,7 +109,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testAdd() throws Exception {
 
         // given
@@ -143,7 +143,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testAddOnParameterError() throws Exception {
 
         // given
@@ -170,7 +170,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testAddOnDuplicate() throws Exception {
 
         // given
@@ -211,7 +211,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testUpdate() throws Exception {
 
         // given
@@ -246,7 +246,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testUpdateOnParameterError() throws Exception {
 
         // given
@@ -272,7 +272,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testUpdateOnNotFound() throws Exception {
 
         // given
@@ -310,7 +310,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testDelete() throws Exception {
 
         // given
@@ -324,7 +324,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testDeleteOnParameterError() throws Exception {
 
         // given
@@ -344,7 +344,7 @@ class UserAdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ADMIN")
     void testDeleteOnNotFound() throws Exception {
 
         // given

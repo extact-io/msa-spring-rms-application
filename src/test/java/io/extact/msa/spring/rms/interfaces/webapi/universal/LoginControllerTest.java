@@ -1,9 +1,13 @@
 package io.extact.msa.spring.rms.interfaces.webapi.universal;
 
 import static io.extact.msa.spring.PersistedTestData.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -15,12 +19,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
+import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.web.RestControllerConfig;
@@ -28,6 +34,7 @@ import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 
 @WebMvcTest(LoginController.class)
+@ActiveProfiles("test")
 public class LoginControllerTest {
 
     @Autowired
@@ -41,7 +48,8 @@ public class LoginControllerTest {
     @Import({
             EnvConfig.class,
             RestControllerConfig.class,
-            WebSecurityConfig.class })
+            WebSecurityConfig.class,
+            JwtEncodeConfig.class })
     static class TestConfig {
         @Bean
         LoginController loginController(LoginService service) {
@@ -64,6 +72,7 @@ public class LoginControllerTest {
                 .param("password", password))
                 // then
                 .andExpect(status().isOk())
+                .andExpect(header().string(AUTHORIZATION, not(blankOrNullString())))
                 .andExpect(jsonPath("$.id").value(user1.getId().id()))
                 .andExpect(jsonPath("$.loginId").value(user1.getLoginId()))
                 .andExpect(jsonPath("$.password").value(user1.getPassword()))
@@ -88,6 +97,7 @@ public class LoginControllerTest {
                 .param("password", password))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
+                .andExpect(header().doesNotExist(AUTHORIZATION))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("NOT_FOUND")));
     }
@@ -134,6 +144,7 @@ public class LoginControllerTest {
                 .content(requestBody))
                 // then
                 .andExpect(status().isOk())
+                .andExpect(header().string(AUTHORIZATION, not(blankOrNullString())))
                 .andExpect(jsonPath("$.id").value(user1.getId().id()))
                 .andExpect(jsonPath("$.loginId").value(user1.getLoginId()))
                 .andExpect(jsonPath("$.password").value(user1.getPassword()))
@@ -161,6 +172,7 @@ public class LoginControllerTest {
                 .content(requestBody))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
+                .andExpect(header().doesNotExist(AUTHORIZATION))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("NOT_FOUND")));
     }

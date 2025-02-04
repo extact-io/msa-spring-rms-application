@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.extact.msa.spring.platform.core.jwt.encode.GenerateToken;
 import io.extact.msa.spring.platform.fw.web.RmsRestController;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.domain.user.constraint.LoginId;
@@ -20,6 +21,7 @@ public class LoginController {
     private final LoginService service;
 
     @GetMapping
+    @GenerateToken
     public LoginUserResponse login(
             @LoginId @RequestParam("loginId") String loginId,
             @Passowrd @RequestParam("password") String password) {
@@ -30,6 +32,7 @@ public class LoginController {
     }
 
     @PostMapping
+    @GenerateToken
     public LoginUserResponse login(@Valid @RequestBody LoginRequest request) {
         return service
                 .login(request.loginId(), request.password())
