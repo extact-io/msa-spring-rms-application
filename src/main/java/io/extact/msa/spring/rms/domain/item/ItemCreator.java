@@ -1,16 +1,18 @@
 package io.extact.msa.spring.rms.domain.item;
 
+import io.extact.msa.spring.platform.fw.domain.model.ModelCreator;
 import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
+import io.extact.msa.spring.rms.domain.item.ItemCreator.ItemModelAttributes;
 import io.extact.msa.spring.rms.domain.item.model.Item;
-import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ItemCreator {
+public class ItemCreator implements ModelCreator<Item, ItemModelAttributes> {
 
     private final IdentityGenerator idGenerator;
     private final ModelValidator validator;
