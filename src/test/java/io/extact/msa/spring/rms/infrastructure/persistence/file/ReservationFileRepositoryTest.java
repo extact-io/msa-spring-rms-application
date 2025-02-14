@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -29,18 +29,16 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractReservationRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.file.ReservationFileRepositoryTest.TestConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.reservation.ReservationFileRepository;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
-import io.extact.msa.spring.test.spring.SelfRootContext;
 
-@SpringBootTest(classes = { SelfRootContext.class, TestConfig.class }, webEnvironment = WebEnvironment.NONE)
-@ActiveProfiles("reservation-file")
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+@ActiveProfiles({ "test", "reservation-file" })
 class ReservationFileRepositoryTest extends AbstractReservationRepositoryTest {
 
     private ReservationRepository repository;
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @Configuration(proxyBeanMethods = false)
     @Import(FileRepositoryConfig.class)
     static class TestConfig {
 

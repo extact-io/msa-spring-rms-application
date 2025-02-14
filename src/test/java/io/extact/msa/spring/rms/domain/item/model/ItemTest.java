@@ -13,16 +13,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
-import io.extact.msa.spring.rms.ConstraintAnnotationAsserter;
-import io.extact.msa.spring.rms.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
 import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
+import io.extact.msa.spring.rms.test.ConstraintAnnotationAsserter;
+import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
 
 /**
  * Itemクラスのテスト。
@@ -31,6 +32,7 @@ import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
  * ・{@code Verifiable#verify()}に対するテスト（正常とエラーの両パターン）
  */
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
+@ActiveProfiles("test")
 class ItemTest {
 
     @Autowired

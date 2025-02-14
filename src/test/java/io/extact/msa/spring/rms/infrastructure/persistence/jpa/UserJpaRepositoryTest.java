@@ -13,7 +13,7 @@ import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractUserRepositoryTest;
 
 @DataJpaTest
-@ActiveProfiles("user-jpa")
+@ActiveProfiles({ "test", "user-jpa" })
 class UserJpaRepositoryTest extends AbstractUserRepositoryTest {
 
     @Autowired

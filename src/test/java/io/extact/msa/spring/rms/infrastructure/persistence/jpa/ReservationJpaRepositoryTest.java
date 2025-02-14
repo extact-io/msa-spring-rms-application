@@ -13,7 +13,7 @@ import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractReservationRepositoryTest;
 
 @DataJpaTest
-@ActiveProfiles("reservation-jpa")
+@ActiveProfiles({ "test", "reservation-jpa" })
 class ReservationJpaRepositoryTest extends AbstractReservationRepositoryTest {
 
     @Autowired

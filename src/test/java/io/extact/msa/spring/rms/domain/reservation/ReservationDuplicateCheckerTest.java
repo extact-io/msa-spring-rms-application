@@ -25,7 +25,7 @@ import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.FileRepositoryConfig;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-@ActiveProfiles("reservation-file")
+@ActiveProfiles({ "test", "reservation-file" })
 class ReservationDuplicateCheckerTest {
 
     @Autowired

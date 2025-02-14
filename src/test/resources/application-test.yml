@@ -1,5 +1,9 @@
 debug: false
 
+spring:
+  main:
+    banner-mode: off
+
 rms:
   debug:
     configdump:

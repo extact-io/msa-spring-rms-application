@@ -34,10 +34,10 @@ public class ReservationModelComposer {
 
         ItemReference item = itemFuture.join()
                 .orElseThrow(() -> new BusinessFlowException(
-                        "target does not exist for id:[" + reservation.getItemId() + "]", CauseType.NOT_FOUND));
+                        "target item does not exist for id:[" + reservation.getItemId() + "]", CauseType.NOT_FOUND));
         UserReference user = userFuture.join()
                 .orElseThrow(() -> new BusinessFlowException(
-                        "target does not exist for id:[" + reservation.getReserverId() + "]", CauseType.NOT_FOUND));
+                        "target user does not exist for id:[" + reservation.getReserverId() + "]", CauseType.NOT_FOUND));
 
         return new ReservationComposeModel(reservation, item, user);
     }

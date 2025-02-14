@@ -1,4 +1,4 @@
-package io.extact.msa.spring.rms;
+package io.extact.msa.spring.rms.test;
 
 import static org.assertj.core.api.Assertions.*;
 

@@ -13,7 +13,7 @@ import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractItemRepositoryTest;
 
 @DataJpaTest
-@ActiveProfiles("item-jpa")
+@ActiveProfiles({ "test", "item-jpa" })
 class ItemJpaRepositoryTest extends AbstractItemRepositoryTest {
 
     @Autowired

@@ -17,12 +17,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
-import io.extact.msa.spring.rms.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
@@ -31,6 +31,7 @@ import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.ItemReference;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
+import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
 
 /**
  * テスト観点
@@ -39,6 +40,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
  * ・domainコンポーネントとの結合
  */
 @DataJpaTest
+@ActiveProfiles({ "test", "jpa-all" })
 @TestMethodOrder(OrderAnnotation.class)
 class ItemAdminServiceTest {
 

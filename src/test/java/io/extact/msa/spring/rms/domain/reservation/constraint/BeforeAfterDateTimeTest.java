@@ -10,12 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 
 @SpringBootTest(classes = ValidatorConfig.class, webEnvironment = WebEnvironment.NONE)
+@ActiveProfiles("test")
 class BeforeAfterDateTimeTest {
 
     @Test
@@ -25,6 +27,17 @@ class BeforeAfterDateTimeTest {
         Set<ConstraintViolation<Data>> result = validator.validate(OK);
         ConstraintViolationSetAssert.assertThat(result)
                 .hasNoViolations();
+
+        OK = new Data(null, LocalDateTime.now()); // nullなのでチェック対象外でOK
+        result = validator.validate(OK);
+        ConstraintViolationSetAssert.assertThat(result)
+                .hasNoViolations();
+
+        OK = new Data(LocalDateTime.now().minusHours(1), null); // nullなのでチェック対象外でOK
+        result = validator.validate(OK);
+        ConstraintViolationSetAssert.assertThat(result)
+                .hasNoViolations();
+
 
         Data NG = new Data(LocalDateTime.now(), LocalDateTime.now().minusHours(1));
         result = validator.validate(NG);

@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -25,18 +25,16 @@ import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractItemRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.file.ItemFileRepositoryTest.TestConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.item.ItemFileRepository;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
-import io.extact.msa.spring.test.spring.SelfRootContext;
 
-@SpringBootTest(classes = { SelfRootContext.class, TestConfig.class }, webEnvironment = WebEnvironment.NONE)
-@ActiveProfiles("item-file")
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+@ActiveProfiles({ "test", "item-file" })
 class ItemFileRepositoryTest extends AbstractItemRepositoryTest {
 
     private ItemRepository repository;
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @Configuration(proxyBeanMethods = false)
     @Import(FileRepositoryConfig.class)
     static class TestConfig {
 

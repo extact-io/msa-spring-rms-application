@@ -40,16 +40,16 @@ import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
 import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
-import io.extact.msa.spring.platform.test.stub.auth.TestAuthUtils;
 import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserAddRequest.UserAddRequestBuilder;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserUpdateRequest.UserUpdateRequestBuilder;
+import io.extact.msa.spring.rms.test.TestAuthUtils;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @EnableAutoConfigurationWithoutJpa
-@ActiveProfiles({ "file-all", "test" })
+@ActiveProfiles({ "test", "file-all" })
 @TestMethodOrder(OrderAnnotation.class)
 class UserAdminControllerIntegrationTest {
 

@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,7 @@ import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 
 @WebMvcTest(ItemReservationController.class)
+@ActiveProfiles("test")
 class ItemReservationControllerTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};

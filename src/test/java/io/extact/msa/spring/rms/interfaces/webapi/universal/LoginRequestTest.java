@@ -11,13 +11,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
-import io.extact.msa.spring.rms.ConstraintAnnotationAsserter;
 import io.extact.msa.spring.rms.domain.user.constraint.LoginId;
 import io.extact.msa.spring.rms.domain.user.constraint.Passowrd;
+import io.extact.msa.spring.rms.test.ConstraintAnnotationAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
+@ActiveProfiles("test")
 class LoginRequestTest {
 
     @Autowired

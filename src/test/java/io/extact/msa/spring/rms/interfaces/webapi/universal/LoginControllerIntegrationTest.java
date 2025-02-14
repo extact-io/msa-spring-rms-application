@@ -37,7 +37,7 @@ import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @EnableAutoConfigurationWithoutJpa
-@ActiveProfiles({ "file-all", "test" })
+@ActiveProfiles({ "test", "file-all" })
 @TestMethodOrder(OrderAnnotation.class)
 class LoginControllerIntegrationTest {
 

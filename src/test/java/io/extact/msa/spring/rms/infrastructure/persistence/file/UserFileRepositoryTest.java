@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -26,18 +26,16 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractUserRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.file.UserFileRepositoryTest.TestConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.file.user.UserFileRepository;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
-import io.extact.msa.spring.test.spring.SelfRootContext;
 
-@SpringBootTest(classes = { SelfRootContext.class, TestConfig.class }, webEnvironment = WebEnvironment.NONE)
-@ActiveProfiles("user-file")
+@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+@ActiveProfiles({ "test", "user-file" })
 class UserFileRepositoryTest extends AbstractUserRepositoryTest {
 
     private UserRepository repository;
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @Configuration(proxyBeanMethods = false)
     @Import(FileRepositoryConfig.class)
     static class TestConfig {
 

@@ -16,22 +16,24 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.platform.core.auth.context.DefaultLoginContext;
 import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
-import io.extact.msa.spring.platform.test.stub.auth.TestAuthUtils;
-import io.extact.msa.spring.rms.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserReference;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
+import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.rms.test.TestAuthUtils;
 
 @DataJpaTest
+@ActiveProfiles({ "test", "jpa-all" })
 @TestMethodOrder(OrderAnnotation.class)
 class UserProfileServiceTest {
 
