@@ -1,16 +1,16 @@
 package io.extact.msa.spring.rms.interfaces.console.common;
 
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 
 public interface ModelFormatter<T> {
 
     String format(T model);
 
-    static class RentalItemFormatter implements ModelFormatter<ItemReference> {
+    static class RentalItemFormatter implements ModelFormatter<ItemModelView> {
         @Override
-        public String format(ItemReference item) {
+        public String format(ItemModelView item) {
             return String.format("[%s]%s シリアル番号：%s",
                     item.getId().id(),
                     item.getItemName(),
@@ -31,9 +31,9 @@ public interface ModelFormatter<T> {
         }
     }
 
-    static class UserAccountFormatter implements ModelFormatter<UserReference> {
+    static class UserAccountFormatter implements ModelFormatter<UserModelView> {
         @Override
-        public String format(UserReference user) {
+        public String format(UserModelView user) {
             return String.format("[%s] %s/%s %s %s",
                     user.getId(),
                     user.getLoginId(),

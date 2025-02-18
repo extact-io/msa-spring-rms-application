@@ -8,12 +8,12 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEntity;
 import io.extact.msa.spring.rms.domain.user.model.User;
+import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
-import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,7 +51,7 @@ public class UserEntity implements TableEntity<User>, UserCreatable {
     }
 
     @Override
-    public User toModel(ModelPropertySupportFactory factory) {
+    public User toModel(ModelValidator validator) {
         User user = newInstance(
                 new UserId(id),
                 loginId,
@@ -60,7 +60,7 @@ public class UserEntity implements TableEntity<User>, UserCreatable {
                 userName,
                 phoneNumber,
                 contact);
-        user.configureSupport(factory);
+        user.configure(validator);
         return user;
     }
 }

@@ -10,7 +10,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.method.MethodValidationException;
 
 import io.extact.msa.spring.platform.fw.exception.RmsPersistenceException;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
@@ -80,16 +79,6 @@ public abstract class AbstractItemRepositoryTest {
     }
 
     @Test
-    void testUpdateOnValidationError() {
-        // given
-        Item validateErrorItem = testCreator.newInstance(new ItemId(4), "", "UPDATE"); // serialNoがブランク
-        // when & then
-        assertThrows(MethodValidationException.class, () -> {
-            repository().update(validateErrorItem);
-        });
-    }
-
-    @Test
     void testUpdateOnDuplicate() {
         // given
         Item duplicateItem = testCreator.newInstance(new ItemId(4), "A0001", "UPDATE"); // A0001は既に登録済み
@@ -121,16 +110,6 @@ public abstract class AbstractItemRepositoryTest {
     }
 
     @Test
-    void testAddOnValidationError() {
-        // given
-        Item validateErrorItem = testCreator.newInstance(new ItemId(6), "", "ADD"); // serialNoがブランク
-        // when & then
-        assertThrows(MethodValidationException.class, () -> {
-            repository().add(validateErrorItem);
-        });
-    }
-
-    @Test
     void testAddOnDuplicate() {
         // given
         Item duplicateItem = testCreator.newInstance(new ItemId(7), "A0001", "ADD"); // A0001は既に登録済み
@@ -148,16 +127,6 @@ public abstract class AbstractItemRepositoryTest {
         repository().delete(deleteItem);
         // then
         assertThat(repository().find(deleteItem.getId())).isEmpty();
-    }
-
-    @Test
-    void testDeleteOnValidationError() {
-        // given
-        Item validateErrorItem = testCreator.newInstance(new ItemId(2), "", "ADD"); // serialNoがブランク
-        // when & then
-        assertThrows(MethodValidationException.class, () -> {
-            repository().delete(validateErrorItem);
-        });
     }
 
     @Test

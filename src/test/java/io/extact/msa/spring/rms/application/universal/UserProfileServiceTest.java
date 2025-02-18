@@ -27,7 +27,7 @@ import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.test.TestAuthUtils;
@@ -78,7 +78,7 @@ class UserProfileServiceTest {
         TestAuthUtils.signinByHeader(1, "MEMBER");
 
         // when
-        UserReference actual = service.updateOwnProfile(command);
+        UserModelView actual = service.updateOwnProfile(command);
 
         // then
         User expected = testCreator.newInstance(

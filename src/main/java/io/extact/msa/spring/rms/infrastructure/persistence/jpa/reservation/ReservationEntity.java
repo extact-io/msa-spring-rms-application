@@ -9,13 +9,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEntity;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
+import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
-import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,14 +54,14 @@ public class ReservationEntity implements TableEntity<Reservation>, ReservationC
     }
 
     @Override
-    public Reservation toModel(ModelPropertySupportFactory factory) {
+    public Reservation toModel(ModelValidator validator) {
         Reservation r = newInstance(
                 new ReservationId(id),
                 new ReservationPeriod(fromDateTime, toDateTime),
                 note,
                 new ItemId(itemId),
                 new UserId(reserverId));
-        r.configureSupport(factory);
+        r.configure(validator);
         return r;
     }
 }

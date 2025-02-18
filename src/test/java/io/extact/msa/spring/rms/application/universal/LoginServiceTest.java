@@ -16,7 +16,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.test.assertj.ToStringAssert;
 
@@ -45,7 +45,7 @@ class LoginServiceTest {
         String password = "member1";
 
         // when
-        UserReference user = service.login(loginId, password);
+        UserModelView user = service.login(loginId, password);
 
         // then
         ToStringAssert.assertThatToString(user).isEqualTo(user1);

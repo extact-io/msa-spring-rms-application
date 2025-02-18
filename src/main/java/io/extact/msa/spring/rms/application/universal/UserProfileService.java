@@ -8,7 +8,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseTyp
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -23,11 +23,11 @@ public class UserProfileService {
     private final LoginContext loginContext;
     private final UserRepository repository;
 
-    public UserReference getOwnProfile() {
+    public UserModelView getOwnProfile() {
         return getInternalOwnProfile();
     }
 
-    public UserReference updateOwnProfile(UserProfileUpdateCommand command) {
+    public UserModelView updateOwnProfile(UserProfileUpdateCommand command) {
 
         User user = getInternalOwnProfile();
         user.changePassword(command.password());

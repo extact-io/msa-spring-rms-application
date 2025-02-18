@@ -5,8 +5,8 @@ import static io.extact.msa.spring.rms.interfaces.console.common.ClientConstants
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.rms.application.admin.ItemAddCommand;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
 import io.extact.msa.spring.rms.interfaces.console.textio.TextIoUtils;
@@ -19,7 +19,7 @@ public class AddItemScreen implements RmsScreen {
     private final ItemAdminService service;
 
     @Override
-    public Transition play(UserReference loginUser, boolean printHeader) {
+    public Transition play(UserModelView loginUser, boolean printHeader) {
 
         if (printHeader) {
             TextIoUtils.printScreenHeader(loginUser, "レンタル品登録画面");
@@ -53,7 +53,7 @@ public class AddItemScreen implements RmsScreen {
 
         // レンタル品登録の実行
         try {
-            ItemReference newItem = service.add(command);
+            ItemModelView newItem = service.add(command);
             this.printResultInformation(newItem);
             return Transition.ADMIN_MAIN;
 
@@ -64,7 +64,7 @@ public class AddItemScreen implements RmsScreen {
         }
     }
 
-    private void printResultInformation(ItemReference newItem) {
+    private void printResultInformation(ItemModelView newItem) {
         TextIoUtils.println("***** レンタル品登録結果 *****");
         TextIoUtils.printf(ITEM_FORMAT.format(newItem));
         TextIoUtils.blankLine();

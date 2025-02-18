@@ -31,7 +31,7 @@ import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
-import io.extact.msa.spring.rms.domain.reservation.model.ReservationReference;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
@@ -87,7 +87,7 @@ class ReservationModelComposerTest {
     @Test
     void testComposeModel() {
         // given
-        ReservationReference reservation = ok_reservation;
+        ReservationModelView reservation = ok_reservation;
         // when
         ReservationComposeModel actual = composer.composeModel(reservation);
         // then
@@ -97,7 +97,7 @@ class ReservationModelComposerTest {
     @Test
     void testComposeModelOnItemNotFound() {
         // given
-        ReservationReference reservation = all_ng_reservation;
+        ReservationModelView reservation = all_ng_reservation;
         // when
         BusinessFlowException thrown = assertThrows(BusinessFlowException.class, () -> {
             composer.composeModel(reservation); // UserよりもItemが先に評価される
@@ -110,7 +110,7 @@ class ReservationModelComposerTest {
     @Test
     void testComposeModelOnUserNotFound() {
         // given
-        ReservationReference reservation = user_ng_reservation;
+        ReservationModelView reservation = user_ng_reservation;
         // when
         BusinessFlowException thrown = assertThrows(BusinessFlowException.class, () -> {
             composer.composeModel(reservation);

@@ -4,12 +4,12 @@ import org.beryx.textio.EnumInputReader;
 import org.beryx.textio.TextIoFactory;
 
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.common.ClientConstants;
 
 public class TextIoUtils {
 
-    public static void printScreenHeader(UserReference loginUser, String screenName) {
+    public static void printScreenHeader(UserModelView loginUser, String screenName) {
         var msg = System.lineSeparator()
                 + "===================================================" + System.lineSeparator()
                 + "レンタル予約システム － %s" + System.lineSeparator()

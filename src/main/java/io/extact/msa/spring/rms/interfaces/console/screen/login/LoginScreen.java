@@ -5,7 +5,7 @@ import static io.extact.msa.spring.rms.interfaces.console.common.ClientConstants
 import io.extact.msa.spring.platform.core.env.MainModuleInformation;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.rms.application.universal.LoginService;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
 import io.extact.msa.spring.rms.interfaces.console.textio.TextIoUtils;
@@ -23,7 +23,7 @@ public class LoginScreen implements RmsScreen {
     private final MainModuleInformation moduleInfo;
 
     @Override
-    public Transition play(UserReference dummy, boolean printHeader) {
+    public Transition play(UserModelView dummy, boolean printHeader) {
         try {
             if (printHeader) {
                 // 認証画面のヘッダーを表示する
@@ -49,7 +49,7 @@ public class LoginScreen implements RmsScreen {
                     .read("パスワード");
 
             // ログイン実行
-            UserReference nowLoginUser = service.login(loginId, password);
+            UserModelView nowLoginUser = service.login(loginId, password);
             // 成功したのでログインユーザを通知
             loginObserver.onEvent(nowLoginUser);
 

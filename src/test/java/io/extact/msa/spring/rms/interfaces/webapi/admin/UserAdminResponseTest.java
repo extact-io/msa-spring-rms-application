@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 
 class UserAdminResponseTest {
@@ -16,7 +16,7 @@ class UserAdminResponseTest {
     @Test
     void testFrom() {
         // given
-        UserReference user = testCreator.newInstance(
+        UserModelView user = testCreator.newInstance(
                 new UserId(1),
                 "testLoginId",
                 "testPassword",
@@ -42,7 +42,7 @@ class UserAdminResponseTest {
     @Test
     void testFromNull() {
         // given
-        UserReference user = null;
+        UserModelView user = null;
         // when
         UserAdminResponse response = UserAdminResponse.from(user);
         // then

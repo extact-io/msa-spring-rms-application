@@ -33,7 +33,7 @@ import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
+import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator;
 import io.extact.msa.spring.rms.domain.reservation.ReservationDuplicateChecker;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
@@ -108,7 +108,7 @@ class ItemReservationServiceTest {
     @Test
     void testGetItemAll() {
         // when
-        List<ItemReference> items = service.getItemAll();
+        List<ItemModelView> items = service.getItemAll();
         // then
         ToStringAssert.assertThatToString(items).containsExactly(item1, item2, item3, item4);
     }
@@ -120,7 +120,7 @@ class ItemReservationServiceTest {
         LocalDateTime to = LocalDateTime.of(2020, 4, 2, 23, 59, 0);
 
         // when
-        List<ItemReference> items = service.findRentableItemAtPeriod(from, to);
+        List<ItemModelView> items = service.findRentableItemAtPeriod(from, to);
         // then
         ToStringAssert.assertThatToString(items).containsExactly(item1, item2, item4);
     }
@@ -132,7 +132,7 @@ class ItemReservationServiceTest {
         LocalDateTime to = LocalDateTime.now().plusHours(1);
 
         // when
-        List<ItemReference> items = service.findRentableItemAtPeriod(from, to);
+        List<ItemModelView> items = service.findRentableItemAtPeriod(from, to);
         // then
         ToStringAssert.assertThatToString(items).containsExactly(item1, item2, item3, item4);
     }

@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import io.extact.msa.spring.PersistedTestData;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
+import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
 
 class ItemAdminResponseTest {
 
     @Test
     void testFrom() {
         // given
-        ItemReference item = PersistedTestData.item1;
+        ItemModelView item = PersistedTestData.item1;
 
         // when
         ItemAdminResponse response = ItemAdminResponse.from(item);
@@ -27,9 +27,9 @@ class ItemAdminResponseTest {
     @Test
     void testFromNull() {
         // given
-        ItemReference ref = null;
+        ItemModelView view = null;
         // when
-        ItemAdminResponse response = ItemAdminResponse.from(ref);
+        ItemAdminResponse response = ItemAdminResponse.from(view);
         // then
         assertThat(response).isNull();
     }

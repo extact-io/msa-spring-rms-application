@@ -1,17 +1,17 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.file.item;
 
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.exception.RmsSystemException;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.rms.domain.item.model.Item;
-import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ItemArrayMapper implements ModelArrayMapper<Item>, ItemCreatable {
 
-    private final ModelPropertySupportFactory modelSupportFactory;
+    private final ModelValidator validator;
 
     @Override
     public Item toModel(String[] attributes) throws RmsSystemException {
@@ -19,7 +19,7 @@ public class ItemArrayMapper implements ModelArrayMapper<Item>, ItemCreatable {
         String serialNo = attributes[1];
         String itemName = attributes[2];
         Item item = newInstance(new ItemId(id), serialNo, itemName);
-        item.configureSupport(modelSupportFactory);
+        item.configure(validator);
         return item;
     }
 

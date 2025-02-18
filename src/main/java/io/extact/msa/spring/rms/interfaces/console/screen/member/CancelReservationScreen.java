@@ -8,7 +8,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.common.ClientConstants;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
@@ -21,7 +21,7 @@ public class CancelReservationScreen implements RmsScreen {
     private final ItemReservationService service;
 
     @Override
-    public Transition play(UserReference loginUser, boolean printHeader) {
+    public Transition play(UserModelView loginUser, boolean printHeader) {
 
         if (printHeader) {
             TextIoUtils.printScreenHeader(loginUser, "レンタル品予約キャンセル画面");

@@ -19,8 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.InMemoryIdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
@@ -37,7 +36,7 @@ class ReservationCreatorTest {
     private ReservationCreator reservationCreator;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(ModelConfig.class)
+    @Import(ValidatorConfig.class)
     static class TestConfig {
 
         @Bean
@@ -49,10 +48,7 @@ class ReservationCreatorTest {
 
     @BeforeEach
     void beforeEach(@Autowired IdentityGenerator idGenerator, @Autowired ModelValidator validator) {
-        this.reservationCreator = new ReservationCreator(
-                idGenerator,
-                validator,
-                new DefaultModelPropertySupportFactory(validator));
+        this.reservationCreator = new ReservationCreator(idGenerator, validator);
     }
 
     @Test

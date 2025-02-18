@@ -10,11 +10,10 @@ import org.apache.commons.lang3.Range;
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
 import io.extact.msa.spring.platform.fw.domain.model.ValueModel;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
+import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
 import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
 import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTimeFuture;
 import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
-import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
-import lombok.Getter;
 import lombok.Value;
 
 @Value
@@ -23,10 +22,8 @@ public class ReservationPeriod implements ValueModel, BeforeAfterDateTimeValidat
 
     @FromDateTime
     @FromDateTimeFuture(groups = Add.class)
-    @Getter
     private LocalDateTime from;
     @ToDateTime
-    @Getter
     private LocalDateTime to;
 
     public ReservationPeriod(LocalDateTime fromDateTime, LocalDateTime toDateTime) {
@@ -40,8 +37,8 @@ public class ReservationPeriod implements ValueModel, BeforeAfterDateTimeValidat
 
     public boolean isOverlappedBy(ReservationPeriod otherPeriod) {
 
-        Range<ChronoLocalDateTime<?>> range = Range.between(from, to);
-        Range<ChronoLocalDateTime<?>> otherRange = Range.between(otherPeriod.from, otherPeriod.to);
+        Range<ChronoLocalDateTime<?>> range = Range.of(from, to);
+        Range<ChronoLocalDateTime<?>> otherRange = Range.of(otherPeriod.from, otherPeriod.to);
 
         return range.isOverlappedBy(otherRange);
     }

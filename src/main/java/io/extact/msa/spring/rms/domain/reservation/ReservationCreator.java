@@ -4,7 +4,6 @@ import jakarta.validation.groups.Default;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
 import io.extact.msa.spring.platform.fw.domain.model.ModelCreator;
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
@@ -22,7 +21,6 @@ public class ReservationCreator implements ModelCreator<Reservation, Reservation
 
     private final IdentityGenerator idGenerator;
     private final ModelValidator Validator;
-    private final ModelPropertySupportFactory modelSupportFactory;
     private final ReservationCreatable constructorProxy = new ReservationCreatable() {};
 
     public Reservation create(ReservationModelAttributes attrs) {
@@ -35,8 +33,8 @@ public class ReservationCreator implements ModelCreator<Reservation, Reservation
                 attrs.itemId,
                 attrs.reserverId);
 
-        reservation.configureSupport(modelSupportFactory);
-        Validator.validateModel(reservation, Default.class, Add.class);
+        reservation.configure(Validator);
+        reservation.verify(Default.class, Add.class);
 
         return reservation;
     }

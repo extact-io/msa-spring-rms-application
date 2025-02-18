@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
-import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.ItemCreator.ItemModelAttributes;
+import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
+import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
 
 @Transactional
 public class ItemAdminService {
@@ -29,15 +29,15 @@ public class ItemAdminService {
         this.support = new ApplicationCrudSupport<>(duplicateChecker, repository);
     }
 
-    public List<ItemReference> getAll() {
-        return new ArrayList<>(support.getAll()); // 型をReferenceに制限するため変換
+    public List<ItemModelView> getAll() {
+        return new ArrayList<>(support.getAll()); // 型をModelViewに制限するため変換
     }
 
-    public ItemReference add(ItemAddCommand command) {
+    public ItemModelView add(ItemAddCommand command) {
         return support.add(() -> this.createModel(command));
     }
 
-    public ItemReference update(ItemUpdateCommand command) {
+    public ItemModelView update(ItemUpdateCommand command) {
         return support.update(command.id(), item -> this.editModel(item, command));
     }
 

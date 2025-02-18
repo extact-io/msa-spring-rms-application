@@ -28,7 +28,7 @@ import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
@@ -61,7 +61,7 @@ class UserAdminServiceTest {
     @Test
     void testGetAll() {
         // when
-        List<UserReference> users = service.getAll();
+        List<UserModelView> users = service.getAll();
 
         // then
         assertThat(users).containsExactly(user1, user2, user3);
@@ -81,7 +81,7 @@ class UserAdminServiceTest {
                 .build();
 
         // when
-        UserReference actual = service.add(command);
+        UserModelView actual = service.add(command);
 
         // then
         User expected = testCreator.newInstance(
@@ -163,7 +163,7 @@ class UserAdminServiceTest {
                 .build();
 
         // when
-        UserReference actual = service.update(command);
+        UserModelView actual = service.update(command);
 
         // then
         User expected = testCreator.newInstance(

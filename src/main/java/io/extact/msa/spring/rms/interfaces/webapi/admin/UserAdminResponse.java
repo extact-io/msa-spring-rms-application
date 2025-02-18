@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.admin;
 
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 
 public record UserAdminResponse(
@@ -12,7 +12,7 @@ public record UserAdminResponse(
         String phoneNumber,
         String contact) {
 
-    static UserAdminResponse from(UserReference user) {
+    static UserAdminResponse from(UserModelView user) {
         if (user == null) {
             return null;
         }

@@ -7,7 +7,7 @@ import java.util.List;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
 import io.extact.msa.spring.rms.application.admin.UserUpdateCommand;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
@@ -21,14 +21,14 @@ public class UpdateUserScreen implements RmsScreen {
     private final UserAdminService service;
 
     @Override
-    public Transition play(UserReference loginUser, boolean printHeader) {
+    public Transition play(UserModelView loginUser, boolean printHeader) {
 
         if (printHeader) {
             TextIoUtils.printScreenHeader(loginUser, "ユーザ情報編集画面");
         }
 
         // ユーザ一覧を表示
-        List<? extends UserReference> users = service.getAll();
+        List<? extends UserModelView> users = service.getAll();
         TextIoUtils.println(EDIT_USER_INFORMATION);
         users.forEach(dto -> TextIoUtils.println(USER_FORMAT.format(dto)));
         TextIoUtils.blankLine();
@@ -46,7 +46,7 @@ public class UpdateUserScreen implements RmsScreen {
         }
         TextIoUtils.blankLine();
 
-        UserReference targetUser = users.stream()
+        UserModelView targetUser = users.stream()
                 .filter(user -> user.getId().id() == selectId)
                 .findFirst()
                 .get();
@@ -92,7 +92,7 @@ public class UpdateUserScreen implements RmsScreen {
 
         // ユーザ情報の更新実行
         try {
-            UserReference updatedUser = service.update(command);
+            UserModelView updatedUser = service.update(command);
             this.printResultInformation(updatedUser);
             return Transition.ADMIN_MAIN;
 
@@ -103,7 +103,7 @@ public class UpdateUserScreen implements RmsScreen {
         }
     }
 
-    private void printResultInformation(UserReference updatedUserAccount) {
+    private void printResultInformation(UserModelView updatedUserAccount) {
         TextIoUtils.blankLine();
         TextIoUtils.println("***** ユーザ登録結果 *****");
         TextIoUtils.printf("[%s]のユーザ情報を更新しました", updatedUserAccount.getId());

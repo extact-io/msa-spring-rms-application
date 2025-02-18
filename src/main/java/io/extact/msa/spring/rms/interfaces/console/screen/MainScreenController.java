@@ -6,7 +6,7 @@ import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.universal.LoginService;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
 import io.extact.msa.spring.rms.interfaces.console.screen.admin.AddItemScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.admin.AddUserScreen;
@@ -26,7 +26,7 @@ import io.extact.msa.spring.rms.interfaces.console.screen.member.ReserveItemScre
 public class MainScreenController implements LoginEventObserver {
 
     private final TransitionMap transitionMap;
-    private UserReference currentLoginUser;
+    private UserModelView currentLoginUser;
 
     public MainScreenController(
             LoginService loginService,
@@ -86,12 +86,12 @@ public class MainScreenController implements LoginEventObserver {
     // -------------------------------------------------- obsever methods.
 
     @Override
-    public void onEvent(UserReference loginUser) {
+    public void onEvent(UserModelView loginUser) {
         this.currentLoginUser = loginUser;
     }
 
     @Override
-    public UserReference getLoginUser() {
+    public UserModelView getLoginUser() {
         return this.currentLoginUser;
     }
 }

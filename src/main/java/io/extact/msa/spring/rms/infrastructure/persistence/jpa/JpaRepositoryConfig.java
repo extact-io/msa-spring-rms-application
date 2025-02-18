@@ -9,12 +9,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.profile.ConditionalOnAnyPersistenceProfile;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.sqlinit.ProfileBasedDbInitializerConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.DefaultModelEntityMapper;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemEntity;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemJpaRepository;
@@ -29,7 +27,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.jpa.user.UserJpaRepos
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnAnyPersistenceProfile(JPA)
 @Import({
-        ModelConfig.class,
+        ValidatorConfig.class,
         ProfileBasedDbInitializerConfig.class })
 public class JpaRepositoryConfig {
 
@@ -42,9 +40,7 @@ public class JpaRepositoryConfig {
         ItemJpaRepository itemJpaRepository(ItemJpaRepositoryDelegator delegator, ModelValidator validator) {
             return new ItemJpaRepository(
                     delegator,
-                    new DefaultModelEntityMapper<>(
-                            ItemEntity::from,
-                            modelSupportFactory(validator)));
+                    new DefaultModelEntityMapper<>(ItemEntity::from, validator));
         }
     }
 
@@ -59,9 +55,7 @@ public class JpaRepositoryConfig {
                 ModelValidator validator) {
             return new ReservationJpaRepository(
                     delegator,
-                    new DefaultModelEntityMapper<>(
-                            ReservationEntity::from,
-                            modelSupportFactory(validator)));
+                    new DefaultModelEntityMapper<>(ReservationEntity::from, validator));
         }
     }
 
@@ -74,13 +68,7 @@ public class JpaRepositoryConfig {
         UserJpaRepository userJpaRepository(UserJpaRepositoryDelegator delegator, ModelValidator validator) {
             return new UserJpaRepository(
                     delegator,
-                    new DefaultModelEntityMapper<>(
-                            UserEntity::from,
-                            modelSupportFactory(validator)));
+                    new DefaultModelEntityMapper<>(UserEntity::from, validator));
         }
-    }
-
-    private ModelPropertySupportFactory modelSupportFactory(ModelValidator validator) {
-        return new DefaultModelPropertySupportFactory(validator);
     }
 }

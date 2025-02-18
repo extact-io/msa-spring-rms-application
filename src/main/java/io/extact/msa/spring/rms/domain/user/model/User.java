@@ -3,9 +3,7 @@ package io.extact.msa.spring.rms.domain.user.model;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-import io.extact.msa.spring.platform.fw.domain.model.EntityModel;
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupport;
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.domain.model.AbstractEntityModel;
 import io.extact.msa.spring.rms.domain.user.constraint.LoginId;
 import io.extact.msa.spring.rms.domain.user.constraint.Passowrd;
 import io.extact.msa.spring.rms.domain.user.constraint.UserTypeConstraint;
@@ -16,9 +14,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 @ToString
-public class User implements EntityModel, UserReference {
+public class User extends AbstractEntityModel implements UserModelView {
 
     @Getter
     @NotNull
@@ -38,9 +36,6 @@ public class User implements EntityModel, UserReference {
     @Valid
     private UserProfile profile;
 
-    @ToString.Exclude
-    private ModelPropertySupport modelSupport;
-
     User(UserId id, String loginId, String password, UserType userType, UserProfile profile) {
         this.id = id;
         this.loginId = loginId;
@@ -49,27 +44,49 @@ public class User implements EntityModel, UserReference {
         this.profile = profile;
     }
 
+    // --------------------------------------- service methods
+
     public boolean isAdmin() {
         return this.userType == UserType.ADMIN;
     }
 
     public void changePassword(String newPassword) {
-        modelSupport.setPropertyWithValidation("password", newPassword);
+        applyPassword(newPassword);
     }
 
     public void switchUserType(UserType newUserType) {
-        modelSupport.setPropertyWithValidation("userType", newUserType);
+        applyUserType(newUserType);
     }
 
     public void editProfile(String userName, String phoneNumber, String contact) {
         UserProfile newProfile = new UserProfile(userName, phoneNumber, contact);
-        modelSupport.setPropertyWithValidation("profile", newProfile);
+        applyProfile(newProfile);
     }
 
-    @Override
-    public void configureSupport(ModelPropertySupportFactory factory) {
-        this.modelSupport = factory.create(User::new, this);
+    // --------------------------------------- private methods
+
+    private void applyPassword(String newPassword) {
+        User test = new User();
+        test.password = newPassword;
+        validator().validateField(test, "password");
+        this.password = newPassword;
     }
+
+    private void applyUserType(UserType newUserType) {
+        User test = new User();
+        test.userType = newUserType;
+        validator().validateField(test, "userType");
+        this.userType = newUserType;
+    }
+
+    private void applyProfile(UserProfile newUserProfile) {
+        User test = new User();
+        test.profile = newUserProfile;
+        validator().validateField(test, "profile");
+        this.profile = newUserProfile;
+    }
+
+    // --------------------------------------- inner interface
 
     public interface UserCreatable {
         default User newInstance(

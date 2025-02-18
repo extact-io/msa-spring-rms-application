@@ -1,7 +1,6 @@
 package io.extact.msa.spring.rms.domain.user;
 
 import io.extact.msa.spring.platform.fw.domain.model.ModelCreator;
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.rms.domain.user.UserCreator.UserModelAttributes;
@@ -17,7 +16,6 @@ public class UserCreator implements ModelCreator<User, UserModelAttributes> {
 
     private final IdentityGenerator idGenerator;
     private final ModelValidator validator;
-    private final ModelPropertySupportFactory modelSupportFactory;
     private final UserCreatable constructorProxy = new UserCreatable() {};
 
     public User create(UserModelAttributes attrs) {
@@ -32,8 +30,8 @@ public class UserCreator implements ModelCreator<User, UserModelAttributes> {
                 attrs.phoneNumber,
                 attrs.contact);
 
-        user.configureSupport(modelSupportFactory);
-        validator.validateModel(user);
+        user.configure(validator);
+        user.verify();
 
         return user;
     }

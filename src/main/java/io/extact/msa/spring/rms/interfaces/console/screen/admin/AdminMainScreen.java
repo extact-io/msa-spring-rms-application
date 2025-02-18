@@ -1,7 +1,7 @@
 package io.extact.msa.spring.rms.interfaces.console.screen.admin;
 
 
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
 import io.extact.msa.spring.rms.interfaces.console.textio.TextIoUtils;
@@ -32,7 +32,7 @@ public class AdminMainScreen implements RmsScreen {
     }
 
     @Override
-    public Transition play(UserReference loginUser, boolean printHeader) {
+    public Transition play(UserModelView loginUser, boolean printHeader) {
 
         TextIoUtils.printScreenHeader(loginUser, "管理者サービスメニュー画面");
 

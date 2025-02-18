@@ -3,17 +3,17 @@ package io.extact.msa.spring.rms.interfaces.console.common;
 import java.time.format.DateTimeFormatter;
 
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 
 public class ClientConstants {
 
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd");
     public static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
 
-    public static final ModelFormatter<ItemReference> ITEM_FORMAT = new ModelFormatter.RentalItemFormatter();
+    public static final ModelFormatter<ItemModelView> ITEM_FORMAT = new ModelFormatter.RentalItemFormatter();
     public static final ModelFormatter<ReservationComposeModel> RESERVATION_FORMAT = new ModelFormatter.ReservationFormatter();
-    public static final ModelFormatter<UserReference> USER_FORMAT = new ModelFormatter.UserAccountFormatter();
+    public static final ModelFormatter<UserModelView> USER_FORMAT = new ModelFormatter.UserAccountFormatter();
 
     public static final String SCREEN_BREAK_KEY = "-1";
     public static final int SCREEN_BREAK_VALUE = Integer.parseInt(SCREEN_BREAK_KEY);

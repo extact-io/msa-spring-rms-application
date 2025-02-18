@@ -3,7 +3,7 @@ package io.extact.msa.spring.rms.interfaces.webapi.universal;
 import java.util.Set;
 
 import io.extact.msa.spring.platform.core.jwt.encode.UserClaims;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 
 public record LoginUserResponse(
@@ -15,7 +15,7 @@ public record LoginUserResponse(
         String phoneNumber,
         String contact) implements UserClaims {
 
-    static LoginUserResponse from(UserReference user) {
+    static LoginUserResponse from(UserModelView user) {
         if (user == null) {
             return null;
         }

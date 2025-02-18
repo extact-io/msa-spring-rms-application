@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.console.screen.member;
 
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
 import io.extact.msa.spring.rms.interfaces.console.textio.TextIoUtils;
@@ -31,7 +31,7 @@ public class MemberMainScreen implements RmsScreen {
     }
 
     @Override
-    public Transition play(UserReference loginUser, boolean printHeader) {
+    public Transition play(UserModelView loginUser, boolean printHeader) {
 
         TextIoUtils.printScreenHeader(loginUser, "レンタル会員サービスメニュー画面");
 

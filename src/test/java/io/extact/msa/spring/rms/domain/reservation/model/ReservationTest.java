@@ -20,8 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
 import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
@@ -42,7 +41,7 @@ class ReservationTest {
     private Validator beanValidator;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(ModelConfig.class)
+    @Import(ValidatorConfig.class)
     static class TestConfig {
     }
 
@@ -134,7 +133,7 @@ class ReservationTest {
                 "note",
                 new ItemId(1),
                 new UserId(1));
-        r.configureSupport(new DefaultModelPropertySupportFactory(modelValidator));
+        r.configure(modelValidator);
         return r;
     }
 }

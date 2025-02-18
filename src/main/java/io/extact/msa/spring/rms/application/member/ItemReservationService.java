@@ -16,7 +16,7 @@ import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
+import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
 import io.extact.msa.spring.rms.domain.reservation.ReservationDuplicateChecker;
@@ -42,11 +42,11 @@ public class ItemReservationService {
     private final UserRepository userRepository;
 
 
-    public List<ItemReference> getItemAll() {
-        return new ArrayList<>(itemRepository.findAll()); // 型をReferenceに制限するため変換
+    public List<ItemModelView> getItemAll() {
+        return new ArrayList<>(itemRepository.findAll()); // 型をModelViewに制限するため変換
     }
 
-    public List<ItemReference> findRentableItemAtPeriod(LocalDateTime from, LocalDateTime to) {
+    public List<ItemModelView> findRentableItemAtPeriod(LocalDateTime from, LocalDateTime to) {
 
         ReservationPeriod overlapPeriod = new ReservationPeriod(from, to);
         List<ItemId> reservedItemIds = reservationRepository
@@ -60,7 +60,7 @@ public class ItemReservationService {
                 .stream()
                 .filter(item -> !reservedItemIds.contains(item.getId()))
                 .toList();
-        return new ArrayList<>(items); // 型をReferenceに制限するため変換
+        return new ArrayList<>(items); // 型をModelViewに制限するため変換
     }
 
     public boolean isRentableItemAtPeriod(ItemId itemId, LocalDateTime from, LocalDateTime to) {

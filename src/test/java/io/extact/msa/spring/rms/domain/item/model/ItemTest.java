@@ -18,8 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
 import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
 import io.extact.msa.spring.rms.test.ConstraintAnnotationAsserter;
@@ -41,7 +40,7 @@ class ItemTest {
     private Validator beanValidator;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(ModelConfig.class)
+    @Import(ValidatorConfig.class)
     static class TestConfig {
     }
 
@@ -108,7 +107,7 @@ class ItemTest {
 
     private Item newItem() {
         Item item = new Item(new ItemId(1), "serialNo", "itemName");
-        item.configureSupport(new DefaultModelPropertySupportFactory(modelValidator));
+        item.configure(modelValidator);
         return item;
     }
 }

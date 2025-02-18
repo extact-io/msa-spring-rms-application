@@ -12,7 +12,7 @@ import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.UserCreator.UserModelAttributes;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 
 @Transactional
 public class UserAdminService {
@@ -29,15 +29,15 @@ public class UserAdminService {
         this.support = new ApplicationCrudSupport<>(duplicateChecker, repository);
     }
 
-    public List<UserReference> getAll() {
+    public List<UserModelView> getAll() {
         return new ArrayList<>(support.getAll());
     }
 
-    public UserReference add(UserAddCommand command) {
+    public UserModelView add(UserAddCommand command) {
         return support.add(() -> this.createModel(command));
     }
 
-    public UserReference update(UserUpdateCommand command) {
+    public UserModelView update(UserUpdateCommand command) {
         // loginIdは更新不可なので重複エラーは発生しない
         return support.update(command.id(), user -> this.editModel(user, command));
     }

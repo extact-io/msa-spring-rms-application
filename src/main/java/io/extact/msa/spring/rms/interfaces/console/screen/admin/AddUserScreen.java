@@ -5,7 +5,7 @@ import static io.extact.msa.spring.rms.interfaces.console.common.ClientConstants
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.rms.application.admin.UserAddCommand;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
@@ -19,7 +19,7 @@ public class AddUserScreen implements RmsScreen {
     private final UserAdminService service;
 
     @Override
-    public Transition play(UserReference loginUser, boolean printHeader) {
+    public Transition play(UserModelView loginUser, boolean printHeader) {
 
         if (printHeader) {
             TextIoUtils.printScreenHeader(loginUser, "ユーザ登録画面");
@@ -77,7 +77,7 @@ public class AddUserScreen implements RmsScreen {
 
         // ユーザ登録の実行
         try {
-            UserReference newUser = service.add(command);
+            UserModelView newUser = service.add(command);
             this.printResultInformation(newUser);
             return Transition.ADMIN_MAIN;
 
@@ -88,7 +88,7 @@ public class AddUserScreen implements RmsScreen {
         }
     }
 
-    private void printResultInformation(UserReference newUser) {
+    private void printResultInformation(UserModelView newUser) {
         TextIoUtils.blankLine();
         TextIoUtils.println("***** ユーザ登録結果 *****");
         TextIoUtils.println("ユーザ番号：" + newUser.getId());

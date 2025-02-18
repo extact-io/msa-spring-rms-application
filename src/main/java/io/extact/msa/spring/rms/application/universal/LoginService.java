@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -14,7 +14,7 @@ public class LoginService {
 
     private final UserRepository repository;
 
-    public UserReference login(String loginId, String password) {
+    public UserModelView login(String loginId, String password) {
         return repository
                 .findByLoginIdAndPassword(loginId, password)
                 .orElseThrow(() -> new BusinessFlowException("loginId or password is different", CauseType.NOT_FOUND));

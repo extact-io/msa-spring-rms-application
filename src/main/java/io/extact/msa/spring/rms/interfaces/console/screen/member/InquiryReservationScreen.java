@@ -8,8 +8,8 @@ import java.util.List;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
 import io.extact.msa.spring.rms.interfaces.console.textio.TextIoUtils;
@@ -21,14 +21,14 @@ public class InquiryReservationScreen implements RmsScreen {
     private final ItemReservationService service;
 
     @Override
-    public Transition play(UserReference loginUser, boolean printHeader) {
+    public Transition play(UserModelView loginUser, boolean printHeader) {
 
         if (printHeader) {
             TextIoUtils.printScreenHeader(loginUser, "予約照会画面");
         }
 
         // レンタル品一覧を表示
-        List<? extends ItemReference> items = service.getItemAll();
+        List<? extends ItemModelView> items = service.getItemAll();
         TextIoUtils.println(INQUIRY_RESERVATION_INFORMATION);
         items.forEach(dto -> TextIoUtils.println(ITEM_FORMAT.format(dto)));
         TextIoUtils.blankLine();

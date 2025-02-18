@@ -6,11 +6,11 @@ import jakarta.persistence.Access;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEntity;
 import io.extact.msa.spring.rms.domain.item.model.Item;
-import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,9 +35,9 @@ public class ItemEntity implements TableEntity<Item>, ItemCreatable {
     }
 
     @Override
-    public Item toModel(ModelPropertySupportFactory factory) {
+    public Item toModel(ModelValidator validator) {
         Item item = newInstance(new ItemId(this.id), this.serialNo, this.itemName);
-        item.configureSupport(factory);
+        item.configure(validator);
         return item;
     }
 }

@@ -3,9 +3,7 @@ package io.extact.msa.spring.rms.domain.item.model;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
-import io.extact.msa.spring.platform.fw.domain.model.EntityModel;
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupport;
-import io.extact.msa.spring.platform.fw.domain.model.ModelPropertySupportFactory;
+import io.extact.msa.spring.platform.fw.domain.model.AbstractEntityModel;
 import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
 import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
 import lombok.AccessLevel;
@@ -15,9 +13,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 @ToString
-public class Item implements EntityModel, ItemReference {
+public class Item extends AbstractEntityModel implements ItemModelView {
 
     @Getter
     @NotNull
@@ -30,24 +28,36 @@ public class Item implements EntityModel, ItemReference {
     @ItemName
     private String itemName;
 
-    @ToString.Exclude
-    private ModelPropertySupport modelSupport;
-
     Item(ItemId id, String serialNo, String itemName) {
         this.id = id;
         this.serialNo = serialNo;
         this.itemName = itemName;
     }
 
+    // --------------------------------------- service methods
+
     public void editItem(String newSerialNo, String newItemName) {
-        modelSupport.setPropertyWithValidation("serialNo", newSerialNo);
-        modelSupport.setPropertyWithValidation("itemName", newItemName);
+        applySerialNo(newSerialNo);
+        applyItemName(newItemName);
     }
 
-    @Override
-    public void configureSupport(ModelPropertySupportFactory factory) {
-        this.modelSupport = factory.create(Item::new, this);
+    // --------------------------------------- private methods
+
+    private void applySerialNo(String newSerialNo) {
+        Item test = new Item();
+        test.serialNo = newSerialNo;
+        validator().validateField(test, "serialNo");
+        this.serialNo = newSerialNo;
     }
+
+    private void applyItemName(String newItemName) {
+        Item test = new Item();
+        test.itemName = newItemName;
+        validator().validateField(test, "itemName");
+        this.itemName = newItemName;
+    }
+
+    // --------------------------------------- inner interface
 
     public interface ItemCreatable {
         default Item newInstance(

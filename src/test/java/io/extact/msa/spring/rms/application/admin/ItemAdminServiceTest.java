@@ -29,7 +29,7 @@ import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.item.model.ItemReference;
+import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
 
@@ -69,7 +69,7 @@ class ItemAdminServiceTest {
     void testGetAll() {
         // given
         // when
-        List<ItemReference> items = service.getAll();
+        List<ItemModelView> items = service.getAll();
 
         // then
         assertThatToString(items).containsExactly(item1, item2, item3, item4);
@@ -85,7 +85,7 @@ class ItemAdminServiceTest {
                 .build();
 
         // when
-        ItemReference actual = service.add(command);
+        ItemModelView actual = service.add(command);
 
         // then
         Item expected = testCreator.newInstance(new ItemId(1000), "newNo", "newItem");
@@ -151,7 +151,7 @@ class ItemAdminServiceTest {
                 .build();
 
         // when
-        ItemReference actual = service.update(command);
+        ItemModelView actual = service.update(command);
 
         // then
         Item expected = testCreator.newInstance(item1.getId(), "upateNo", "upadteItem");

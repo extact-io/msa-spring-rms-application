@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.universal;
 
-import io.extact.msa.spring.rms.domain.user.model.UserReference;
+import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 
 public record UserProfileResponse(
@@ -12,7 +12,7 @@ public record UserProfileResponse(
         String phoneNumber,
         String contact) {
 
-    static UserProfileResponse from(UserReference user) {
+    static UserProfileResponse from(UserModelView user) {
         if (user == null) {
             return null;
         }

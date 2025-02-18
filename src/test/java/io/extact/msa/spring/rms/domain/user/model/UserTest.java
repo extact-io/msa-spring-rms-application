@@ -18,8 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.DefaultModelPropertySupportFactory;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.model.ModelConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.user.constraint.Contact;
 import io.extact.msa.spring.rms.domain.user.constraint.LoginId;
 import io.extact.msa.spring.rms.domain.user.constraint.Passowrd;
@@ -39,7 +38,7 @@ class UserTest {
     private Validator beanValidator;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(ModelConfig.class)
+    @Import(ValidatorConfig.class)
     static class TestConfig {
     }
 
@@ -257,7 +256,7 @@ class UserTest {
                         "userName",
                         "090-0000-0000",
                         "contact"));
-        user.configureSupport(new DefaultModelPropertySupportFactory(modelValidator));
+        user.configure(modelValidator);
         return user;
     }
 }
