@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.admin;
 
-import static io.extact.msa.spring.PersistedTestData.*;
+import static io.extact.msa.spring.rms.test.PersistedTestData.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
-import io.extact.msa.spring.platform.fw.web.RestControllerConfig;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.application.admin.ItemAddCommand;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ItemUpdateCommand;

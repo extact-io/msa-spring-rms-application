@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import io.extact.msa.spring.platform.fw.web.RmsRestController;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.rms.application.universal.UserProfileService;
 import lombok.RequiredArgsConstructor;
 

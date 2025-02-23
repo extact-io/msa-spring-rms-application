@@ -1,6 +1,7 @@
 package io.extact.msa.spring.rms.application.universal;
 
-import jakarta.transaction.Transactional;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;

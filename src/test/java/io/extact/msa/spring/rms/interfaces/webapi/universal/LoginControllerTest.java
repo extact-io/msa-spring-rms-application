@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.universal;
 
-import static io.extact.msa.spring.PersistedTestData.*;
+import static io.extact.msa.spring.rms.test.PersistedTestData.*;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
@@ -24,14 +24,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
-import io.extact.msa.spring.platform.fw.web.RestControllerConfig;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
+import io.extact.msa.spring.rms.test.PersistedTestData;
 
 @WebMvcTest(LoginController.class)
 @ActiveProfiles("test")

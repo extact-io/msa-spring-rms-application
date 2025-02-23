@@ -2,8 +2,8 @@ package io.extact.msa.spring.rms.infrastructure.persistence.jpa.item;
 
 import java.util.Optional;
 
-import io.extact.msa.spring.platform.fw.infrastructure.persistence.ModelEntityMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.AbstractJpaRepository;
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.ModelEntityMapper;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 

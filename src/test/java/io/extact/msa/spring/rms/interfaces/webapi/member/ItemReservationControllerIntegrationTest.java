@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.member;
 
-import static io.extact.msa.spring.PersistedTestData.*;
+import static io.extact.msa.spring.rms.test.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
@@ -34,7 +34,6 @@ import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
@@ -48,6 +47,7 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstrai
 import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationAdminResponse;
 import io.extact.msa.spring.rms.interfaces.webapi.member.ReserveItemRequest.ReserveItemRequestBuilder;
+import io.extact.msa.spring.rms.test.PersistedTestData;
 import io.extact.msa.spring.rms.test.TestAuthUtils;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 

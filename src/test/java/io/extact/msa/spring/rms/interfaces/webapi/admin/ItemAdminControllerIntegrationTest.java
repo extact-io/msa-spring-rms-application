@@ -31,7 +31,6 @@ import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.annotation.PutExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
@@ -42,6 +41,7 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDese
 import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
 import io.extact.msa.spring.rms.WebApiApplication;
+import io.extact.msa.spring.rms.test.PersistedTestData;
 import io.extact.msa.spring.rms.test.TestAuthUtils;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 

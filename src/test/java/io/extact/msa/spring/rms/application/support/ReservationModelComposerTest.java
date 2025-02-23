@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.async.AsyncConfig;
 import io.extact.msa.spring.platform.core.async.AsyncInvoker;
 import io.extact.msa.spring.platform.fw.domain.model.Identity;
@@ -35,6 +34,7 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
+import io.extact.msa.spring.rms.test.PersistedTestData;
 import io.extact.msa.spring.test.assertj.ToStringAssert;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)

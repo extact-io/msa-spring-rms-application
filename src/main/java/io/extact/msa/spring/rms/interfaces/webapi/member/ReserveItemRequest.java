@@ -2,8 +2,8 @@ package io.extact.msa.spring.rms.interfaces.webapi.member;
 
 import java.time.LocalDateTime;
 
+import io.extact.msa.spring.platform.core.generic.Transformable;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
-import io.extact.msa.spring.platform.fw.domain.model.Transformable;
 import io.extact.msa.spring.rms.application.member.ReserveItemCommand;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;

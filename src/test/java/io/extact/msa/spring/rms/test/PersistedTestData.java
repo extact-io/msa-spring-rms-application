@@ -1,4 +1,4 @@
-package io.extact.msa.spring;
+package io.extact.msa.spring.rms.test;
 
 import java.time.LocalDateTime;
 

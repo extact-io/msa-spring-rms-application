@@ -30,7 +30,6 @@ import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.annotation.PutExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import io.extact.msa.spring.PersistedTestData;
 import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
@@ -44,6 +43,7 @@ import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserAddRequest.UserAddRequestBuilder;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserUpdateRequest.UserUpdateRequestBuilder;
+import io.extact.msa.spring.rms.test.PersistedTestData;
 import io.extact.msa.spring.rms.test.TestAuthUtils;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 

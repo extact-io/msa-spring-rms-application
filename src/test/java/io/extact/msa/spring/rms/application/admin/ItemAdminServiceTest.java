@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.application.admin;
 
-import static io.extact.msa.spring.PersistedTestData.*;
+import static io.extact.msa.spring.rms.test.PersistedTestData.*;
 import static io.extact.msa.spring.test.assertj.ToStringAssert.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;

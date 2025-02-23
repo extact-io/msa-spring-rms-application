@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
-import io.extact.msa.spring.platform.fw.web.RmsRestController;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;

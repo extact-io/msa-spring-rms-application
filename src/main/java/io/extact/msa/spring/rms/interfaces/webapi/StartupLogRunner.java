@@ -4,7 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 
 import io.extact.msa.spring.platform.core.env.ActiveProfileResolver;
 import io.extact.msa.spring.platform.core.env.MainModuleInformation;
-import io.extact.msa.spring.platform.fw.StartupLog;
+import io.extact.msa.spring.platform.fw.interfaces.StartupLog;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

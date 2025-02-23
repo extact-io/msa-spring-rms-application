@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.universal;
 
-import io.extact.msa.spring.platform.fw.domain.model.Transformable;
+import io.extact.msa.spring.platform.core.generic.Transformable;
 import io.extact.msa.spring.rms.application.universal.UserProfileUpdateCommand;
 import io.extact.msa.spring.rms.domain.user.constraint.Contact;
 import io.extact.msa.spring.rms.domain.user.constraint.Passowrd;

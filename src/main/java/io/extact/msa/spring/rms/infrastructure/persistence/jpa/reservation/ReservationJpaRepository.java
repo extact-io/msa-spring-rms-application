@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-import io.extact.msa.spring.platform.fw.infrastructure.persistence.ModelEntityMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.AbstractJpaRepository;
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.ModelEntityMapper;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;

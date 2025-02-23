@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
-import io.extact.msa.spring.platform.fw.web.RmsRestController;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import lombok.RequiredArgsConstructor;
