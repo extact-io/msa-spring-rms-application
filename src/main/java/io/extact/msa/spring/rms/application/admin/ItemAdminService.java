@@ -3,9 +3,8 @@ package io.extact.msa.spring.rms.application.admin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
+import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
 import io.extact.msa.spring.rms.domain.item.ItemCreator.ItemModelAttributes;
@@ -14,7 +13,7 @@ import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
 
-@Transactional
+@ApplicationService
 public class ItemAdminService {
 
     private final ItemCreator modelCreator;

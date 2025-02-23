@@ -1,9 +1,8 @@
 package io.extact.msa.spring.rms.application.universal;
 
 
-import org.springframework.transaction.annotation.Transactional;
-
 import io.extact.msa.spring.platform.core.auth.context.LoginContext;
+import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
@@ -18,7 +17,7 @@ import lombok.RequiredArgsConstructor;
  * チェック内容がが異なるため別のサービスとして設けている。
  */
 @RequiredArgsConstructor
-@Transactional
+@ApplicationService
 public class UserProfileService {
 
     private final LoginContext loginContext;

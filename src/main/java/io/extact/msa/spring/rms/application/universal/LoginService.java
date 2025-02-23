@@ -1,7 +1,6 @@
 package io.extact.msa.spring.rms.application.universal;
 
-import org.springframework.transaction.annotation.Transactional;
-
+import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
@@ -9,7 +8,7 @@ import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional
+@ApplicationService
 public class LoginService {
 
     private final UserRepository repository;

@@ -2,9 +2,8 @@ package io.extact.msa.spring.rms.application.admin;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
+import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.domain.reservation.ReservationDuplicateChecker;
@@ -13,7 +12,7 @@ import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 
-@Transactional
+@ApplicationService
 public class ReservationAdminService {
 
     private final ReservationModelComposer modelComposer;

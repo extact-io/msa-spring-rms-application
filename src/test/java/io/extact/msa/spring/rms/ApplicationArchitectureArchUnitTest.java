@@ -19,14 +19,15 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.library.Architectures;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 
+import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.platform.fw.domain.model.EntityModelView;
 import io.extact.msa.spring.platform.fw.domain.model.ValueModel;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.rms.interfaces.console.MainScreenRunner;
 import io.extact.msa.spring.rms.interfaces.webapi.StartupLogRunner;
 
 @AnalyzeClasses(packages = "io.extact.msa.spring.rms", importOptions = ImportOption.DoNotIncludeTests.class)
 class ApplicationArchitectureArchUnitTest {
-
 
     // ---------------------------------------------------------------------
     // オニオンアーキテクチャの検証
@@ -59,7 +60,6 @@ class ApplicationArchitectureArchUnitTest {
             // Cofigurationクラスからの依存は無視する
             .ensureAllClassesAreContainedInArchitectureIgnoring(configurationClasses())
             .ignoreDependency(configurationClasses(), alwaysTrue());
-
 
     // ---------------------------------------------------------------------
     // レイヤーごとの依存関係の検証
@@ -102,6 +102,7 @@ class ApplicationArchitectureArchUnitTest {
                     "java..",
                     "jakarta.validation..",
                     "org.springframework.web..", // Spring MVCには依存してOK
+                    "lombok..",
                     "..core.generic..",
                     "..core.env..",
                     "..core.auth..",
@@ -128,6 +129,7 @@ class ApplicationArchitectureArchUnitTest {
             .onlyDependOnClassesThat().resideInAnyPackage(
                     "java..",
                     "org.beryx.textio..", // コンソールFWには依存してOK
+                    "lombok..",
                     "..core.env..",
                     "..fw.exception",
                     "..fw.interfaces",
@@ -147,6 +149,7 @@ class ApplicationArchitectureArchUnitTest {
             .should()
             .onlyDependOnClassesThat(resideInAnyPackage(
                     "java..",
+                    "lombok..",
                     "..core.generic..",
                     "..core.auth..",
                     "..core.async..",
@@ -155,10 +158,8 @@ class ApplicationArchitectureArchUnitTest {
                     "..fw.exception..",
                     "..rms.domain..",
                     "..rms.application..")
-                            // Springへの依存はNGだが@Transactionalだけは許容
-                            .or(type(org.springframework.transaction.annotation.Transactional.class))
-                            .or(type(org.springframework.transaction.annotation.Propagation.class))
-                            .or(type(org.springframework.transaction.annotation.Isolation.class)));
+                            .or(type(org.springframework.transaction.annotation.Propagation.class)) //
+            );
 
     /**
      * domainパッケージ内の集約(item/reservation/user)間で循環参照が発生していないかの検証
@@ -182,6 +183,7 @@ class ApplicationArchitectureArchUnitTest {
             .onlyDependOnClassesThat(resideInAnyPackage(
                     "java..",
                     "jakarta.validation..",
+                    "lombok..",
                     "..core.generic..",
                     "..fw.domain..",
                     "..fw.exception..",
@@ -200,6 +202,7 @@ class ApplicationArchitectureArchUnitTest {
             .should()
             .onlyDependOnClassesThat(resideInAnyPackage(
                     "java..",
+                    "lombok..",
                     "..fw.exception..",
                     "..fw.domain.model..",
                     "..fw.infrastructure.persistence.file..",
@@ -222,6 +225,7 @@ class ApplicationArchitectureArchUnitTest {
             .onlyDependOnClassesThat(resideInAnyPackage(
                     "java..",
                     "jakarta.persistence..",
+                    "lombok..",
                     "..fw.exception..",
                     "..fw.domain.model..",
                     "..fw.infrastructure.persistence.jpa..",
@@ -232,13 +236,39 @@ class ApplicationArchitectureArchUnitTest {
                             .or(type(io.extact.msa.spring.rms.domain.user.UserRepository.class)) //
             );
 
-
     // ---------------------------------------------------------------------
     // ネーミングの検証
     // ---------------------------------------------------------------------
 
+    @ArchTest
+    static final ArchRule naming_controller_should_be_suffixed_forward = classes()
+            .that()
+            .resideInAPackage("..interfaces.webapi..")
+            .and().areAnnotatedWith(RmsRestController.class)
+            .should()
+            .haveSimpleNameEndingWith("Controller");
 
+    @ArchTest
+    static final ArchRule naming_controller_should_be_suffixed_reverse = noClasses()
+            .that()
+            .resideInAPackage("..interfaces.webapi..")
+            .and().haveSimpleNameEndingWith("Controller")
+            .should().notBeAnnotatedWith(RmsRestController.class);
 
+    @ArchTest
+    static final ArchRule naming_service_should_be_suffixed_forward = classes()
+            .that()
+            .resideInAPackage("..application..")
+            .and().areAnnotatedWith(ApplicationService.class)
+            .should()
+            .haveSimpleNameEndingWith("Service");
+
+    @ArchTest
+    static final ArchRule naming_controller_should_be_suffixed_reserve = noClasses()
+            .that()
+            .resideInAPackage("..application..")
+            .and().haveSimpleNameEndingWith("Service")
+            .should().notBeAnnotatedWith(ApplicationService.class);
 
     // --------------------------------------------------------------- private methods
 

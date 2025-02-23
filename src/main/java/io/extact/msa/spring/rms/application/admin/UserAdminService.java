@@ -3,18 +3,17 @@ package io.extact.msa.spring.rms.application.admin;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
+import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.rms.domain.user.UserCreator;
-import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.UserCreator.UserModelAttributes;
+import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 
-@Transactional
+@ApplicationService
 public class UserAdminService {
 
     private final UserCreator modelCreator;
