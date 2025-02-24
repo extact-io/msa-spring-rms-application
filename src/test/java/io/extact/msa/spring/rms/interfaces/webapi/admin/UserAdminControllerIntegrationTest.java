@@ -43,8 +43,8 @@ import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserAddRequest.UserAddRequestBuilder;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserUpdateRequest.UserUpdateRequestBuilder;
-import io.extact.msa.spring.rms.test.PersistedTestData;
-import io.extact.msa.spring.rms.test.TestAuthUtils;
+import io.extact.msa.spring.rms.testutils.PersistedTestData;
+import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)

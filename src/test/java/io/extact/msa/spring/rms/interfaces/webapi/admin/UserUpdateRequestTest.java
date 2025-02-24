@@ -21,7 +21,7 @@ import io.extact.msa.spring.rms.domain.user.constraint.PhoneNumber;
 import io.extact.msa.spring.rms.domain.user.constraint.UserName;
 import io.extact.msa.spring.rms.domain.user.constraint.UserTypeConstraint;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
-import io.extact.msa.spring.rms.test.ConstraintAnnotationAsserter;
+import io.extact.msa.spring.rms.testutils.ConstraintAnnotationAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @ActiveProfiles("test")

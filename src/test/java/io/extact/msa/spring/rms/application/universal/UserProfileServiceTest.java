@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.application.universal;
 
-import static io.extact.msa.spring.rms.test.PersistedTestData.*;
+import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,8 +29,8 @@ import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
-import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
-import io.extact.msa.spring.rms.test.TestAuthUtils;
+import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 
 @DataJpaTest
 @ActiveProfiles({ "test", "jpa-all" })

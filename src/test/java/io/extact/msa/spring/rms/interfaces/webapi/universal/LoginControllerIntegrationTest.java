@@ -32,7 +32,7 @@ import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
 import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
 import io.extact.msa.spring.rms.WebApiApplication;
-import io.extact.msa.spring.rms.test.PersistedTestData;
+import io.extact.msa.spring.rms.testutils.PersistedTestData;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)

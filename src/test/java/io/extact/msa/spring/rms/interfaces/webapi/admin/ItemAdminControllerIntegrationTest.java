@@ -41,8 +41,8 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDese
 import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
 import io.extact.msa.spring.rms.WebApiApplication;
-import io.extact.msa.spring.rms.test.PersistedTestData;
-import io.extact.msa.spring.rms.test.TestAuthUtils;
+import io.extact.msa.spring.rms.testutils.PersistedTestData;
+import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 /**

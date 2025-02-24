@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.admin;
 
-import static io.extact.msa.spring.rms.test.PersistedTestData.*;
+import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
@@ -42,7 +42,7 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorH
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
 import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationUpdateRequest.ReservationUpdateRequestBuilder;
-import io.extact.msa.spring.rms.test.TestAuthUtils;
+import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)

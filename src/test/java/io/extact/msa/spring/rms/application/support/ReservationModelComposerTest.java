@@ -34,7 +34,7 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.test.PersistedTestData;
+import io.extact.msa.spring.rms.testutils.PersistedTestData;
 import io.extact.msa.spring.test.assertj.ToStringAssert;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)

@@ -21,8 +21,8 @@ import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
 import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
-import io.extact.msa.spring.rms.test.ConstraintAnnotationAsserter;
-import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.rms.testutils.ConstraintAnnotationAsserter;
+import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 
 /**
  * Itemクラスのテスト。

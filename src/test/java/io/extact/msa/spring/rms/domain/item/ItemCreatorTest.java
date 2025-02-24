@@ -22,7 +22,7 @@ import io.extact.msa.spring.rms.domain.InMemoryIdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.ItemCreator.ItemModelAttributes;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @ActiveProfiles("test")

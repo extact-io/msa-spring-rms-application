@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.application.member;
 
-import static io.extact.msa.spring.rms.test.PersistedTestData.*;
+import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,8 +44,8 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
-import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
-import io.extact.msa.spring.rms.test.TestAuthUtils;
+import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 import io.extact.msa.spring.test.assertj.ToStringAssert;
 
 @DataJpaTest

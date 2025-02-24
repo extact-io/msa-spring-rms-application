@@ -1,4 +1,4 @@
-package io.extact.msa.spring.rms.test;
+package io.extact.msa.spring.rms.testutils;
 
 import java.util.Set;
 import java.util.stream.Stream;

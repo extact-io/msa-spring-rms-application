@@ -23,7 +23,7 @@ import io.extact.msa.spring.rms.domain.user.UserCreator.UserModelAttributes;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
-import io.extact.msa.spring.rms.test.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @ActiveProfiles("test")
