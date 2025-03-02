@@ -153,7 +153,7 @@ class ItemAdminControllerIntegrationTest {
         assertThatThrownBy(() -> client.add(request))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("serialNo");
                 });
     }
@@ -224,7 +224,7 @@ class ItemAdminControllerIntegrationTest {
         assertThatThrownBy(() -> client.update(request))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(3);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(3);
                     assertThat(thrown.getDetailMessage()).contains("id", "serialNo", "itemName");
                 });
     }
@@ -309,7 +309,7 @@ class ItemAdminControllerIntegrationTest {
         assertThatThrownBy(() -> client.delete(errorId))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("itemId");
                 });
     }

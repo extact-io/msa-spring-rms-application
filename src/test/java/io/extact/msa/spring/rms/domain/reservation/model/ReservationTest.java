@@ -20,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime;
 import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
@@ -28,8 +28,8 @@ import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTimeFuture
 import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
 import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.testutils.ConstraintAnnotationAsserter;
 import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.test.junit5.ConstraintAnnotationAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @ActiveProfiles("test")

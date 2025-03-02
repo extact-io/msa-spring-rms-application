@@ -136,7 +136,7 @@ class UserProfileControllerIntegrationTest {
         assertThatThrownBy(() -> client.updateOwnProfile(req))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(2);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(2);
                     assertThat(thrown.getDetailMessage()).contains("password", "userName");
                 });
     }

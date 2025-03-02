@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Import;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.domain.service.SimpleDuplicateChecker;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;

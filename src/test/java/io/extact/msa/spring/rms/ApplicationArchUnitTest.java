@@ -2,14 +2,12 @@ package io.extact.msa.spring.rms;
 
 import static com.tngtech.archunit.base.DescribedPredicate.*;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.*;
-import static com.tngtech.archunit.core.domain.properties.CanBeAnnotated.Predicates.*;
 import static com.tngtech.archunit.lang.ArchCondition.*;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
+import static com.tngtech.archunit.library.Architectures.*;
+import static io.extact.msa.spring.test.archunit.ArchUnitUtils.*;
 
 import java.util.Optional;
-
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.context.annotation.Configuration;
 
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
@@ -19,7 +17,6 @@ import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.library.Architectures;
 import com.tngtech.archunit.library.dependencies.Slice;
 import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 
@@ -50,7 +47,7 @@ class ApplicationArchUnitTest {
      * @see https://www.archunit.org/userguide/html/000_Index.html#_onion_architecture
      */
     @ArchTest
-    static final ArchRule architecture_respect_onion = Architectures.onionArchitecture()
+    static final ArchRule architecture_respect_onion = onionArchitecture()
             .domainModels(
                     "..domain..model..",
                     "..domain..constraint..")
@@ -87,8 +84,7 @@ class ApplicationArchUnitTest {
             .that()
             .resideInAPackage("..interfaces..")
             // 制約条件(should)はfwなども含めclassパス上のすべてのクラスに対してマッチングされる
-            .should()
-            .dependOnClassesThat(
+            .should().dependOnClassesThat(
                     resideInAnyPackage("io.extact.msa.spring.rms.domain..")
                             // ValueModelインターフェースの実装クラス
                             .and(not(implement(ValueModel.class)))
@@ -109,12 +105,11 @@ class ApplicationArchUnitTest {
             .that()
             // modelパッケージにあるXxxxCreatableインターフェースの実装クラスは・・の条件
             .implement(
-                    resideInAnyPackage("..domain..model")
+                    resideInAnyPackage("..domain..model..")
                             .and(INTERFACES)
                             .and(simpleNameEndingWith("Creatable")))
             .should().beAssignableTo(type(TableEntity.class).or(type(ModelArrayMapper.class)))
             .orShould(from(anonymousClassInImplementationClassOf(ModelCreator.class)));
-
 
     // ---------------------------------------------------------------------
     // モジュール単位の独立性の検証(Slice Isolation)
@@ -126,11 +121,9 @@ class ApplicationArchUnitTest {
      * ・adminパッケージがmemberパッケージを利用しているといったことがないこと
      */
     @ArchTest
-    static final ArchRule isolate_webapi_not_depend_on_each_other = SlicesRuleDefinition
-            .slices()
+    static final ArchRule isolate_webapi_not_depend_on_each_other = SlicesRuleDefinition.slices()
             .matching("..rms.interfaces.webapi.(*)..")
-            .should()
-            .notDependOnEachOther();
+            .should().notDependOnEachOther();
 
     /**
      * application配下のパッケージはsupportパッケージを除きそれぞれが独立し相互に依存していないこと。
@@ -138,12 +131,10 @@ class ApplicationArchUnitTest {
      * ・adminパッケージがsupportパッケージに依存するのはよいがmemberパッケージを利用しているといったことがないこと
      */
     @ArchTest
-    static final ArchRule isolate_application_not_depend_on_each_other = SlicesRuleDefinition
-            .slices()
+    static final ArchRule isolate_application_not_depend_on_each_other = SlicesRuleDefinition.slices()
             .matching("..rms.application.(*)..").namingSlices("Application $1")
             .that(not(containDescription("Application support")))
-            .should()
-            .notDependOnEachOther();
+            .should().notDependOnEachOther();
 
     /**
      * application配下のパッケージが循環参照していないこと。
@@ -152,18 +143,15 @@ class ApplicationArchUnitTest {
     static final ArchRule isolate_application_be_free_of_cycles = SlicesRuleDefinition
             .slices()
             .matching("..rms.application.(*)..")
-            .should()
-            .beFreeOfCycles();
+            .should().beFreeOfCycles();
 
     /**
      * domainパッケージ内の集約(item/reservation/user)間で循環参照が発生していないかの検証
      */
     @ArchTest
-    static final ArchRule isolate_domain_be_free_of_cycles = SlicesRuleDefinition
-            .slices()
+    static final ArchRule isolate_domain_be_free_of_cycles = SlicesRuleDefinition.slices()
             .matching("..rms.domain.(*)..")
-            .should()
-            .beFreeOfCycles();
+            .should().beFreeOfCycles();
 
     /**
      * persistence.file配下のパッケージ(item/reservation/user)は独立し相互に依存していないこと。
@@ -171,11 +159,9 @@ class ApplicationArchUnitTest {
      * ・reservationパッケージがitemパッケージを利用しているといったことがないこと
      */
     @ArchTest
-    static final ArchRule isolate_persistence_file_not_depend_on_each_other = SlicesRuleDefinition
-            .slices()
+    static final ArchRule isolate_persistence_file_not_depend_on_each_other = SlicesRuleDefinition.slices()
             .matching("..rms.infrastructure.persistence.file.(*)..")
-            .should()
-            .notDependOnEachOther();
+            .should().notDependOnEachOther();
 
     /**
      * persistence.jpa配下のパッケージ(item/reservation/user)は独立し相互に依存していないこと。
@@ -183,16 +169,14 @@ class ApplicationArchUnitTest {
      * ・reservationパッケージがitemパッケージを利用しているといったことがないこと
      */
     @ArchTest
-    static final ArchRule isolate_each_persistence_jpa_not_depend_on_each_other = SlicesRuleDefinition
-            .slices()
+    static final ArchRule isolate_each_persistence_jpa_not_depend_on_each_other = SlicesRuleDefinition.slices()
             .matching("..rms.infrastructure.persistence.jpa.(*)..")
-            .should()
-            .notDependOnEachOther();
-
+            .should().notDependOnEachOther();
 
     // ---------------------------------------------------------------------
-    // レイヤごとの依存可能パッケージの検証
+    // レイヤごとの依存可能モジュールの検証
     // ---------------------------------------------------------------------
+
     /**
      * webapiパッケージから依存してOKなモジュールの検証
      */
@@ -202,8 +186,8 @@ class ApplicationArchUnitTest {
             .resideInAPackage("..interfaces.webapi..")
             .and(not(configurationClasses()))
             .and(not(type(StartupLogRunner.class)))
-            .should()
-            .onlyDependOnClassesThat().resideInAnyPackage(
+            .should().onlyDependOnClassesThat()
+            .resideInAnyPackage(
                     "java..",
                     "jakarta.validation..",
                     "org.springframework.web..", // Spring MVCには依存してOK
@@ -230,8 +214,8 @@ class ApplicationArchUnitTest {
             .resideInAPackage("..interfaces.console..")
             .and(not(configurationClasses()))
             .and(not(type(MainScreenRunner.class)))
-            .should()
-            .onlyDependOnClassesThat().resideInAnyPackage(
+            .should().onlyDependOnClassesThat()
+            .resideInAnyPackage(
                     "java..",
                     "org.beryx.textio..", // コンソールFWには依存してOK
                     "lombok..",
@@ -251,20 +235,20 @@ class ApplicationArchUnitTest {
             .that()
             .resideInAPackage("..application..")
             .and(not(configurationClasses()))
-            .should()
-            .onlyDependOnClassesThat(resideInAnyPackage(
-                    "java..",
-                    "lombok..",
-                    "..core.generic..",
-                    "..core.auth..",
-                    "..core.async..",
-                    "..fw.domain..",
-                    "..fw.application..",
-                    "..fw.exception..",
-                    "..rms.domain..",
-                    "..rms.application..")
-                            // @ApplicationServiceにデフォルト属性(propagation = Propagation.requirede)が設定されるため
-                            .or(type(org.springframework.transaction.annotation.Propagation.class)) //
+            .should().onlyDependOnClassesThat(
+                    resideInAnyPackage(
+                            "java..",
+                            "lombok..",
+                            "..core.generic..",
+                            "..core.auth..",
+                            "..core.async..",
+                            "..fw.domain..",
+                            "..fw.application..",
+                            "..fw.exception..",
+                            "..rms.domain..",
+                            "..rms.application..")
+                                    // @ApplicationServiceにデフォルト属性(propagation = Propagation.requirede)が設定されるため
+                                    .or(type(org.springframework.transaction.annotation.Propagation.class)) //
             );
 
     /**
@@ -275,16 +259,16 @@ class ApplicationArchUnitTest {
             .that()
             .resideInAPackage("..domain..")
             .and(not(configurationClasses()))
-            .should()
-            .onlyDependOnClassesThat(resideInAnyPackage(
-                    "java..",
-                    "jakarta.validation..",
-                    "lombok..",
-                    "..core.generic..",
-                    "..fw.domain..",
-                    "..fw.exception..",
-                    "..rms.domain..")
-                            .or(type(org.apache.commons.lang3.Range.class)) //
+            .should().onlyDependOnClassesThat(
+                    resideInAnyPackage(
+                            "java..",
+                            "jakarta.validation..",
+                            "lombok..",
+                            "..core.generic..",
+                            "..fw.domain..",
+                            "..fw.exception..",
+                            "..rms.domain..")
+                                    .or(type(org.apache.commons.lang3.Range.class)) //
             );
 
     /**
@@ -295,18 +279,18 @@ class ApplicationArchUnitTest {
             .that()
             .resideInAPackage("..infrastructure.persistence.file..")
             .and(not(configurationClasses()))
-            .should()
-            .onlyDependOnClassesThat(resideInAnyPackage(
-                    "java..",
-                    "lombok..",
-                    "..fw.exception..",
-                    "..fw.domain.model..",
-                    "..fw.infrastructure.persistence.file..",
-                    "..rms.domain..model..",
-                    "..rms.infrastructure.persistence.file..")
-                            .or(type(io.extact.msa.spring.rms.domain.item.ItemRepository.class))
-                            .or(type(io.extact.msa.spring.rms.domain.reservation.ReservationRepository.class))
-                            .or(type(io.extact.msa.spring.rms.domain.user.UserRepository.class)) //
+            .should().onlyDependOnClassesThat(
+                    resideInAnyPackage(
+                            "java..",
+                            "lombok..",
+                            "..fw.exception..",
+                            "..fw.domain.model..",
+                            "..fw.infrastructure.persistence.file..",
+                            "..rms.domain..model..",
+                            "..rms.infrastructure.persistence.file..")
+                                    .or(type(io.extact.msa.spring.rms.domain.item.ItemRepository.class))
+                                    .or(type(io.extact.msa.spring.rms.domain.reservation.ReservationRepository.class)) //
+                                    .or(type(io.extact.msa.spring.rms.domain.user.UserRepository.class)) //
             );
 
     /**
@@ -331,7 +315,6 @@ class ApplicationArchUnitTest {
                             .or(type(io.extact.msa.spring.rms.domain.reservation.ReservationRepository.class))
                             .or(type(io.extact.msa.spring.rms.domain.user.UserRepository.class)) //
             );
-
 
     // ---------------------------------------------------------------------
     // ネーミングの検証
@@ -534,11 +517,6 @@ class ApplicationArchUnitTest {
             .should().haveSimpleNameEndingWith("JpaRepositoryDelegator");
 
     // --------------------------------------------------------------- private methods
-
-    private static DescribedPredicate<JavaClass> configurationClasses() {
-        return belongTo(annotatedWith(Configuration.class)
-                .or(annotatedWith(SpringBootConfiguration.class)));
-    }
 
     private static DescribedPredicate<JavaClass> subInterface(Class<?> rootInterface) {
         JavaClass rootJavaClass = new ClassFileImporter().importClass(rootInterface);

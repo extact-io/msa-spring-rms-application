@@ -156,7 +156,7 @@ class ItemReservationControllerIntegrationTest {
         assertThatThrownBy(() -> client.findRentableItemAtPeriod(from, to))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("from");
                 });
     }
@@ -219,7 +219,7 @@ class ItemReservationControllerIntegrationTest {
         assertThatThrownBy(() -> client.isRentableItemAtPeriod(itemId, from, to))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("itemId");
                 });
     }
@@ -235,7 +235,7 @@ class ItemReservationControllerIntegrationTest {
         assertThatThrownBy(() -> client.isRentableItemAtPeriod(itemId, from, to))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("to");
                 });
     }
@@ -318,7 +318,7 @@ class ItemReservationControllerIntegrationTest {
         assertThatThrownBy(() -> client.findReservationByItemId(invalidId, date))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("itemId");
                 });
     }
@@ -375,7 +375,7 @@ class ItemReservationControllerIntegrationTest {
         assertThatThrownBy(() -> client.findReservationByReserverId(invalidId))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("reserverId");
                 });
     }
@@ -477,7 +477,7 @@ class ItemReservationControllerIntegrationTest {
         assertThatThrownBy(() -> client.reserve(request))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(3);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(3);
                     assertThat(thrown.getDetailMessage()).contains(
                             "fromDateTime",
                             "toDateTime",
@@ -498,7 +498,7 @@ class ItemReservationControllerIntegrationTest {
         assertThatThrownBy(() -> client.reserve(duplicateRequest))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("fromDateTime");
                 });
     }
@@ -516,7 +516,7 @@ class ItemReservationControllerIntegrationTest {
         assertThatThrownBy(() -> client.reserve(duplicateRequest))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("開始日", "終了日");
                 });
     }
@@ -598,7 +598,7 @@ class ItemReservationControllerIntegrationTest {
         assertThatThrownBy(() -> client.cancel(errorId))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("reservationId");
                 });
     }

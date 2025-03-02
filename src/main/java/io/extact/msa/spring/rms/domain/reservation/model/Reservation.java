@@ -77,6 +77,7 @@ public class Reservation extends AbstractEntityModel implements ReservationModel
         Reservation test = new Reservation();
         test.note = newNote;
         validator().validateField(test, "note");
+        // validator().validateField(test, this::getNote); ← 文字列渡す代わりにメソッド参照を渡して向こう側でプロパティ名に変更してもいい気が
         this.note = newNote;
     }
 

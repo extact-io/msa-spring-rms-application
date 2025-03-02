@@ -19,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.InMemoryIdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;

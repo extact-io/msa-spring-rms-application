@@ -147,7 +147,7 @@ class UserAdminControllerIntegrationTest {
         assertThatThrownBy(() -> client.add(req))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(4);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(4);
                     assertThat(thrown.getDetailMessage()).contains("loginId", "password", "userType", "userName");
                 });
     }
@@ -221,7 +221,7 @@ class UserAdminControllerIntegrationTest {
         assertThatThrownBy(() -> client.update(req))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(4);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(4);
                     assertThat(thrown.getDetailMessage()).contains("id", "password", "userType", "userName");
                 });
     }
@@ -285,7 +285,7 @@ class UserAdminControllerIntegrationTest {
         assertThatThrownBy(() -> client.delete(errorId))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("userId");
                 });
     }

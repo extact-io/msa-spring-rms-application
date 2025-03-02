@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.reservation.constraint.BeforeAfterDateTime.BeforeAfterDateTimeValidatable;
 import io.extact.msa.spring.test.assertj.ConstraintViolationSetAssert;
 

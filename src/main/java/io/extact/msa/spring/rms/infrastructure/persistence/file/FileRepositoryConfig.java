@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.file;
 
-import static io.extact.msa.spring.platform.fw.infrastructure.framework.profile.PersistenceProfileType.*;
+import static io.extact.msa.spring.platform.fw.feature.profile.PersistenceProfileType.*;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.profile.ConditionalOnAnyPersistenceProfile;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.feature.profile.ConditionalOnAnyPersistenceProfile;
+import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.LoadPathDeriver;

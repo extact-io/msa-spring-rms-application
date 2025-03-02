@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.jpa;
 
-import static io.extact.msa.spring.platform.fw.infrastructure.framework.profile.PersistenceProfileType.*;
+import static io.extact.msa.spring.platform.fw.feature.profile.PersistenceProfileType.*;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.profile.ConditionalOnAnyPersistenceProfile;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.sqlinit.ProfileBasedDbInitializerConfig;
-import io.extact.msa.spring.platform.fw.infrastructure.framework.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.feature.profile.ConditionalOnAnyPersistenceProfile;
+import io.extact.msa.spring.platform.fw.feature.sqlinit.ProfileBasedDbInitializerConfig;
+import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.DefaultModelEntityMapper;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemEntity;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemJpaRepository;

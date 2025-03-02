@@ -149,7 +149,7 @@ class ReservationAdminControllerIntegrationTest {
         assertThatThrownBy(() -> client.update(invalidRequest))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(3);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(3);
                     assertThat(thrown.getDetailMessage()).contains("id", "fromDateTime", "toDateTime");
                 });
     }
@@ -227,7 +227,7 @@ class ReservationAdminControllerIntegrationTest {
         assertThatThrownBy(() -> client.delete(errorId))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(1);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
                     assertThat(thrown.getDetailMessage()).contains("reservationId");
                 });
     }

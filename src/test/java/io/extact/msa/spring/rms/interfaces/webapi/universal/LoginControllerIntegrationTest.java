@@ -97,7 +97,7 @@ class LoginControllerIntegrationTest {
         assertThatThrownBy(() -> client.login(loginId, password))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(2);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(2);
                     assertThat(thrown.getDetailMessage()).contains("loginId", "password");
                 });
     }
@@ -139,7 +139,7 @@ class LoginControllerIntegrationTest {
         assertThatThrownBy(() -> client.login(req))
                 // then
                 .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().validationErrorItems()).hasSize(2);
+                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(2);
                     assertThat(thrown.getDetailMessage()).contains("loginId", "password");
                 });
     }
