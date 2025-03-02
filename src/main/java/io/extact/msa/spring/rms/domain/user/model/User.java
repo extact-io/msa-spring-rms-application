@@ -68,21 +68,21 @@ public class User extends AbstractEntityModel implements UserModelView {
     private void applyPassword(String newPassword) {
         User test = new User();
         test.password = newPassword;
-        validator().validateField(test, "password");
+        validator().validateField(test, test::getPassword);
         this.password = newPassword;
     }
 
     private void applyUserType(UserType newUserType) {
         User test = new User();
         test.userType = newUserType;
-        validator().validateField(test, "userType");
+        validator().validateField(test, test::getUserType);
         this.userType = newUserType;
     }
 
     private void applyProfile(UserProfile newUserProfile) {
         User test = new User();
         test.profile = newUserProfile;
-        validator().validateField(test, "profile");
+        validator().validateField(test, test::getProfile);
         this.profile = newUserProfile;
     }
 

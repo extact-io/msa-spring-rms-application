@@ -46,14 +46,14 @@ public class Item extends AbstractEntityModel implements ItemModelView {
     private void applySerialNo(String newSerialNo) {
         Item test = new Item();
         test.serialNo = newSerialNo;
-        validator().validateField(test, "serialNo");
+        validator().validateField(test, test::getSerialNo);
         this.serialNo = newSerialNo;
     }
 
     private void applyItemName(String newItemName) {
         Item test = new Item();
         test.itemName = newItemName;
-        validator().validateField(test, "itemName");
+        validator().validateField(test, test::getItemName);
         this.itemName = newItemName;
     }
 

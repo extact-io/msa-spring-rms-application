@@ -69,15 +69,14 @@ public class Reservation extends AbstractEntityModel implements ReservationModel
     private void applyPeriod(ReservationPeriod newPeriod) {
         Reservation test = new Reservation();
         test.period = newPeriod;
-        validator().validateField(test, "period");
+        validator().validateField(test, test::getPeriod);
         this.period = newPeriod;
     }
 
     private void applyNote(String newNote) {
         Reservation test = new Reservation();
         test.note = newNote;
-        validator().validateField(test, "note");
-        // validator().validateField(test, this::getNote); ← 文字列渡す代わりにメソッド参照を渡して向こう側でプロパティ名に変更してもいい気が
+        validator().validateField(test, test::getNote);
         this.note = newNote;
     }
 
