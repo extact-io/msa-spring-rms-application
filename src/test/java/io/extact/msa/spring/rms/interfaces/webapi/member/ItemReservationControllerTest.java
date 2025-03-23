@@ -9,10 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +47,7 @@ import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 class ItemReservationControllerTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};
+    private static DateTimeFormatter dateTimeFormatter;
 
     @Autowired
     private MockMvc mockMvc;
@@ -62,6 +66,11 @@ class ItemReservationControllerTest {
         ItemReservationController reservationMemberController(ItemReservationService service) {
             return new ItemReservationController(service);
         }
+    }
+
+    @BeforeAll
+    static void beforeAll(@Value("${rms.rest.client.format.date-time}") String dateTimePattern) {
+        dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
     }
 
     @Test
@@ -293,16 +302,17 @@ class ItemReservationControllerTest {
         // when
         mockMvc.perform(get("/member/reservations/items/{itemId}", itemId.id()))
                 // then
-        .andExpect(jsonPath("$.length()").value(2))
-        .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
-        // TODO コンバーターと一緒に直す
-        //.andExpect(jsonPath("$[0].fromDateTime").value(model1.reservation().getPeriod().getFrom()))
-        //.andExpect(jsonPath("$[0].toDateTime").value(model1.reservation().getPeriod().getTo()))
-        .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
-        .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
-        .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
-        .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
-        .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
+                .andExpect(jsonPath("$[0].fromDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .andExpect(jsonPath("$[0].toDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
+                .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
+                .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
+                .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
+                .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
+                .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
     }
 
     @Test
@@ -321,9 +331,10 @@ class ItemReservationControllerTest {
                 // then
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
-                // TODO コンバーターと一緒に直す
-                //.andExpect(jsonPath("$[0].fromDateTime").value(model1.reservation().getPeriod().getFrom()))
-                //.andExpect(jsonPath("$[0].toDateTime").value(model1.reservation().getPeriod().getTo()))
+                .andExpect(jsonPath("$[0].fromDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .andExpect(jsonPath("$[0].toDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
                 .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
                 .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
                 .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
@@ -414,16 +425,17 @@ class ItemReservationControllerTest {
         // when
         mockMvc.perform(get("/member/reservations/reservers/{reserverId}", reserverId.id()))
                 // then
-        .andExpect(jsonPath("$.length()").value(2))
-        .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
-        // TODO コンバーターと一緒に直す
-        //.andExpect(jsonPath("$[0].fromDateTime").value(model1.reservation().getPeriod().getFrom()))
-        //.andExpect(jsonPath("$[0].toDateTime").value(model1.reservation().getPeriod().getTo()))
-        .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
-        .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
-        .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
-        .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
-        .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
+                .andExpect(jsonPath("$[0].fromDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .andExpect(jsonPath("$[0].toDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
+                .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
+                .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
+                .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
+                .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
+                .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
     }
 
     @Test
@@ -493,9 +505,10 @@ class ItemReservationControllerTest {
                 // then
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
-                // TODO コンバーターと一緒に直す
-                //.andExpect(jsonPath("$[0].fromDateTime").value(model1.reservation().getPeriod().getFrom()))
-                //.andExpect(jsonPath("$[0].toDateTime").value(model1.reservation().getPeriod().getTo()))
+                .andExpect(jsonPath("$[0].fromDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .andExpect(jsonPath("$[0].toDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
                 .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
                 .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
                 .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
@@ -562,9 +575,8 @@ class ItemReservationControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(newId.id()))
-                // TODO 書式と精度はコンバーターと一緒に直す
-                //.andExpect(jsonPath("$.fromDateTime").value(req.fromDateTime()))
-                //.andExpect(jsonPath("$.toDateTime").value(req.toDateTime()))
+                .andExpect(jsonPath("$.fromDateTime").value(dateTimeFormatter.format(req.fromDateTime())))
+                .andExpect(jsonPath("$.toDateTime").value(dateTimeFormatter.format(req.toDateTime())))
                 .andExpect(jsonPath("$.note").value(req.note()))
                 .andExpect(jsonPath("$.itemId").value(req.itemId()))
                 .andExpect(jsonPath("$.serialNo").value(item1.getSerialNo()))

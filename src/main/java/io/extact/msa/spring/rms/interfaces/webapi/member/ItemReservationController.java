@@ -62,7 +62,7 @@ public class ItemReservationController {
     @GetMapping("/reservations/items/{itemId}")
     public List<ReserveItemResponse> findReservationByItemId(
             @PathVariable("itemId") @RmsId Integer itemId,
-            @RequestParam(value = "from-date", required = false) LocalDate from) {
+            @RequestParam(name = "from-date", required = false) LocalDate from) {
 
         List<ReservationComposeModel> models = from != null
                 ? service.findReservationByItemIdAndFromDate(new ItemId(itemId), from)

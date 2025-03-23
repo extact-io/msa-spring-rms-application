@@ -8,10 +8,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +45,7 @@ import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationUpdateRequest
 class ReservationAdminControllerTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};
+    private static DateTimeFormatter dateTimeFormatter;
 
     @Autowired
     private MockMvc mockMvc;
@@ -62,6 +66,11 @@ class ReservationAdminControllerTest {
         }
     }
 
+    @BeforeAll
+    static void beforeAll(@Value("${rms.rest.client.format.date-time}") String dateTimePattern) {
+        dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
+    }
+
     @Test
     @WithMockUser(roles = "ADMIN")
     void testGetAll() throws Exception {
@@ -76,9 +85,10 @@ class ReservationAdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(3))
                 .andExpect(jsonPath("$[0].id").value(1))
-                // TODO コンバーターと一緒に直す
-                //.andExpect(jsonPath("$[0].fromDateTime").value(model1.reservation().getPeriod().getFrom()))
-                //.andExpect(jsonPath("$[0].toDateTime").value(model1.reservation().getPeriod().getTo()))
+                .andExpect(jsonPath("$[0].fromDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .andExpect(jsonPath("$[0].toDateTime")
+                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
                 .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
                 .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
                 .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id()))
@@ -150,9 +160,8 @@ class ReservationAdminControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(req.id()))
-                // TODO 書式と精度はコンバーターと一緒に直す
-                //.andExpect(jsonPath("$.fromDateTime").value(req.fromDateTime()))
-                //.andExpect(jsonPath("$.toDateTime").value(req.toDateTime()))
+                .andExpect(jsonPath("$.fromDateTime").value(dateTimeFormatter.format(req.fromDateTime())))
+                .andExpect(jsonPath("$.toDateTime").value(dateTimeFormatter.format(req.toDateTime())))
                 .andExpect(jsonPath("$.note").value(req.note()))
                 .andExpect(jsonPath("$.itemId").value(reservation2.getItemId().id()))
                 .andExpect(jsonPath("$.reserverId").value(reservation2.getReserverId().id()))

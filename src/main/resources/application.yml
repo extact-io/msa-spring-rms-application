@@ -19,6 +19,10 @@ spring:
       ddl-auto: none
     properties:
       javax.persistence.validation.mode: NONE
+  mvc:
+    format:
+      date: yyyyMMdd
+      date-time: yyyyMMdd HH:mm
 
 management:
   endpoints:
@@ -44,6 +48,15 @@ rms:
     public-key: classpath:/jwt.pub.key
     claim:
       issuer: ${rms.jwt-encode.claim.issuer}
+  rest:
+    controller:
+      format:
+        date: ${spring.mvc.format.date}
+        date-time: ${spring.mvc.format.date-time}
+    client:
+      format:
+        date: ${spring.mvc.format.date}
+        date-time: ${spring.mvc.format.date-time}
   persistence:
     item:
       csv:

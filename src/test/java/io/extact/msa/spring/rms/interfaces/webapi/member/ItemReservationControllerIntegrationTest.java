@@ -20,7 +20,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.Environment;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +46,8 @@ import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
 import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
+import io.extact.msa.spring.platform.fw.infrastructure.external.converter.ConfigConversionServiceBuilder;
+import io.extact.msa.spring.platform.fw.infrastructure.external.converter.ConfigMessageConveterBuilder;
 import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationAdminResponse;
 import io.extact.msa.spring.rms.interfaces.webapi.member.ReserveItemRequest.ReserveItemRequestBuilder;
@@ -78,14 +82,26 @@ class ItemReservationControllerIntegrationTest {
     static class TestConfig {
         @Bean
         ReservationClient reservationClient(Environment env) {
+
+            HttpMessageConverter<Object> converter = ConfigMessageConveterBuilder
+                    .builder(env)
+                    .build();
+            ConversionService conversionService = ConfigConversionServiceBuilder
+                    .builder(env)
+                    .build();
+
             RestClient restClient = RestClient.builder()
                     .uriBuilderFactory(new LocalHostUriBuilderFactory(env))
+                    .messageConverters(converters -> converters.addFirst(converter))
                     .defaultStatusHandler(new RestClientErrorHandler(new ErrorMessageDeserializer()))
                     .requestInitializer(new BearerTokenRequestInitializer())
                     .build();
 
             RestClientAdapter adapter = RestClientAdapter.create(restClient);
-            HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+            HttpServiceProxyFactory factory = HttpServiceProxyFactory
+                    .builderFor(adapter)
+                    .conversionService(conversionService)
+                    .build();
             return factory.createClient(ReservationClient.class);
         }
     }
@@ -155,9 +171,9 @@ class ItemReservationControllerIntegrationTest {
         // when
         assertThatThrownBy(() -> client.findRentableItemAtPeriod(from, to))
                 // then
-                .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
-                    assertThat(thrown.getDetailMessage()).contains("from");
+                // サーバにリクエスト送信される前にClient側でエラーになる
+                .isInstanceOfSatisfying(IllegalArgumentException.class, thrown -> {
+                    assertThat(thrown.getMessage()).contains("from");
                 });
     }
 
@@ -234,9 +250,9 @@ class ItemReservationControllerIntegrationTest {
         // when
         assertThatThrownBy(() -> client.isRentableItemAtPeriod(itemId, from, to))
                 // then
-                .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
-                    assertThat(thrown.getDetailMessage()).contains("to");
+                // サーバにリクエスト送信される前にClient側でエラーになる
+                .isInstanceOfSatisfying(IllegalArgumentException.class, thrown -> {
+                    assertThat(thrown.getMessage()).contains("to");
                 });
     }
 
@@ -662,8 +678,8 @@ class ItemReservationControllerIntegrationTest {
 
         @GetExchange("/member/items/rentable")
         List<ItemResponse> findRentableItemAtPeriod(
-                @RequestParam("from") LocalDateTime from,
-                @RequestParam("to") LocalDateTime to);
+                @RequestParam(name = "from") LocalDateTime from,
+                @RequestParam(name = "to") LocalDateTime to);
 
         @GetExchange("/member/items/{itemId}/rentable")
         boolean isRentableItemAtPeriod(
