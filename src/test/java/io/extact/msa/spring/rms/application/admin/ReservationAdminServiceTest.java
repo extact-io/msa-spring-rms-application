@@ -8,10 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Bean;
@@ -39,13 +36,11 @@ import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.test.assertj.ToStringAssert;
 
-@DataJpaTest
+@DataJpaTest // default rollback
 @ActiveProfiles({ "test", "jpa-all" })
-@TestMethodOrder(OrderAnnotation.class)
 class ReservationAdminServiceTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};
-    private static final int WITH_SIDE_EFFECT_CASE = 99;
 
     @Autowired
     private ReservationAdminService service;
@@ -83,7 +78,6 @@ class ReservationAdminServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testUpdate(@Autowired ReservationRepository forResultAssert) {
         // given
         ReservationUpdateCommand command = ReservationUpdateCommand.builder()
@@ -183,7 +177,6 @@ class ReservationAdminServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testDelete(@Autowired ReservationRepository forResultAssert) {
         // given
         ReservationId deleteId = reservation3.getId();

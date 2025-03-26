@@ -7,10 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Bean;
@@ -32,13 +29,11 @@ import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 
-@DataJpaTest
+@DataJpaTest // default rollback
 @ActiveProfiles({ "test", "jpa-all" })
-@TestMethodOrder(OrderAnnotation.class)
 class UserProfileServiceTest {
 
     private static final UserCreatable testCreator = new UserCreatable() {};
-    private static final int WITH_SIDE_EFFECT_CASE = 99;
 
     @Autowired
     private UserProfileService service;
@@ -66,7 +61,6 @@ class UserProfileServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void updateOwnProfile(@Autowired UserRepository forResultAssert) {
         // given
         UserProfileUpdateCommand command = UserProfileUpdateCommand.builder()

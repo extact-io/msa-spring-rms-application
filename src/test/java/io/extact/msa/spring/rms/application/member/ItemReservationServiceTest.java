@@ -10,10 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Bean;
@@ -48,13 +45,11 @@ import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 import io.extact.msa.spring.test.assertj.ToStringAssert;
 
-@DataJpaTest
+@DataJpaTest // default rollback
 @ActiveProfiles({ "test", "jpa-all" })
-@TestMethodOrder(OrderAnnotation.class)
 class ItemReservationServiceTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};
-    private static final int WITH_SIDE_EFFECT_CASE = 99;
 
     @Autowired
     private ItemReservationService service;
@@ -256,7 +251,6 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testReserve(@Autowired ReservationRepository forResultAssert) {
         // given
         int reserverId = 1;
@@ -273,8 +267,9 @@ class ItemReservationServiceTest {
         ReservationComposeModel actual = service.reserve(command);
 
         // then
+        int addedId = forResultAssert.nextIdentity() - 1;
         Reservation added = testCreator.newInstance(
-                new ReservationId(1000),
+                new ReservationId(addedId),
                 command.period(),
                 command.note(),
                 command.itemId(),
@@ -399,7 +394,6 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testCancel(@Autowired ReservationRepository forResultAssert) {
         // given
         ReservationId cancelId = reservation3.getId();

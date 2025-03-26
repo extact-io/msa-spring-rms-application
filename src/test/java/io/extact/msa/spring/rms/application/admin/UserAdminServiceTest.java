@@ -7,10 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +15,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
+import io.extact.msa.spring.rms.application.admin.event.ReservationDependencyEventListener;
 import io.extact.msa.spring.rms.domain.DomainConfig;
+import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.user.UserCreator;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
@@ -33,13 +33,11 @@ import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 
-@DataJpaTest
+@DataJpaTest // default rollback
 @ActiveProfiles({ "test", "jpa-all" })
-@TestMethodOrder(OrderAnnotation.class)
 class UserAdminServiceTest {
 
     private static final UserCreatable testCreator = new UserCreatable() {};
-    private static final int WITH_SIDE_EFFECT_CASE = 99;
 
     @Autowired
     private UserAdminService service;
@@ -49,12 +47,19 @@ class UserAdminServiceTest {
             PersistenceConfig.class,
             DomainConfig.class })
     static class TestConfig {
+
         @Bean
         UserAdminService userAdminService(
                 UserCreator modelCreator,
                 DuplicateChecker<User> duplicateChecker,
-                UserRepository repository) {
-            return new UserAdminService(modelCreator, duplicateChecker, repository);
+                UserRepository repository,
+                ApplicationServiceEventPublisher eventPublisher) {
+            return new UserAdminService(modelCreator, duplicateChecker, repository, eventPublisher);
+        }
+
+        @Bean
+        ReservationDependencyEventListener reservationDependencyEventListener(ReservationRepository repository) {
+            return new ReservationDependencyEventListener(repository);
         }
     }
 
@@ -68,7 +73,6 @@ class UserAdminServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testAdd(@Autowired UserRepository forResultAssert) {
         // given
         UserAddCommand command = UserAddCommand.builder()
@@ -84,8 +88,9 @@ class UserAdminServiceTest {
         UserModelView actual = service.add(command);
 
         // then
+        int addedId = forResultAssert.nextIdentity() - 1;
         User expected = testCreator.newInstance(
-                new UserId(1000),
+                new UserId(addedId),
                 "newLogin",
                 "newPass",
                 UserType.MEMBER,
@@ -150,7 +155,6 @@ class UserAdminServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testUpdate(@Autowired UserRepository forResultAssert) {
         // given
         UserUpdateCommand command = UserUpdateCommand.builder()
@@ -233,7 +237,6 @@ class UserAdminServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testDelete(@Autowired UserRepository forResultAssert) {
         // given
         UserId deleteId = user3.getId();
@@ -259,5 +262,19 @@ class UserAdminServiceTest {
 
         // then
         assertThat(exception.getCauseType()).isEqualTo(CauseType.NOT_FOUND);
+    }
+
+    @Test
+    void testDeleteOnRefered(@Autowired UserRepository forResultAssert) {
+        // given
+        UserId referedId = new UserId(1);
+
+        // when
+        BusinessFlowException exception = assertThrows(BusinessFlowException.class, () -> {
+            service.delete(referedId);
+        });
+
+        // then
+        assertThat(exception.getCauseType()).isEqualTo(CauseType.REFERED);
     }
 }

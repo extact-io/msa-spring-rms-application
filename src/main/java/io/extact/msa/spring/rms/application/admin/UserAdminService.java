@@ -5,7 +5,9 @@ import java.util.List;
 
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
 import io.extact.msa.spring.platform.fw.application.ApplicationService;
+import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
+import io.extact.msa.spring.rms.application.admin.event.UserWillBeDeletedEvent;
 import io.extact.msa.spring.rms.domain.user.UserCreator;
 import io.extact.msa.spring.rms.domain.user.UserCreator.UserModelAttributes;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
@@ -18,14 +20,17 @@ public class UserAdminService {
 
     private final UserCreator modelCreator;
     private final ApplicationCrudSupport<User> support;
+    private final ApplicationServiceEventPublisher eventPublisher;
 
     public UserAdminService(
             UserCreator modelCreator,
             DuplicateChecker<User> duplicateChecker,
-            UserRepository repository) {
+            UserRepository repository,
+            ApplicationServiceEventPublisher eventPublisher) {
 
         this.modelCreator = modelCreator;
         this.support = new ApplicationCrudSupport<>(duplicateChecker, repository);
+        this.eventPublisher = eventPublisher;
     }
 
     public List<UserModelView> getAll() {
@@ -42,9 +47,9 @@ public class UserAdminService {
     }
 
     public void delete(UserId id) {
+        eventPublisher.publish(new UserWillBeDeletedEvent(id));
         support.delete(id);
     }
-
 
     private User createModel(UserAddCommand command) {
         UserModelAttributes attrs = UserModelAttributes.builder()

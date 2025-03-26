@@ -8,10 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Bean;
@@ -19,10 +16,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
+import io.extact.msa.spring.rms.application.admin.event.ReservationDependencyEventListener;
 import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
@@ -30,6 +29,7 @@ import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
+import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 
@@ -38,14 +38,13 @@ import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
  * ・トランザクションが機能しているか
  * ・入出力データクラスの項目マッピング
  * ・domainコンポーネントとの結合
+ *
  */
-@DataJpaTest
+@DataJpaTest // default rollback
 @ActiveProfiles({ "test", "jpa-all" })
-@TestMethodOrder(OrderAnnotation.class)
 class ItemAdminServiceTest {
 
     private static final ItemCreatable testCreator = new ItemCreatable() {};
-    private static final int WITH_SIDE_EFFECT_CASE = 99;
 
     @Autowired
     private ItemAdminService service;
@@ -60,8 +59,14 @@ class ItemAdminServiceTest {
         ItemAdminService itemAdminService(
                 ItemCreator modelCreator,
                 DuplicateChecker<Item> duplicateChecker,
-                ItemRepository repository) {
-            return new ItemAdminService(modelCreator, duplicateChecker, repository);
+                ItemRepository repository,
+                ApplicationServiceEventPublisher eventPublisher) {
+            return new ItemAdminService(modelCreator, duplicateChecker, repository, eventPublisher);
+        }
+
+        @Bean
+        ReservationDependencyEventListener reservationDependencyEventListener(ReservationRepository repository) {
+            return new ReservationDependencyEventListener(repository);
         }
     }
 
@@ -76,7 +81,6 @@ class ItemAdminServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testAdd(@Autowired ItemRepository forResultAssert) {
         // given
         ItemAddCommand command = ItemAddCommand.builder()
@@ -88,7 +92,8 @@ class ItemAdminServiceTest {
         ItemModelView actual = service.add(command);
 
         // then
-        Item expected = testCreator.newInstance(new ItemId(1000), "newNo", "newItem");
+        int addedId = forResultAssert.nextIdentity() - 1;
+        Item expected = testCreator.newInstance(new ItemId(addedId), "newNo", "newItem");
         assertThatToString(actual).isEqualTo(expected);
         // commitされているかの確認
         Optional<Item> commited = forResultAssert.find(expected.getId());
@@ -141,7 +146,6 @@ class ItemAdminServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testUpdate(@Autowired ItemRepository forResultAssert) {
         // given
         ItemUpdateCommand command = ItemUpdateCommand.builder()
@@ -233,7 +237,6 @@ class ItemAdminServiceTest {
     }
 
     @Test
-    @Order(WITH_SIDE_EFFECT_CASE)
     void testDelete(@Autowired ItemRepository forResultAssert) {
         // given
         ItemId deleteId = item4.getId();
@@ -258,5 +261,19 @@ class ItemAdminServiceTest {
 
         // then
         assertThat(exception.getCauseType()).isEqualTo(CauseType.NOT_FOUND);
+    }
+
+    @Test
+    void testDeleteOnRefered(@Autowired ItemRepository forResultAssert) {
+        // given
+        ItemId referedId = new ItemId(3);
+
+        // when
+        BusinessFlowException exception = assertThrows(BusinessFlowException.class, () -> {
+            service.delete(referedId);
+        });
+
+        // then
+        assertThat(exception.getCauseType()).isEqualTo(CauseType.REFERED);
     }
 }

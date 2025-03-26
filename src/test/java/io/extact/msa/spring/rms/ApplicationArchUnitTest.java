@@ -247,6 +247,7 @@ class ApplicationArchUnitTest {
                             "..fw.exception..",
                             "..rms.domain..",
                             "..rms.application..")
+                                    .or(type(org.springframework.context.event.EventListener.class)) //
                                     // @ApplicationServiceにデフォルト属性(propagation = Propagation.requirede)が設定されるため
                                     .or(type(org.springframework.transaction.annotation.Propagation.class)) //
             );

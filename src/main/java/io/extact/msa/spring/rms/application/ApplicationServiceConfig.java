@@ -8,10 +8,13 @@ import io.extact.msa.spring.platform.core.async.AsyncConfig;
 import io.extact.msa.spring.platform.core.async.AsyncInvoker;
 import io.extact.msa.spring.platform.core.auth.context.DefaultLoginContext;
 import io.extact.msa.spring.platform.core.auth.context.LoginContext;
+import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
+import io.extact.msa.spring.platform.fw.feature.event.EventPublisherConfig;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
+import io.extact.msa.spring.rms.application.admin.event.ReservationDependencyEventListener;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.application.universal.LoginService;
@@ -27,7 +30,8 @@ import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 
 @Configuration(proxyBeanMethods = false)
-@Import(AsyncConfig.class) // for ReservationModelComposer
+@Import({ AsyncConfig.class, // for ReservationModelComposer
+        EventPublisherConfig.class })
 public class ApplicationServiceConfig {
 
     // ---- for admin
@@ -44,9 +48,10 @@ public class ApplicationServiceConfig {
     ItemAdminService itemAdminService(
             ItemCreator modelCreator,
             DuplicateChecker<Item> duplicateChecker,
-            ItemRepository repository) {
+            ItemRepository repository,
+            ApplicationServiceEventPublisher eventPublisher) {
 
-        return new ItemAdminService(modelCreator, duplicateChecker, repository);
+        return new ItemAdminService(modelCreator, duplicateChecker, repository, eventPublisher);
     }
 
     @Bean
@@ -62,9 +67,10 @@ public class ApplicationServiceConfig {
     UserAdminService userAdminService(
             UserCreator modelCreator,
             DuplicateChecker<User> duplicateChecker,
-            UserRepository repository) {
+            UserRepository repository,
+            ApplicationServiceEventPublisher eventPublisher) {
 
-        return new UserAdminService(modelCreator, duplicateChecker, repository);
+        return new UserAdminService(modelCreator, duplicateChecker, repository, eventPublisher);
     }
 
     // ---- for member
@@ -88,7 +94,6 @@ public class ApplicationServiceConfig {
                 userRepository);
     }
 
-
     // ---- for universal
     @Bean
     LoginService loginService(UserRepository repository) {
@@ -100,6 +105,12 @@ public class ApplicationServiceConfig {
         return new UserProfileService(loginContext, repository);
     }
 
+    // ---- for listener
+    @Bean
+    ReservationDependencyEventListener dependencyEventListener(ReservationRepository repository) {
+
+        return new ReservationDependencyEventListener(repository);
+    }
 
     // ---- for etc.
     @Bean

@@ -156,7 +156,7 @@ class UserAdminControllerIntegrationTest {
     void testAddOnDuplicate() {
         // given
         UserAddRequest req = userAddRequestBuilder()
-                .loginId(user3.loginId()) // override
+                .loginId(user1.loginId()) // override
                 .build();
         // when
         assertThatThrownBy(() -> client.add(req))
@@ -266,9 +266,9 @@ class UserAdminControllerIntegrationTest {
     @Order(4)
     void testDelete() {
         // given
-        int deleteId = 1;
+        int deleteId = 3;
         // when
-        client.delete(1);
+        client.delete(deleteId);
         // then
         UserAdminResponse deleted = client.getAll().stream()
                 .filter(user -> user.id() == deleteId)
@@ -299,6 +299,18 @@ class UserAdminControllerIntegrationTest {
                 // then
                 .isInstanceOfSatisfying(BusinessFlowException.class, thrown -> {
                     assertThat(thrown.getCauseType()).isEqualTo(CauseType.NOT_FOUND);
+                });
+    }
+
+    @Test
+    void testDeleteOnRefered() {
+        // given
+        int referedId = 1;
+        // when
+        assertThatThrownBy(() -> client.delete(referedId))
+                // then
+                .isInstanceOfSatisfying(BusinessFlowException.class, thrown -> {
+                    assertThat(thrown.getCauseType()).isEqualTo(CauseType.REFERED);
                 });
     }
 

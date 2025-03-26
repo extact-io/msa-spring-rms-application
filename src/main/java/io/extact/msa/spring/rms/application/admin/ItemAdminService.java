@@ -5,7 +5,9 @@ import java.util.List;
 
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
 import io.extact.msa.spring.platform.fw.application.ApplicationService;
+import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
+import io.extact.msa.spring.rms.application.admin.event.ItemWillBeDeletedEvent;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
 import io.extact.msa.spring.rms.domain.item.ItemCreator.ItemModelAttributes;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
@@ -18,14 +20,17 @@ public class ItemAdminService {
 
     private final ItemCreator modelCreator;
     private final ApplicationCrudSupport<Item> support;
+    private final ApplicationServiceEventPublisher eventPublisher;
 
     public ItemAdminService(
             ItemCreator modelCreator,
             DuplicateChecker<Item> duplicateChecker,
-            ItemRepository repository) {
+            ItemRepository repository,
+            ApplicationServiceEventPublisher eventPublisher) {
 
         this.modelCreator = modelCreator;
         this.support = new ApplicationCrudSupport<>(duplicateChecker, repository);
+        this.eventPublisher = eventPublisher;
     }
 
     public List<ItemModelView> getAll() {
@@ -41,6 +46,7 @@ public class ItemAdminService {
     }
 
     public void delete(ItemId id) {
+        eventPublisher.publish(new ItemWillBeDeletedEvent(id));
         support.delete(id);
     }
 

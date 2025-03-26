@@ -327,6 +327,18 @@ class ItemAdminControllerIntegrationTest {
     }
 
     @Test
+    void testDeleteOnRefered() {
+        // given
+        int referedId = 3;
+        // when
+        assertThatThrownBy(() -> client.delete(referedId))
+                // then
+                .isInstanceOfSatisfying(BusinessFlowException.class, thrown -> {
+                    assertThat(thrown.getCauseType()).isEqualTo(CauseType.REFERED);
+                });
+    }
+
+    @Test
     void testDeleteOnAuthError(@Autowired JsonWebTokenGenerator generator) {
         // given -- 認証エラー
         SecurityContextHolder.clearContext();

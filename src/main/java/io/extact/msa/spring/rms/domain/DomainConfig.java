@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Import;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.domain.service.SimpleDuplicateChecker;
+import io.extact.msa.spring.platform.fw.feature.event.EventPublisherConfig;
 import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
@@ -19,7 +20,7 @@ import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 
 @Configuration(proxyBeanMethods = false)
-@Import(ValidatorConfig.class)
+@Import({ ValidatorConfig.class, EventPublisherConfig.class })
 public class DomainConfig {
 
     @Bean
