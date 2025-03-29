@@ -27,7 +27,7 @@ public class ReservationDependencyEventListener {
         repository.findByItemId(event.id())
                 .stream()
                 .findAny()
-                .ifPresent(item -> {
+                .ifPresent(_ -> {
                     throw new BusinessFlowException(
                             "Cannot be deleted because it is referenced in the reservation. itemId=" + event.id(),
                             CauseType.REFERED);
@@ -46,7 +46,7 @@ public class ReservationDependencyEventListener {
         repository.findByReserverId(event.id())
                 .stream()
                 .findAny()
-                .ifPresent(user -> {
+                .ifPresent(_ -> {
                     throw new BusinessFlowException(
                             "Cannot be deleted because it is referenced in the reservation. userId=" + event.id(),
                             CauseType.REFERED);

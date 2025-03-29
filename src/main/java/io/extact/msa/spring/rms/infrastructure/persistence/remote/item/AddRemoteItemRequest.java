@@ -1,0 +1,20 @@
+package io.extact.msa.spring.rms.infrastructure.persistence.remote.item;
+
+import io.extact.msa.spring.platform.core.generic.Transformable;
+import io.extact.msa.spring.rms.application.admin.ItemAddCommand;
+import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
+import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
+import lombok.Builder;
+
+@Builder
+record AddRemoteItemRequest(
+        @SerialNo String serialNo,
+        @ItemName String itemName) implements Transformable {
+
+    ItemAddCommand toCommand() {
+        return ItemAddCommand.builder()
+                .serialNo(this.serialNo)
+                .itemName(this.itemName)
+                .build();
+    }
+}

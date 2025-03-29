@@ -18,8 +18,8 @@ public class RmsStringInputReader extends InputReader<String, RmsStringInputRead
 
     public RmsStringInputReader(TextTerminal<?> textTerminalSupplier) {
         super(() -> textTerminalSupplier);
-        valueCheckers.add((val, propName) -> getLengthValidationErrors(val));
-        valueCheckers.add((val, propName) -> getPatternValidationErrors(val));
+        valueCheckers.add((val, _) -> getLengthValidationErrors(val));
+        valueCheckers.add((val, _) -> getPatternValidationErrors(val));
     }
 
     public RmsStringInputReader withPattern(PatternMessage pm) {

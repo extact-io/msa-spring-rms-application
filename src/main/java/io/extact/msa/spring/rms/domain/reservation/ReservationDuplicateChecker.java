@@ -25,7 +25,7 @@ public class ReservationDuplicateChecker implements DuplicateChecker<Reservation
         overlapped.stream()
                 .filter(Predicate.not(checkReservation::equals)) // 自分自身以外があったら
                 .findAny()
-                .ifPresent(match -> {
+                .ifPresent(_ -> {
                     throw new BusinessFlowException("Already reserved.", CauseType.DUPLICATE);
                 });
     }

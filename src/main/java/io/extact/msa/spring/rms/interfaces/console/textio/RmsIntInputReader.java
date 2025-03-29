@@ -14,7 +14,7 @@ public class RmsIntInputReader extends IntInputReader {
 
     public RmsIntInputReader(TextTerminal<?> textTerminalSupplier) {
         super(() -> textTerminalSupplier);
-        valueCheckers.add((val, propName) -> getSelectableValidationErrors(val));
+        valueCheckers.add((val, _) -> getSelectableValidationErrors(val));
     }
 
     public InputReader<Integer, IntInputReader> withSelectableValues(List<Integer> values, int excludeValue) {
