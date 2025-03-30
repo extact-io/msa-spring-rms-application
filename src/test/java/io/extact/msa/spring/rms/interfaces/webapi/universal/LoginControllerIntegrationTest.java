@@ -149,8 +149,8 @@ class LoginControllerIntegrationTest {
     public interface LoginClient {
         @GetExchange
         ResponseEntity<LoginUserResponse> login(
-                @RequestParam("loginId") String loginId,
-                @RequestParam("password") String password);
+                @RequestParam String loginId,
+                @RequestParam String password);
 
         @PostExchange
         ResponseEntity<LoginUserResponse> login(@RequestBody LoginRequest request);

@@ -5,12 +5,15 @@ import java.util.List;
 
 import io.extact.msa.spring.platform.fw.domain.repository.GenericRepository;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
+import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
 public interface ReservationRepository extends GenericRepository<Reservation>, IdentityGenerator {
+
+	List<Reservation> findByCondition(ReservationSearchCondition cond);
 
     /**
      * レンタル品IDと利用開始日が一致する予約一覧を取得する。

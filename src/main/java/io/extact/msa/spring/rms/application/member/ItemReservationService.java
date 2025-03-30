@@ -68,6 +68,14 @@ public class ItemReservationService {
                 .findOverlappingReservations(itemId, overlapPeriod)
                 .isEmpty();
     }
+    
+    public List<ReservationComposeModel> findReservationByCondition(ReservationSearchCondition cond) {
+        return reservationRepository
+                .findByCondition(cond)
+                .stream()
+                .map(modelComposer::composeModel)
+                .toList();
+    }
 
     public List<ReservationComposeModel> findReservationByItemId(ItemId itemId) {
         return reservationRepository

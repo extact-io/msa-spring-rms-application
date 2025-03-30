@@ -7,7 +7,7 @@ import io.extact.msa.spring.platform.fw.domain.model.Identity;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 
-public class ItemRemoteRepository implements ItemRepository {
+public class RemoteItemRepository implements ItemRepository {
 
     @Override
     public Optional<Item> find(Identity id) {

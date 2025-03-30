@@ -15,22 +15,22 @@ import org.springframework.web.service.annotation.PutExchange;
 public interface RemoteItemClientApi {
 
     @GetExchange("/{id}")
-    RemoteItemResponse get(@PathVariable("id") Integer id);
+    RemoteItem get(@PathVariable Integer id);
 
     @GetExchange
-    List<RemoteItemResponse> getAll();
+    List<RemoteItem> getAll();
 
     @PostExchange
-    RemoteItemResponse add(@RequestBody AddRemoteItemRequest req);
+    void add(@RequestBody RemoteItem item);
 
     @PutExchange
-    RemoteItemResponse update(@RequestBody UpdateRemoteItemRequest req);
+    void update(@RequestBody RemoteItem item);
 
     @DeleteExchange("/{id}")
-    RemoteItemResponse delete(@PathVariable("id") Integer itemId);
+    void delete(@PathVariable Integer id);
 
     @GetExchange
-    RemoteItemResponse findDuplicationData(@RequestParam("serial-no") String serialNo);
+    RemoteItem findDuplicationData(@RequestParam("serial-no") String serialNo);
 
     @GetExchange("/next-identity")
     int nextIdentity();

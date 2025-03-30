@@ -22,7 +22,7 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.RequiredArgsConstructor;
 
-@RmsRestController
+@RmsRestController("/reserve")
 @RequiredArgsConstructor
 public class ItemReservationController {
 
@@ -39,11 +39,11 @@ public class ItemReservationController {
 
     @GetMapping("/items/rentable")
     public List<ItemResponse> findRentableItemAtPeriod(
-            @RequestParam("from") LocalDateTime from,
-            @RequestParam("to") LocalDateTime to) {
+            @RequestParam LocalDateTime from,
+            @RequestParam LocalDateTime to) {
 
         return service
-                .findRentableItemAtPeriod(from, to)
+        		.findRentableItemAtPeriod(from, to)
                 .stream()
                 .map(ItemResponse::from)
                 .toList();
@@ -51,17 +51,33 @@ public class ItemReservationController {
 
     @GetMapping("/items/{itemId}/rentable")
     public boolean isRentableItemAtPeriod(
-            @PathVariable("itemId") @RmsId Integer itemId,
-            @RequestParam("from") LocalDateTime from,
-            @RequestParam("to") LocalDateTime to) {
+            @PathVariable @RmsId Integer itemId,
+            @RequestParam LocalDateTime from,
+            @RequestParam LocalDateTime to) {
 
         return service
                 .isRentableItemAtPeriod(new ItemId(itemId), from, to);
     }
 
+    // new
+    @GetMapping("/reservations")
+    public List<ReserveItemResponse> findReservationByCondition(
+            @RequestParam(name = "item-id", required = false) Integer itemId,
+    		@RequestParam(name = "reserver-id", required = false) Integer reserverId,
+            @RequestParam(name = "from-date", required = false) LocalDate from) {
+
+        List<ReservationComposeModel> models = from != null
+                ? service.findReservationByItemIdAndFromDate(new ItemId(itemId), from)
+                : service.findReservationByItemId(new ItemId(itemId));
+        
+        return models.stream()
+                .map(ReserveItemResponse::from)
+                .toList();
+    }
+    
     @GetMapping("/reservations/items/{itemId}")
     public List<ReserveItemResponse> findReservationByItemId(
-            @PathVariable("itemId") @RmsId Integer itemId,
+            @PathVariable @RmsId Integer itemId,
             @RequestParam(name = "from-date", required = false) LocalDate from) {
 
         List<ReservationComposeModel> models = from != null
@@ -75,7 +91,7 @@ public class ItemReservationController {
 
     @GetMapping("/reservations/reservers/{reserverId}")
     public List<ReserveItemResponse> findReservationByReserverId(
-            @PathVariable("reserverId") @RmsId Integer reserverId) {
+            @PathVariable @RmsId Integer reserverId) {
 
         return service
                 .findReservationByReserverId(new UserId(reserverId))
@@ -102,7 +118,7 @@ public class ItemReservationController {
 
     @DeleteMapping("/reservations/{reservationId}")
     public void cancel(
-            @PathVariable("reservationId") @RmsId Integer reservationId) {
+            @PathVariable @RmsId Integer reservationId) {
         service.cancel(new ReservationId(reservationId));
     }
 }

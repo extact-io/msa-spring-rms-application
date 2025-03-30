@@ -23,8 +23,8 @@ public class LoginController {
     @GetMapping
     @GenerateToken
     public LoginUserResponse login(
-            @LoginId @RequestParam("loginId") String loginId,
-            @Passowrd @RequestParam("password") String password) {
+            @LoginId @RequestParam String loginId,
+            @Passowrd @RequestParam String password) {
         return service
                 .login(loginId, password)
                 .transform(LoginUserResponse::from);

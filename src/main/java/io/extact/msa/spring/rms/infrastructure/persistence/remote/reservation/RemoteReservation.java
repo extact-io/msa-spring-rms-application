@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 
-public record RemoteReservationResponse(
+public record RemoteReservation(
         int id,
         LocalDateTime fromDateTime,
         LocalDateTime toDateTime,
@@ -12,11 +12,11 @@ public record RemoteReservationResponse(
         int itemId,
         int reserverId) {
 
-    static RemoteReservationResponse from(ReservationComposeModel model) {
+    static RemoteReservation from(ReservationComposeModel model) {
         if (model == null) {
             return null;
         }
-        return new RemoteReservationResponse(
+        return new RemoteReservation(
                 model.reservation().getId().id(),
                 model.reservation().getPeriod().getFrom(),
                 model.reservation().getPeriod().getTo(),
