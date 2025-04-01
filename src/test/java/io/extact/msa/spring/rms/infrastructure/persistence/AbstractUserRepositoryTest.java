@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.extact.msa.spring.platform.fw.exception.RmsPersistenceException;
+import io.extact.msa.spring.platform.fw.feature.exception.RmsPersistenceException;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;

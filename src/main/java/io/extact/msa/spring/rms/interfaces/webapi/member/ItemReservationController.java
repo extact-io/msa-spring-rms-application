@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
+import io.extact.msa.spring.platform.fw.feature.exception.RmsRequestCheckException;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
 import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
@@ -74,15 +75,12 @@ public class ItemReservationController {
     			.build();
     	
     	if (!cond.hasAnyCondition()) {
-    		// TODO: ここから
-    		// BAD_REQUESTになるように例外送出
+    	    throw new RmsRequestCheckException("search requires at least one request parameter.");
     	}
     	
-        List<ReservationComposeModel> models = from != null
-                ? service.findReservationByItemIdAndFromDate(new ItemId(itemId), from)
-                : service.findReservationByItemId(new ItemId(itemId));
-        
-        return models.stream()
+        return service
+                .findReservationByCondition(cond)
+                .stream()
                 .map(ReserveItemResponse::from)
                 .toList();
     }

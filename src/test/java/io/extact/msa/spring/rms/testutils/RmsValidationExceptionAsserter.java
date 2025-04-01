@@ -6,9 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import io.extact.msa.spring.platform.fw.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.exception.message.ValidationErrorMessage;
 import io.extact.msa.spring.platform.fw.exception.message.ValidationErrorMessage.MessageItem;
+import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.feature.validator.SpringModelValidatorAdapter;
 import lombok.RequiredArgsConstructor;
 

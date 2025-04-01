@@ -9,27 +9,27 @@ import lombok.Builder;
 
 @Builder
 public record ReservationSearchCondition(
-		LocalDate from,
-		Integer itemId,
-		Integer reserverId) {
+        LocalDate from,
+        Integer itemId,
+        Integer reserverId) {
 
-	public Optional<LocalDate> getFromAsOptional() {
-		return Optional.ofNullable(from);
-	}
+    public Optional<LocalDate> getFromAsOptional() {
+        return Optional.ofNullable(from);
+    }
 
-	public Optional<ItemId> getItemIdAsOptional() {
-		return Optional
-				.ofNullable(itemId)
-				.map(ItemId::new);
-	}
+    public Optional<ItemId> getItemIdAsOptional() {
+        return Optional
+                .ofNullable(itemId)
+                .map(ItemId::new);
+    }
 
-	public Optional<UserId> getReserverIdAsOptional() {
-		return Optional
-				.ofNullable(reserverId)
-				.map(UserId::new);
-	}
+    public Optional<UserId> getReserverIdAsOptional() {
+        return Optional
+                .ofNullable(reserverId)
+                .map(UserId::new);
+    }
 
-	public boolean hasAnyCondition() {
-		return from != null || itemId != null || reserverId != null;
-	}
+    public boolean hasAnyCondition() {
+        return from != null || itemId != null || reserverId != null;
+    }
 }

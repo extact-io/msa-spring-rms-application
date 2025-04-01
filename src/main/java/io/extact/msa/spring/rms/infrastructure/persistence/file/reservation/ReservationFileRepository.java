@@ -6,6 +6,7 @@ import java.util.List;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.AbstractFileRepository;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
+import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
@@ -25,23 +26,40 @@ public class ReservationFileRepository extends AbstractFileRepository<Reservatio
     }
 
     @Override
+    public List<Reservation> findByCondition(ReservationSearchCondition cond) {
+        ItemId itemId = cond.getItemIdAsOptional().orElse(null);
+        UserId reserverId = cond.getReserverIdAsOptional().orElse(null);
+        LocalDate from = cond.getFromAsOptional().orElse(null);
+        return this.findAll()
+                .stream()
+                .filter(r -> itemId == null || itemId.equals(r.getItemId()))
+                .filter(r -> reserverId == null || reserverId.equals(r.getReserverId()))
+                .filter(r -> from == null || from.equals(r.getPeriod().getFrom().toLocalDate()))
+                .toList();
+    }
+    
+    @Override
     public List<Reservation> findByItemId(ItemId itemId) {
-        return this.findAll().stream()
+        return this.findAll()
+                .stream()
                 .filter(reservation -> reservation.getItemId().equals(itemId))
                 .toList();
     }
 
     @Override
     public List<Reservation> findByItemIdAndFromDate(ItemId itemId, LocalDate from) {
-        return this.findByItemId(itemId).stream()
+        return this.findByItemId(itemId)
+                .stream()
                 .filter(reservation -> reservation.getPeriod().getFrom().toLocalDate().equals(from))
                 .toList();
     }
 
     @Override
     public List<Reservation> findByReserverId(UserId reserverId) {
-        return this.findAll().stream()
+        return this.findAll()
+                .stream()
                 .filter(reservation -> reservation.getReserverId().equals(reserverId))
                 .toList();
     }
+
 }

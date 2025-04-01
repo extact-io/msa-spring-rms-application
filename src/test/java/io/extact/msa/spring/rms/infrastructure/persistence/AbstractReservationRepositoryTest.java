@@ -13,7 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.extact.msa.spring.platform.fw.exception.RmsPersistenceException;
+import io.extact.msa.spring.platform.fw.feature.exception.RmsPersistenceException;
+import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
@@ -182,103 +183,142 @@ public abstract class AbstractReservationRepositoryTest {
     // ------ reservation unique spec
 
     @Test
-    void testFindByItemIdAndFromDate() {
+    void testFindByConditionWithItemIdAndFromDate() {
 
         // ---- 1件ヒット
         // given
-        List<Reservation> expected = List.of(reservation3);
-        ItemId itemId = new ItemId(3);
+        Integer itemId = 3;
         LocalDate fromDate = LocalDate.of(2099, 4, 1);
-
+        ReservationSearchCondition cond = ReservationSearchCondition.builder()
+                .itemId(itemId)
+                .from(fromDate)
+                .build();
+        
         // when
-        List<Reservation> actual = repository().findByItemIdAndFromDate(itemId, fromDate);
+        List<Reservation> actual = repository().findByCondition(cond);
 
         // then
+        List<Reservation> expected = List.of(reservation3);
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
         // ---- 2件ヒット
         // given
-        expected = List.of(reservation1, reservation2);
-        itemId = new ItemId(3);
+        itemId = 3;
         fromDate = LocalDate.of(2020, 4, 1);
+        cond = ReservationSearchCondition.builder()
+                .itemId(itemId)
+                .from(fromDate)
+                .build();
 
         // when
-        actual = repository().findByItemIdAndFromDate(itemId, fromDate);
+        actual = repository().findByCondition(cond);
 
         // then
+        expected = List.of(reservation1, reservation2);
         assertThat(actual).containsExactlyElementsOf(expected);
     }
 
     @Test
-    void testFindByItemIdAndFromDateOnNotFound() {
+    void testFindByConditionWithItemIdAndFromDateOnNotFound() {
 
         // ---- 開始日に該当なし
         // given
-        ItemId itemId = new ItemId(3);
+        Integer itemId = 3;
         LocalDate fromDate = LocalDate.of(2999, 4, 1);
+        ReservationSearchCondition cond = ReservationSearchCondition.builder()
+                .itemId(itemId)
+                .from(fromDate)
+                .build();
+        
         // when
-        List<Reservation> actual = repository().findByItemIdAndFromDate(itemId, fromDate);
+        List<Reservation> actual = repository().findByCondition(cond);
+        
         // then
         assertThat(actual).isEmpty();
 
         // ---- レンタル品に該当なし
         // given
-        itemId = new ItemId(999);
+        itemId = 999;
         fromDate = LocalDate.of(2020, 4, 1);
+        cond = ReservationSearchCondition.builder()
+                .itemId(itemId)
+                .from(fromDate)
+                .build();
+        
         // when
-        actual = repository().findByItemIdAndFromDate(itemId, fromDate);
+        actual = repository().findByCondition(cond);
+        
         // then
         assertThat(actual).isEmpty();
     }
 
     @Test
-    void testFindByReserverId() {
+    void testFindByConditionWithReserverId() {
 
         // ---- 1件ヒット
         // given
-        List<Reservation> expected = List.of(reservation2);
-        UserId reserverId = new UserId(2);
+        Integer reserverId = 2;
+        ReservationSearchCondition cond = ReservationSearchCondition
+                .builder()
+                .reserverId(reserverId)
+                .build();
         // when
-        List<Reservation> actual = repository().findByReserverId(reserverId);
+        List<Reservation> actual = repository().findByCondition(cond);
         // then
+        List<Reservation> expected = List.of(reservation2);
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
         // ---- 2件ヒット
         // given
-        expected = List.of(reservation1, reservation3);
-        reserverId = new UserId(1);
+        reserverId = 1;
+        cond = ReservationSearchCondition
+                .builder()
+                .reserverId(reserverId)
+                .build();
         // when
-        actual = repository().findByReserverId(reserverId);
+        actual = repository().findByCondition(cond);
         // then
+        expected = List.of(reservation1, reservation3);
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
         // ---- 0件ヒット
         // given
-        reserverId = new UserId(3);
+        reserverId = 3;
+        cond = ReservationSearchCondition
+                .builder()
+                .reserverId(reserverId)
+                .build();
         // when
-        actual = repository().findByReserverId(reserverId);
+        actual = repository().findByCondition(cond);
         // then
         assertThat(actual).isEmpty();
     }
 
-
     @Test
-    void testFindByItemId() {
+    void testFindByConditionWithItemId() {
 
         // ---- 3件ヒット
         // given
-        List<Reservation> expected = List.of(reservation1, reservation2, reservation3);
-        ItemId itemId = new ItemId(3);
+        Integer itemId = 3;
+        ReservationSearchCondition cond = ReservationSearchCondition
+                .builder()
+                .itemId(itemId)
+                .build();
         // when
-        List<Reservation> actual = repository().findByItemId(itemId);
+        List<Reservation> actual = repository().findByCondition(cond);
         // then
+        List<Reservation> expected = List.of(reservation1, reservation2, reservation3);
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
         // ---- 0件ヒット
         // given
-        itemId = new ItemId(1);
+        itemId = 1;
+        cond = ReservationSearchCondition
+                .builder()
+                .itemId(itemId)
+                .build();
         // when
-        actual = repository().findByItemId(itemId);
+        actual = repository().findByCondition(cond);
         // then
         assertThat(actual).isEmpty();
     }

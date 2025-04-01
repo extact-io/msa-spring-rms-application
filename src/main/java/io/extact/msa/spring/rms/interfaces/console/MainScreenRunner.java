@@ -6,7 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 
 import io.extact.msa.spring.platform.core.env.ActiveProfileResolver;
 import io.extact.msa.spring.platform.core.env.MainModuleInformation;
-import io.extact.msa.spring.platform.fw.exception.RmsServiceUnavailableException;
+import io.extact.msa.spring.platform.fw.feature.exception.RmsServiceUnavailableException;
 import io.extact.msa.spring.platform.fw.interfaces.StartupLog;
 import io.extact.msa.spring.rms.interfaces.console.screen.MainScreenController;
 import io.extact.msa.spring.rms.interfaces.console.textio.TextIoUtils;

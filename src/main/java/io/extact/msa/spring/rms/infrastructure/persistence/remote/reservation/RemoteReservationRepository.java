@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import io.extact.msa.spring.platform.fw.domain.model.Identity;
+import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
@@ -53,4 +54,9 @@ public class RemoteReservationRepository implements ReservationRepository {
 	public List<Reservation> findByItemId(ItemId itemId) {
 		return null;
 	}
+
+    @Override
+    public List<Reservation> findByCondition(ReservationSearchCondition cond) {
+        return null;
+    }
 }
