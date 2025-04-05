@@ -17,7 +17,7 @@ import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsRequestCheckException;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
-import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
+import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
@@ -68,7 +68,7 @@ public class ItemReservationController {
     		@RequestParam(name = "reserver-id", required = false) Integer reserverId,
             @RequestParam(name = "from-date", required = false) LocalDate from) {
 
-    	ReservationSearchCondition cond = ReservationSearchCondition.builder()
+    	ReservationQueryCondition cond = ReservationQueryCondition.builder()
     			.itemId(itemId)
     			.reserverId(reserverId)
     			.from(from)

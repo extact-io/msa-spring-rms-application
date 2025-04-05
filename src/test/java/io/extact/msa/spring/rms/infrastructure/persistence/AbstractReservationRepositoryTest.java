@@ -14,14 +14,17 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.extact.msa.spring.platform.fw.feature.exception.RmsPersistenceException;
-import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
+import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
+import io.extact.msa.spring.rms.application.member.ReservationQueryService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
+import lombok.RequiredArgsConstructor;
 
 @Transactional
 @Rollback
@@ -59,6 +62,7 @@ public abstract class AbstractReservationRepositoryTest {
                     new UserId(1));
 
     protected abstract ReservationRepository repository();
+    protected abstract ReservationQueryService queryService();
 
     @Test
     void testGet() {
@@ -189,33 +193,51 @@ public abstract class AbstractReservationRepositoryTest {
         // given
         Integer itemId = 3;
         LocalDate fromDate = LocalDate.of(2099, 4, 1);
-        ReservationSearchCondition cond = ReservationSearchCondition.builder()
+        ReservationQueryCondition cond = ReservationQueryCondition.builder()
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
         
         // when
-        List<Reservation> actual = repository().findByCondition(cond);
+        List<ReservationModelView> actual = queryService().findByCondition(cond);
 
         // then
-        List<Reservation> expected = List.of(reservation3);
+        List<ReservationModelView> expected = List.of(reservation3)
+                .stream()
+                .map(ReservationToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
+        actual = actual
+                .stream()
+                .map(ReservationModelViewToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
         // ---- 2件ヒット
         // given
         itemId = 3;
         fromDate = LocalDate.of(2020, 4, 1);
-        cond = ReservationSearchCondition.builder()
+        cond = ReservationQueryCondition.builder()
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
 
         // when
-        actual = repository().findByCondition(cond);
+        actual = queryService().findByCondition(cond);
 
         // then
-        expected = List.of(reservation1, reservation2);
-        assertThat(actual).containsExactlyElementsOf(expected);
+        expected = List.of(reservation1, reservation2)
+                .stream()
+                .map(ReservationToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
+        actual = actual
+                .stream()
+                .map(ReservationModelViewToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
+        assertThatToString(actual).containsExactlyElementsOf(expected);
     }
 
     @Test
@@ -225,13 +247,13 @@ public abstract class AbstractReservationRepositoryTest {
         // given
         Integer itemId = 3;
         LocalDate fromDate = LocalDate.of(2999, 4, 1);
-        ReservationSearchCondition cond = ReservationSearchCondition.builder()
+        ReservationQueryCondition cond = ReservationQueryCondition.builder()
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
         
         // when
-        List<Reservation> actual = repository().findByCondition(cond);
+        List<ReservationModelView> actual = queryService().findByCondition(cond);
         
         // then
         assertThat(actual).isEmpty();
@@ -240,13 +262,13 @@ public abstract class AbstractReservationRepositoryTest {
         // given
         itemId = 999;
         fromDate = LocalDate.of(2020, 4, 1);
-        cond = ReservationSearchCondition.builder()
+        cond = ReservationQueryCondition.builder()
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
         
         // when
-        actual = repository().findByCondition(cond);
+        actual = queryService().findByCondition(cond);
         
         // then
         assertThat(actual).isEmpty();
@@ -258,38 +280,56 @@ public abstract class AbstractReservationRepositoryTest {
         // ---- 1件ヒット
         // given
         Integer reserverId = 2;
-        ReservationSearchCondition cond = ReservationSearchCondition
+        ReservationQueryCondition cond = ReservationQueryCondition
                 .builder()
                 .reserverId(reserverId)
                 .build();
         // when
-        List<Reservation> actual = repository().findByCondition(cond);
+        List<ReservationModelView> actual = queryService().findByCondition(cond);
         // then
-        List<Reservation> expected = List.of(reservation2);
+        List<ReservationModelView> expected = List.of(reservation2)
+                .stream()
+                .map(ReservationToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
+        actual = actual
+                .stream()
+                .map(ReservationModelViewToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
         // ---- 2件ヒット
         // given
         reserverId = 1;
-        cond = ReservationSearchCondition
+        cond = ReservationQueryCondition
                 .builder()
                 .reserverId(reserverId)
                 .build();
         // when
-        actual = repository().findByCondition(cond);
+        actual = queryService().findByCondition(cond);
         // then
-        expected = List.of(reservation1, reservation3);
+        expected = List.of(reservation1, reservation3)
+                .stream()
+                .map(ReservationToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
+        actual = actual
+                .stream()
+                .map(ReservationModelViewToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
         // ---- 0件ヒット
         // given
         reserverId = 3;
-        cond = ReservationSearchCondition
+        cond = ReservationQueryCondition
                 .builder()
                 .reserverId(reserverId)
                 .build();
         // when
-        actual = repository().findByCondition(cond);
+        actual = queryService().findByCondition(cond);
         // then
         assertThat(actual).isEmpty();
     }
@@ -300,25 +340,34 @@ public abstract class AbstractReservationRepositoryTest {
         // ---- 3件ヒット
         // given
         Integer itemId = 3;
-        ReservationSearchCondition cond = ReservationSearchCondition
+        ReservationQueryCondition cond = ReservationQueryCondition
                 .builder()
                 .itemId(itemId)
                 .build();
         // when
-        List<Reservation> actual = repository().findByCondition(cond);
+        List<ReservationModelView> actual = queryService().findByCondition(cond);
         // then
-        List<Reservation> expected = List.of(reservation1, reservation2, reservation3);
+        List<ReservationModelView> expected = List.of(reservation1, reservation2, reservation3)
+                .stream()
+                .map(ReservationToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
+        actual = actual
+                .stream()
+                .map(ReservationModelViewToStringAware::new)
+                .map(aware -> (ReservationModelView) aware)
+                .toList();
         assertThatToString(actual).containsExactlyElementsOf(expected);
 
         // ---- 0件ヒット
         // given
         itemId = 1;
-        cond = ReservationSearchCondition
+        cond = ReservationQueryCondition
                 .builder()
                 .itemId(itemId)
                 .build();
         // when
-        actual = repository().findByCondition(cond);
+        actual = queryService().findByCondition(cond);
         // then
         assertThat(actual).isEmpty();
     }
@@ -462,4 +511,84 @@ public abstract class AbstractReservationRepositoryTest {
         // then
         assertThat(actual).isEmpty();
     }
+
+    
+    // -------------------------------------------------------------- inner classes
+
+    @RequiredArgsConstructor
+    static class ReservationModelViewToStringAware implements ReservationModelView {
+
+        private final ReservationModelView view;
+
+        @Override
+        public ReservationId getId() {
+            return view.getId();
+        }
+
+        @Override
+        public ReservationPeriod getPeriod() {
+            return view.getPeriod();
+        }
+
+        @Override
+        public String getNote() {
+            return view.getNote();
+        }
+
+        @Override
+        public UserId getReserverId() {
+            return view.getReserverId();
+        }
+
+        @Override
+        public ItemId getItemId() {
+            return view.getItemId();
+        }
+
+        @Override
+        public String toString() {
+            return "ReservationModelView [getId()=" + getId() + ", getPeriod()=" + getPeriod()
+                    + ", getNote()=" + getNote() + ", getReserverId()=" + getReserverId() + ", getItemId()="
+                    + getItemId() + "]";
+        }
+    }
+    
+    @RequiredArgsConstructor
+    static class ReservationToStringAware implements ReservationModelView {
+
+        private final Reservation model;
+        
+        @Override
+        public ReservationId getId() {
+            return model.getId();
+        }
+
+        @Override
+        public ReservationPeriod getPeriod() {
+            return model.getPeriod();
+        }
+
+        @Override
+        public String getNote() {
+            return model.getNote();
+        }
+
+        @Override
+        public UserId getReserverId() {
+            return model.getReserverId();
+        }
+
+        @Override
+        public ItemId getItemId() {
+            return model.getItemId();
+        }
+        
+        @Override
+        public String toString() {
+            return "ReservationModelView [getId()=" + getId() + ", getPeriod()=" + getPeriod()
+                    + ", getNote()=" + getNote() + ", getReserverId()=" + getReserverId() + ", getItemId()="
+                    + getItemId() + "]";
+        }
+    }
+
 }

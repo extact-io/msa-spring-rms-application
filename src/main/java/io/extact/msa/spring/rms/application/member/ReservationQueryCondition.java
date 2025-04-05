@@ -8,7 +8,7 @@ import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.Builder;
 
 @Builder
-public record ReservationSearchCondition(
+public record ReservationQueryCondition(
         LocalDate from,
         Integer itemId,
         Integer reserverId) {

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import io.extact.msa.spring.rms.application.member.ReservationQueryService;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractReservationRepositoryTest;
 
@@ -18,6 +19,8 @@ class ReservationJpaRepositoryTest extends AbstractReservationRepositoryTest {
 
     @Autowired
     private ReservationRepository repository;
+    @Autowired
+    private ReservationQueryService queryService;
 
     @Configuration(proxyBeanMethods = false)
     @Import(JpaRepositoryConfig.class)
@@ -27,6 +30,11 @@ class ReservationJpaRepositoryTest extends AbstractReservationRepositoryTest {
     @Override
     protected ReservationRepository repository() {
         return this.repository;
+    }
+    
+    @Override
+    protected ReservationQueryService queryService() {
+        return this.queryService;
     }
 
     @Test

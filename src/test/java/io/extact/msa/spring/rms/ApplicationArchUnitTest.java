@@ -200,6 +200,7 @@ class ApplicationArchUnitTest {
                     "..fw.application..",
                     "..fw.interfaces",
                     "..fw.interfaces.webapi..",
+                    "..fw.feature.exception..",
                     "..rms.domain..",
                     "..rms.application..",
                     "..rms.interfaces.webapi.." //
@@ -287,6 +288,7 @@ class ApplicationArchUnitTest {
                             "..fw.exception..",
                             "..fw.domain.model..",
                             "..fw.infrastructure.persistence.file..",
+                            "..rms.application..",
                             "..rms.domain..model..",
                             "..rms.infrastructure.persistence.file..")
                                     .or(type(io.extact.msa.spring.rms.domain.item.ItemRepository.class))
@@ -306,11 +308,13 @@ class ApplicationArchUnitTest {
             .onlyDependOnClassesThat(resideInAnyPackage(
                     "java..",
                     "jakarta.persistence..",
+                    "org.springframework.data..", // Spring dataなのでOK
                     "lombok..",
                     "..fw.exception..",
                     "..fw.domain.model..",
                     "..fw.infrastructure.persistence.jpa..",
                     "..rms.domain..model..",
+                    "..rms.application..",
                     "..rms.infrastructure.persistence.jpa..")
                             .or(type(io.extact.msa.spring.rms.domain.item.ItemRepository.class))
                             .or(type(io.extact.msa.spring.rms.domain.reservation.ReservationRepository.class))
@@ -361,6 +365,7 @@ class ApplicationArchUnitTest {
             .that()
             .resideInAPackage("..application..")
             .and().haveSimpleNameEndingWith("Service")
+            .and(not(simpleNameEndingWith("QueryService")))
             .should().beAnnotatedWith(ApplicationService.class);
 
     /**

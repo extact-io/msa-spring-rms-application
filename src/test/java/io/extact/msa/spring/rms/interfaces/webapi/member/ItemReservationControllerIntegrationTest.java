@@ -286,18 +286,20 @@ class ItemReservationControllerIntegrationTest {
     void testFindReservationByItemId() {
 
         // given -- found
-        int itemId = 3;
+        Integer itemId = 3;
+        Integer reserverId = null;
         LocalDate fromDate = null;
         // when
-        List<ReserveItemResponse> actual = client.findReservationByItemId(itemId, fromDate);
+        List<ReserveItemResponse> actual = client.findReservationByParams(itemId, reserverId, fromDate);
         // then
         assertThat(actual).containsExactly(reservation1, reservation2, reservation3);
 
         // given -- not found
         itemId = 1;
+        reserverId = null;
         fromDate = null;
         // when
-        actual = client.findReservationByItemId(itemId, fromDate);
+        actual = client.findReservationByParams(itemId, reserverId, fromDate);
         // then
         assertThat(actual).isEmpty();
     }
@@ -307,47 +309,53 @@ class ItemReservationControllerIntegrationTest {
     void testFindReservationByItemIdWithFromDate() {
 
         // given -- found
-        int itemId = 3;
+        Integer itemId = 3;
+        Integer reserverId = null;
         LocalDate fromDate = LocalDate.of(2020, 4, 1);
         // when
-        List<ReserveItemResponse> actual = client.findReservationByItemId(itemId, fromDate);
+        List<ReserveItemResponse> actual = client.findReservationByParams(itemId, reserverId, fromDate);
         // then
         assertThat(actual).containsExactly(reservation1, reservation2);
 
         // given -- not found
         itemId = 3;
+        reserverId = null;
         fromDate = LocalDate.of(2020, 4, 2);
         // when
-        actual = client.findReservationByItemId(itemId, fromDate);
+        actual = client.findReservationByParams(itemId, reserverId, fromDate);
         // then
         assertThat(actual).isEmpty();
     }
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testFindReservationByItemIdOnParameterError() {
+    void testFindReservationByInvalidItemId() {
 
-        // given -- on PathVariable error
-        int invalidId = -1;
+        // given
+        Integer invalidItemId = -1;
         LocalDate date = null;
+        Integer reserverId = null;
+        
         // when
-        assertThatThrownBy(() -> client.findReservationByItemId(invalidId, date))
-                // then
-                .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
-                    assertThat(thrown.getDetailMessage()).contains("itemId");
-                });
+        // 検索条件なので-1が来ても検索結果がないだけなのでエラーにはしない
+        List<ReserveItemResponse> actual = client.findReservationByParams(invalidItemId, reserverId, date);
+        
+        // then
+        assertThat(actual).isEmpty();
     }
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
     void testFindReservationByItemIdOnAuthError(@Autowired JsonWebTokenGenerator generator) {
+        
         // given -- 認証エラー
         SecurityContextHolder.clearContext();
-        int itemId = 3;
+        Integer itemId = 3;
         LocalDate fromDate = LocalDate.of(2020, 4, 1);
+        Integer reserverId = null;
+        
         // when
-        assertThatThrownBy(() -> client.findReservationByItemId(itemId, fromDate))
+        assertThatThrownBy(() -> client.findReservationByParams(itemId, reserverId, fromDate))
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
@@ -356,7 +364,7 @@ class ItemReservationControllerIntegrationTest {
         // given -- 認可エラー
         TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
         // when
-        assertThatThrownBy(() -> client.findReservationByItemId(itemId, fromDate))
+        assertThatThrownBy(() -> client.findReservationByParams(itemId, reserverId, fromDate))
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認可エラー");
@@ -368,32 +376,36 @@ class ItemReservationControllerIntegrationTest {
     void testFindReservationByReserverId() {
 
         // given -- found
-        int reserverId = 1;
+        Integer itemId = null;
+        Integer reserverId = 1;
+        LocalDate fromDate = null;
         // when
-        List<ReserveItemResponse> actual = client.findReservationByReserverId(reserverId);
+        List<ReserveItemResponse> actual = client.findReservationByParams(itemId, reserverId, fromDate);
         // then
         assertThat(actual).containsExactly(reservation1, reservation3);
 
         // given -- not found
+        itemId = null;
         reserverId = 3;
+        fromDate = null;
         // when
-        actual = client.findReservationByReserverId(reserverId);
+        actual = client.findReservationByParams(itemId, reserverId, fromDate);
         // then
         assertThat(actual).isEmpty();
     }
 
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
-    void testFindReservationByReserverIdOnParameterError() {
+    void testFindReservationByInvalidReserverId() {
         // given
-        int invalidId = -1;
+        Integer itemId = null;
+        Integer reserverId = -1;
+        LocalDate fromDate = null;
         // when
-        assertThatThrownBy(() -> client.findReservationByReserverId(invalidId))
-                // then
-                .isInstanceOfSatisfying(RmsValidationException.class, thrown -> {
-                    assertThat(thrown.getErrorMessage().messageItems()).hasSize(1);
-                    assertThat(thrown.getDetailMessage()).contains("reserverId");
-                });
+        // 検索条件なので-1が来ても検索結果がないだけなのでエラーにはしない
+        List<ReserveItemResponse> actual = client.findReservationByParams(itemId, reserverId, fromDate);
+        // then
+        assertThat(actual).isEmpty();
     }
 
     @Test
@@ -401,9 +413,11 @@ class ItemReservationControllerIntegrationTest {
     void testFindReservationByReserverIdOnAuthError(@Autowired JsonWebTokenGenerator generator) {
         // given -- 認証エラー
         SecurityContextHolder.clearContext();
-        int reserverId = 1;
+        Integer itemId = null;
+        Integer reserverId = 1;
+        LocalDate fromDate = null;
         // when
-        assertThatThrownBy(() -> client.findReservationByReserverId(reserverId))
+        assertThatThrownBy(() -> client.findReservationByParams(itemId, reserverId, fromDate))
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認証エラー");
@@ -412,7 +426,7 @@ class ItemReservationControllerIntegrationTest {
         // given -- 認可エラー
         TestAuthUtils.signinByJwt(generator, 3, "ADMIN");
         // when
-        assertThatThrownBy(() -> client.findReservationByReserverId(reserverId))
+        assertThatThrownBy(() -> client.findReservationByParams(itemId, reserverId, fromDate))
                 // then
                 .isInstanceOfSatisfying(SecurityConstraintException.class, thrown -> {
                     assertThat(thrown).hasMessageContaining("認可エラー");
@@ -673,36 +687,33 @@ class ItemReservationControllerIntegrationTest {
     @HttpExchange
     public interface ReservationClient {
 
-        @GetExchange("/member/items")
+        @GetExchange("/member/reserve/items")
         List<ItemResponse> getItemAll();
 
-        @GetExchange("/member/items/rentable")
+        @GetExchange("/member/reserve/items/rentable")
         List<ItemResponse> findRentableItemAtPeriod(
                 @RequestParam LocalDateTime from,
                 @RequestParam LocalDateTime to);
 
-        @GetExchange("/member/items/{itemId}/rentable")
+        @GetExchange("/member/reserve/items/{itemId}/rentable")
         boolean isRentableItemAtPeriod(
                 @PathVariable @RmsId Integer itemId,
                 @RequestParam LocalDateTime from,
                 @RequestParam LocalDateTime to);
 
-        @GetExchange("/member/reservations/items/{itemId}")
-        List<ReserveItemResponse> findReservationByItemId(
-                @PathVariable Integer itemId,
-                @RequestParam(value = "from-date", required = false) LocalDate from);
-
-        @GetExchange("/member/reservations/reservers/{reserverId}")
-        List<ReserveItemResponse> findReservationByReserverId(
-                @PathVariable Integer reserverId);
-
-        @GetExchange("/member/reservations/own")
+        @GetExchange("/member/reserve/reservations")
+        public List<ReserveItemResponse> findReservationByParams(
+                @RequestParam(name = "item-id", required = false) Integer itemId,
+                @RequestParam(name = "reserver-id", required = false) Integer reserverId,
+                @RequestParam(name = "from-date", required = false) LocalDate from);
+        
+        @GetExchange("/member/reserve/reservations/own")
         List<ReserveItemResponse> getOwnReservations();
 
-        @PostExchange("/member/reservations")
+        @PostExchange("/member/reserve/reservations")
         ReserveItemResponse reserve(@RequestBody ReserveItemRequest request);
 
-        @DeleteExchange("/member/reservations/{reservationId}")
+        @DeleteExchange("/member/reserve/reservations/{reservationId}")
         void cancel(@PathVariable Integer reservationId);
 
         @GetExchange("/admin/reservations") // for assert use only

@@ -9,11 +9,11 @@ import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
+import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
 
 public class ReservationSpecification {
 
-    public static Specification<ReservationEntity> fromCondition(ReservationSearchCondition condition) {
+    public static Specification<ReservationEntity> fromCondition(ReservationQueryCondition condition) {
 
         return (root, _, cb) -> {
 

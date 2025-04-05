@@ -9,14 +9,16 @@ import org.springframework.data.jpa.domain.Specification;
 
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.AbstractJpaRepository;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.ModelEntityMapper;
-import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
+import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
+import io.extact.msa.spring.rms.application.member.ReservationQueryService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
 public class ReservationJpaRepository extends AbstractJpaRepository<Reservation, ReservationEntity>
-        implements ReservationRepository {
+        implements ReservationRepository, ReservationQueryService {
 
     private final ReservationJpaRepositoryDelegator delegator;
     private final ModelEntityMapper<Reservation, ReservationEntity> entityMapper;
@@ -27,15 +29,6 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
         this.delegator = delegator;
         this.entityMapper = entityMapper;
     }
-    
-	@Override
-	public List<Reservation> findByCondition(ReservationSearchCondition cond) {
-		Specification<ReservationEntity> spec = ReservationSpecification.fromCondition(cond);
-        return delegator.findAll(spec)
-                .stream()
-                .map(entityMapper::toModel)
-                .toList();
-	}
 
     @Override
     public List<Reservation> findByItemIdAndFromDate(ItemId itemId, LocalDate from) {
@@ -60,6 +53,16 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
         return delegator.findByItemIdOrderByIdAsc(itemId.id())
                 .stream()
                 .map(entityMapper::toModel)
+                .toList();
+    }
+
+    @Override
+    public List<ReservationModelView> findByCondition(ReservationQueryCondition cond) {
+        Specification<ReservationEntity> spec = ReservationSpecification.fromCondition(cond);
+        return delegator.findAll(spec)
+                .stream()
+                .map(ReservationModelViewAdapter::new)
+                .map(adapter -> (ReservationModelView) adapter)
                 .toList();
     }
 }

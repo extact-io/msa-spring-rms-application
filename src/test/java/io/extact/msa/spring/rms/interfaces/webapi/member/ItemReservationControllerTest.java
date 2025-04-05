@@ -33,6 +33,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
+import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
 import io.extact.msa.spring.rms.application.member.ReserveItemCommand;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
@@ -82,7 +83,7 @@ class ItemReservationControllerTest {
             .thenReturn(List.of(item1, item2, item3, item4));
 
         // when
-        mockMvc.perform(get("/member/items"))
+        mockMvc.perform(get("/member/reserve/items"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(4))
@@ -100,7 +101,7 @@ class ItemReservationControllerTest {
             .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/items"))
+        mockMvc.perform(get("/member/reserve/items"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
@@ -113,7 +114,7 @@ class ItemReservationControllerTest {
         // @WithMockUser(roles = "MEMBER")なし
 
         // when
-        mockMvc.perform(get("/member/items"))
+        mockMvc.perform(get("/member/reserve/items"))
                 .andExpect(status().isUnauthorized());
 
         // then
@@ -131,7 +132,7 @@ class ItemReservationControllerTest {
             .thenReturn(List.of(item2, item4));
 
         // when
-        mockMvc.perform(get("/member/items/rentable")
+        mockMvc.perform(get("/member/reserve/items/rentable")
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 // then
@@ -153,7 +154,7 @@ class ItemReservationControllerTest {
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/items/rentable")
+        mockMvc.perform(get("/member/reserve/items/rentable")
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 // then
@@ -167,7 +168,7 @@ class ItemReservationControllerTest {
 
         // given
         // when
-        mockMvc.perform(get("/member/items/rentable")
+        mockMvc.perform(get("/member/reserve/items/rentable")
                 .param("from", ""))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
@@ -190,7 +191,7 @@ class ItemReservationControllerTest {
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
 
         // when
-        mockMvc.perform(get("/member/items/rentable")
+        mockMvc.perform(get("/member/reserve/items/rentable")
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 .andExpect(status().isUnauthorized());
@@ -213,7 +214,7 @@ class ItemReservationControllerTest {
             .thenReturn(returnValue);
 
         // when
-        mockMvc.perform(get("/member/items/{itemId}/rentable", itemid.id())
+        mockMvc.perform(get("/member/reserve/items/{itemId}/rentable", itemid.id())
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 // then
@@ -231,7 +232,7 @@ class ItemReservationControllerTest {
         String to = LocalDateTime.of(2025, 1, 1, 12, 0).toString();
 
         // when
-        mockMvc.perform(get("/member/items/{itemId}/rentable", itemid)
+        mockMvc.perform(get("/member/reserve/items/{itemId}/rentable", itemid)
                 .param("from", from)
                 .param("to", to))
                 // then
@@ -256,7 +257,7 @@ class ItemReservationControllerTest {
         String to = LocalDateTime.of(2025, 1, 1, 12, 0).toString();
 
         // when
-        mockMvc.perform(get("/member/items/{itemId}/rentable", itemid)
+        mockMvc.perform(get("/member/reserve/items/{itemId}/rentable", itemid)
                 .param("from", from)
                 .param("to", to))
                 // then
@@ -281,7 +282,7 @@ class ItemReservationControllerTest {
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
 
         // when
-        mockMvc.perform(get("/member/items/{itemId}/rentable", itemid.id())
+        mockMvc.perform(get("/member/reserve/items/{itemId}/rentable", itemid.id())
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 .andExpect(status().isUnauthorized());
@@ -295,12 +296,16 @@ class ItemReservationControllerTest {
     void testFindReservationByItemId() throws Exception {
 
         // given
-        ItemId itemId = new ItemId(1);
-        when(reservationService.findReservationByItemId(itemId))
+        Integer itemId = 1; 
+        ReservationQueryCondition cond = ReservationQueryCondition.builder()
+                .itemId(itemId)
+                .build();
+        when(reservationService.findReservationByCondition(cond))
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/member/reservations/items/{itemId}", itemId.id()))
+        mockMvc.perform(get("/member/reserve/reservations")
+                .param("item-id", itemId.toString()))
                 // then
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
@@ -320,13 +325,18 @@ class ItemReservationControllerTest {
     void testFindReservationByItemIdWithFromDate() throws Exception {
 
         // given
-        ItemId itemId = new ItemId(1);
+        Integer itemId = 1; 
         LocalDate fromDate = LocalDate.of(2024, 1, 1);
-        when(reservationService.findReservationByItemIdAndFromDate(itemId, fromDate))
+        ReservationQueryCondition cond = ReservationQueryCondition.builder()
+                .itemId(itemId)
+                .from(fromDate)
+                .build();
+        when(reservationService.findReservationByCondition(cond))
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/member/reservations/items/{itemId}", itemId.id())
+        mockMvc.perform(get("/member/reserve/reservations")
+                .param("item-id", itemId.toString())
                 .param("from-date", fromDate.toString()))
                 // then
                 .andExpect(jsonPath("$.length()").value(2))
@@ -347,12 +357,18 @@ class ItemReservationControllerTest {
     void testFindReservationByItemIdWithFromDateNull() throws Exception {
 
         // given
-        ItemId itemId = new ItemId(1);
-        when(reservationService.findReservationByItemId(itemId))
+        Integer itemId = 1; 
+        LocalDate fromDate = null;
+        ReservationQueryCondition cond = ReservationQueryCondition.builder()
+                .itemId(itemId)
+                .from(fromDate)
+                .build();
+        when(reservationService.findReservationByCondition(cond))
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/member/reservations/items/{itemId}", itemId.id())
+        mockMvc.perform(get("/member/reserve/reservations")
+                .param("item-id", itemId.toString())
                 .param("from-date", ""))
                 // then
                 .andExpect(jsonPath("$.length()").value(2)); // 以降省略
@@ -363,13 +379,18 @@ class ItemReservationControllerTest {
     void testFindReservationByItemIdReturnEmpty() throws Exception {
 
         // given
-        ItemId itemId = new ItemId(1);
+        Integer itemId = 1; 
         LocalDate fromDate = LocalDate.of(2024, 1, 1);
-        when(reservationService.findReservationByItemIdAndFromDate(itemId, fromDate))
+        ReservationQueryCondition cond = ReservationQueryCondition.builder()
+                .itemId(itemId)
+                .from(fromDate)
+                .build();
+        when(reservationService.findReservationByCondition(cond))
             .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/reservations/items/{itemId}", itemId.id())
+        mockMvc.perform(get("/member/reserve/reservations")
+                .param("item-id", itemId.toString())
                 .param("from-date", fromDate.toString()))
                 // then
                 .andExpect(status().isOk())
@@ -394,7 +415,7 @@ class ItemReservationControllerTest {
                 )));
 
         // then
-        verify(reservationService, never()).findReservationByItemId(any());
+        verify(reservationService, never()).findReservationByCondition(any());
     }
 
     @Test

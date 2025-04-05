@@ -36,6 +36,7 @@ public class ItemReservationService {
     private final ReservationCreator modelCreator;
     private final ReservationModelComposer modelComposer;
     private final ReservationDuplicateChecker duplicateChecker;
+    private final ReservationQueryService queryService;
     private final ReservationRepository reservationRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -69,8 +70,8 @@ public class ItemReservationService {
                 .isEmpty();
     }
     
-    public List<ReservationComposeModel> findReservationByCondition(ReservationSearchCondition cond) {
-        return reservationRepository
+    public List<ReservationComposeModel> findReservationByCondition(ReservationQueryCondition cond) {
+        return queryService
                 .findByCondition(cond)
                 .stream()
                 .map(modelComposer::composeModel)

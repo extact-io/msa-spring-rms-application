@@ -16,6 +16,7 @@ import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
 import io.extact.msa.spring.rms.application.admin.event.ReservationDependencyEventListener;
 import io.extact.msa.spring.rms.application.member.ItemReservationService;
+import io.extact.msa.spring.rms.application.member.ReservationQueryService;
 import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.application.universal.UserProfileService;
@@ -80,6 +81,7 @@ public class ApplicationServiceConfig {
             ReservationCreator modelCreator,
             ReservationModelComposer modelComposer,
             ReservationDuplicateChecker duplicateChecker,
+            ReservationQueryService queryService,
             ReservationRepository reservationRepository,
             ItemRepository itemRepository,
             UserRepository userRepository) {
@@ -89,6 +91,7 @@ public class ApplicationServiceConfig {
                 modelCreator,
                 modelComposer,
                 duplicateChecker,
+                queryService,
                 reservationRepository,
                 itemRepository,
                 userRepository);

@@ -80,6 +80,7 @@ class ItemReservationServiceTest {
                 ReservationCreator modelCreator,
                 ReservationModelComposer modelComposer,
                 ReservationDuplicateChecker duplicateChecker,
+                ReservationQueryService queryService,
                 ReservationRepository reservationRepository,
                 ItemRepository itemRepository,
                 UserRepository userRepository) {
@@ -89,6 +90,7 @@ class ItemReservationServiceTest {
                     modelCreator,
                     modelComposer,
                     duplicateChecker,
+                    queryService,
                     reservationRepository,
                     itemRepository,
                     userRepository);

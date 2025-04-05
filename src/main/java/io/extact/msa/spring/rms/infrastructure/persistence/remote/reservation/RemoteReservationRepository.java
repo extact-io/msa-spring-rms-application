@@ -5,13 +5,15 @@ import java.util.List;
 import java.util.Optional;
 
 import io.extact.msa.spring.platform.fw.domain.model.Identity;
-import io.extact.msa.spring.rms.application.member.ReservationSearchCondition;
+import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
+import io.extact.msa.spring.rms.application.member.ReservationQueryService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
-public class RemoteReservationRepository implements ReservationRepository {
+public class RemoteReservationRepository implements ReservationRepository, ReservationQueryService {
 
     @Override
     public Optional<Reservation> find(Identity id) {
@@ -56,7 +58,7 @@ public class RemoteReservationRepository implements ReservationRepository {
 	}
 
     @Override
-    public List<Reservation> findByCondition(ReservationSearchCondition cond) {
+    public List<ReservationModelView> findByCondition(ReservationQueryCondition cond) {
         return null;
     }
 }
