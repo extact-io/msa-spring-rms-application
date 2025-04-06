@@ -4,7 +4,7 @@ import io.extact.msa.spring.platform.core.env.MainModuleInformation;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
-import io.extact.msa.spring.rms.application.member.ItemReservationService;
+import io.extact.msa.spring.rms.application.member.ReserveItemService;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.screen.TransitionMap.Transition;
@@ -33,7 +33,7 @@ public class MainScreenController implements LoginEventObserver {
             ItemAdminService itemAdminService,
             ReservationAdminService reservationAdminService,
             UserAdminService userAdminService,
-            ItemReservationService reservationMemberService,
+            ReserveItemService reservationMemberService,
             MainModuleInformation moduleInfo) {
 
         this.transitionMap = new TransitionMap();

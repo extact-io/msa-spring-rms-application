@@ -5,9 +5,9 @@ import static io.extact.msa.spring.rms.interfaces.console.common.ClientConstants
 import java.time.LocalDate;
 import java.util.List;
 
-import io.extact.msa.spring.rms.application.member.ItemReservationService;
+import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
+import io.extact.msa.spring.rms.application.member.ReserveItemService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
-import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.interfaces.console.screen.RmsScreen;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class InquiryReservationScreen implements RmsScreen {
 
-    private final ItemReservationService service;
+    private final ReserveItemService service;
 
     @Override
     public Transition play(UserModelView loginUser, boolean printHeader) {
@@ -46,14 +46,15 @@ public class InquiryReservationScreen implements RmsScreen {
         }
 
         // 照会する日付を入力
-        var inputedDate = TextIoUtils.newLocalDateReader()
+        LocalDate inputedDate = TextIoUtils.newLocalDateReader()
                 .read("日付（入力例－2020/10/23）");
 
         // 照会の実行
-        List<ReservationComposeModel> results = service
-                .findReservationByItemIdAndFromDate(
-                        new ItemId(selectedItemId),
-                        inputedDate);
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .itemId(selectedItemId)
+                .from(inputedDate)
+                .build();
+        List<ReservationComposeModel> results = service.findReservationByCondition(cond);
 
         // 該当データなしの場合は最初から
         if (results.isEmpty()) {

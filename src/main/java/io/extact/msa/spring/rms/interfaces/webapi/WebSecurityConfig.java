@@ -14,7 +14,7 @@ import io.extact.msa.spring.platform.core.auth.jwt.RmsJwtAuthConfig;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ItemAdminController;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationAdminController;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserAdminController;
-import io.extact.msa.spring.rms.interfaces.webapi.member.ItemReservationController;
+import io.extact.msa.spring.rms.interfaces.webapi.member.ReserveItemController;
 
 @Configuration(proxyBeanMethods = false)
 @Import(RmsJwtAuthConfig.class)
@@ -29,16 +29,16 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         ReservationAdminController.class,
                         UserAdminController.class));
 
-        configurer.addPathPrefix("/member",
+        configurer.addPathPrefix("/reserve",
                 HandlerTypePredicate.forAssignableType(
-                        ItemReservationController.class));
+                        ReserveItemController.class));
     }
 
     @Bean
     AuthorizeHttpRequestCustomizer authorizeRequestCustomizer() {
         return (AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry configurer) -> configurer
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/member/**").hasRole("MEMBER")
+                .requestMatchers("/reserve/**").hasRole("MEMBER")
                 .requestMatchers("/profile").authenticated()
                 .requestMatchers("/login").permitAll()
                 .anyRequest().authenticated();

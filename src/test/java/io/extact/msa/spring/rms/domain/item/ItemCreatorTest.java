@@ -18,11 +18,11 @@ import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.test.utils.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.domain.InMemoryIdentityGenerator;
 import io.extact.msa.spring.rms.domain.item.ItemCreator.ItemModelAttributes;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @ActiveProfiles("test")

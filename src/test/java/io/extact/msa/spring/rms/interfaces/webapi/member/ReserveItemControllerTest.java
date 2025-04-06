@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.member;
 
-import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
+import static io.extact.msa.spring.rms.PersistedTestData.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -32,8 +32,8 @@ import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
-import io.extact.msa.spring.rms.application.member.ItemReservationService;
-import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
+import io.extact.msa.spring.rms.application.member.ReserveItemService;
+import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
 import io.extact.msa.spring.rms.application.member.ReserveItemCommand;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
@@ -43,9 +43,9 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 
-@WebMvcTest(ItemReservationController.class)
+@WebMvcTest(ReserveItemController.class)
 @ActiveProfiles("test")
-class ItemReservationControllerTest {
+class ReserveItemControllerTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};
     private static DateTimeFormatter dateTimeFormatter;
@@ -55,7 +55,7 @@ class ItemReservationControllerTest {
     @Autowired
     private ObjectMapper mapper;
     @MockitoBean
-    private ItemReservationService reservationService;
+    private ReserveItemService reservationService;
 
     @Configuration(proxyBeanMethods = false)
     @Import({
@@ -64,8 +64,8 @@ class ItemReservationControllerTest {
             WebSecurityConfig.class })
     static class TestConfig {
         @Bean
-        ItemReservationController reservationMemberController(ItemReservationService service) {
-            return new ItemReservationController(service);
+        ReserveItemController reservationMemberController(ReserveItemService service) {
+            return new ReserveItemController(service);
         }
     }
 
@@ -76,14 +76,14 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testGetItemAll() throws Exception {
+    public void testGetItemAll() throws Exception {
 
         // given
         when(reservationService.getItemAll())
             .thenReturn(List.of(item1, item2, item3, item4));
 
         // when
-        mockMvc.perform(get("/member/reserve/items"))
+        mockMvc.perform(get("/reserve/items"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(4))
@@ -94,27 +94,30 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testGetItemAllReturnEmpty() throws Exception {
+    public void testGetItemAllReturnEmpty() throws Exception {
 
         // given
         when(reservationService.getItemAll())
             .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/reserve/items"))
+        mockMvc.perform(get("/reserve/items"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
+        
+        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        verify(reservationService, only()).getItemAll();
     }
 
     @Test
-    void testGetItemAllOnAuthenticationError() throws Exception {
+    public void testGetItemAllOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
 
         // when
-        mockMvc.perform(get("/member/reserve/items"))
+        mockMvc.perform(get("/reserve/items"))
                 .andExpect(status().isUnauthorized());
 
         // then
@@ -123,7 +126,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindRentableItemAtPeriod() throws Exception {
+    public void testFindRentableItemAtPeriod() throws Exception {
 
         // given
         LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
@@ -132,7 +135,7 @@ class ItemReservationControllerTest {
             .thenReturn(List.of(item2, item4));
 
         // when
-        mockMvc.perform(get("/member/reserve/items/rentable")
+        mockMvc.perform(get("/reserve/items/rentable")
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 // then
@@ -145,7 +148,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindRentableItemAtPeriodReturnEmpty() throws Exception {
+    public void testFindRentableItemAtPeriodReturnEmpty() throws Exception {
 
         // given
         LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
@@ -154,21 +157,24 @@ class ItemReservationControllerTest {
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/reserve/items/rentable")
+        mockMvc.perform(get("/reserve/items/rentable")
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
+        
+        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        verify(reservationService, only()).findRentableItemAtPeriod(from, to);
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindRentableItemAtPeriodOnParameterError() throws Exception {
+    public void testFindRentableItemAtPeriodOnParameterError() throws Exception {
 
         // given
         // when
-        mockMvc.perform(get("/member/reserve/items/rentable")
+        mockMvc.perform(get("/reserve/items/rentable")
                 .param("from", ""))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
@@ -183,7 +189,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    void testFindRentableItemAtPeriodOnAuthenticationError() throws Exception {
+    public void testFindRentableItemAtPeriodOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
@@ -191,7 +197,7 @@ class ItemReservationControllerTest {
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
 
         // when
-        mockMvc.perform(get("/member/reserve/items/rentable")
+        mockMvc.perform(get("/reserve/items/rentable")
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 .andExpect(status().isUnauthorized());
@@ -203,7 +209,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testIsRentableItemAtPeriod() throws Exception {
+    public void testIsRentableItemAtPeriod() throws Exception {
 
         // given
         ItemId itemid = new ItemId(1);
@@ -214,7 +220,7 @@ class ItemReservationControllerTest {
             .thenReturn(returnValue);
 
         // when
-        mockMvc.perform(get("/member/reserve/items/{itemId}/rentable", itemid.id())
+        mockMvc.perform(get("/reserve/items/{itemId}/rentable", itemid.id())
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 // then
@@ -224,7 +230,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testIsRentableItemAtPeriodOnPathVariableError() throws Exception {
+    public void testIsRentableItemAtPeriodOnPathVariableError() throws Exception {
 
         // given
         String itemid = "a"; // コンバートエラー
@@ -232,7 +238,7 @@ class ItemReservationControllerTest {
         String to = LocalDateTime.of(2025, 1, 1, 12, 0).toString();
 
         // when
-        mockMvc.perform(get("/member/reserve/items/{itemId}/rentable", itemid)
+        mockMvc.perform(get("/reserve/items/{itemId}/rentable", itemid)
                 .param("from", from)
                 .param("to", to))
                 // then
@@ -249,7 +255,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testIsRentableItemAtPeriodOnRequestPrameterError() throws Exception {
+    public void testIsRentableItemAtPeriodOnRequestPrameterError() throws Exception {
 
         // given
         String itemid = "1";
@@ -257,7 +263,7 @@ class ItemReservationControllerTest {
         String to = LocalDateTime.of(2025, 1, 1, 12, 0).toString();
 
         // when
-        mockMvc.perform(get("/member/reserve/items/{itemId}/rentable", itemid)
+        mockMvc.perform(get("/reserve/items/{itemId}/rentable", itemid)
                 .param("from", from)
                 .param("to", to))
                 // then
@@ -273,7 +279,7 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    void testIsRentableItemAtPeriodOnAuthenticationError() throws Exception {
+    public void testIsRentableItemAtPeriodOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
@@ -282,7 +288,7 @@ class ItemReservationControllerTest {
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
 
         // when
-        mockMvc.perform(get("/member/reserve/items/{itemId}/rentable", itemid.id())
+        mockMvc.perform(get("/reserve/items/{itemId}/rentable", itemid.id())
                 .param("from", from.toString())
                 .param("to", to.toString()))
                 .andExpect(status().isUnauthorized());
@@ -293,18 +299,18 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindReservationByItemId() throws Exception {
+    public void testFindReservationByItemId() throws Exception {
 
         // given
         Integer itemId = 1; 
-        ReservationQueryCondition cond = ReservationQueryCondition.builder()
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .itemId(itemId)
                 .build();
         when(reservationService.findReservationByCondition(cond))
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/member/reserve/reservations")
+        mockMvc.perform(get("/reserve/reservations")
                 .param("item-id", itemId.toString()))
                 // then
                 .andExpect(jsonPath("$.length()").value(2))
@@ -322,12 +328,12 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindReservationByItemIdWithFromDate() throws Exception {
+    public void testFindReservationByItemIdWithFromDate() throws Exception {
 
         // given
         Integer itemId = 1; 
         LocalDate fromDate = LocalDate.of(2024, 1, 1);
-        ReservationQueryCondition cond = ReservationQueryCondition.builder()
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
@@ -335,7 +341,7 @@ class ItemReservationControllerTest {
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/member/reserve/reservations")
+        mockMvc.perform(get("/reserve/reservations")
                 .param("item-id", itemId.toString())
                 .param("from-date", fromDate.toString()))
                 // then
@@ -354,12 +360,12 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindReservationByItemIdWithFromDateNull() throws Exception {
+    public void testFindReservationByItemIdWithFromDateNull() throws Exception {
 
         // given
         Integer itemId = 1; 
         LocalDate fromDate = null;
-        ReservationQueryCondition cond = ReservationQueryCondition.builder()
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
@@ -367,7 +373,7 @@ class ItemReservationControllerTest {
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/member/reserve/reservations")
+        mockMvc.perform(get("/reserve/reservations")
                 .param("item-id", itemId.toString())
                 .param("from-date", ""))
                 // then
@@ -376,12 +382,12 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindReservationByItemIdReturnEmpty() throws Exception {
+    public void testFindReservationByItemIdReturnEmpty() throws Exception {
 
         // given
         Integer itemId = 1; 
         LocalDate fromDate = LocalDate.of(2024, 1, 1);
-        ReservationQueryCondition cond = ReservationQueryCondition.builder()
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
@@ -389,62 +395,72 @@ class ItemReservationControllerTest {
             .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/reserve/reservations")
+        mockMvc.perform(get("/reserve/reservations")
                 .param("item-id", itemId.toString())
                 .param("from-date", fromDate.toString()))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
+        
+        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        verify(reservationService, only()).findReservationByCondition(cond);
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindReservationByItemIdOnParameterError() throws Exception {
+    public void testFindReservationByItemIdOnParameterError() throws Exception {
 
         // given
-        ItemId itemId = new ItemId(-1);
+        Integer invalidItemId = -1; 
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .itemId(invalidItemId)
+                .build();
+        when(reservationService.findReservationByCondition(cond))
+                .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/reservations/items/{itemId}", itemId.id()))
+        mockMvc.perform(get("/reserve/reservations")
+                .param("item-id", invalidItemId.toString()))
                 // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("itemId") //
-                )));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+        
+        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        verify(reservationService, only()).findReservationByCondition(cond);
+    }
+
+    @Test
+    public void testFindReservationByItemIdOnAuthenticationError() throws Exception {
+
+        // given
+        // @WithMockUser(roles = "MEMBER")なし
+        Integer itemId = -1;
+
+        // when
+        mockMvc.perform(get("/reserve/reservations")
+                .param("item-id", itemId.toString()))
+                // then
+                .andExpect(status().isUnauthorized());
 
         // then
         verify(reservationService, never()).findReservationByCondition(any());
     }
 
     @Test
-    void testFindReservationByItemIdOnAuthenticationError() throws Exception {
-
-        // given
-        // @WithMockUser(roles = "MEMBER")なし
-        ItemId itemId = new ItemId(1);
-
-        // when
-        mockMvc.perform(get("/member/reservations/items/{itemId}", itemId.id()))
-                // then
-                .andExpect(status().isUnauthorized());
-
-        // then
-        verify(reservationService, never()).findReservationByItemId(any());
-    }
-
-    @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindReservationByReserverId() throws Exception {
+    public void testFindReservationByReserverId() throws Exception {
 
         // given
-        UserId reserverId = new UserId(1);
-        when(reservationService.findReservationByReserverId(reserverId))
+        Integer reserverId = 1;
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .reserverId(reserverId)
+                .build();
+        when(reservationService.findReservationByCondition(cond))
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/member/reservations/reservers/{reserverId}", reserverId.id()))
+        mockMvc.perform(get("/reserve/reservations")
+                .param("reserver-id", reserverId.toString()))
                 // then
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
@@ -461,68 +477,78 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindReservationByReserverIdReturnEmpty() throws Exception {
+    public void testFindReservationByReserverIdReturnEmpty() throws Exception {
 
         // given
-        UserId reserverId = new UserId(1);
-        when(reservationService.findReservationByReserverId(reserverId))
+        Integer reserverId = 1;
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .reserverId(reserverId)
+                .build();
+        when(reservationService.findReservationByCondition(cond))
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/reservations/reservers/{reserverId}", reserverId.id()))
+        mockMvc.perform(get("/reserve/reservations")
+                .param("reserver-id", reserverId.toString()))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
+        
+        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        verify(reservationService, only()).findReservationByCondition(cond);
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testFindReservationByReserverIdOnParameterError() throws Exception {
+    public void testFindReservationByReserverIdOnParameterError() throws Exception {
 
         // given
-        UserId reserverId = new UserId(-1);
+        Integer invalidReserverId = -1; 
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .reserverId(invalidReserverId)
+                .build();
+        when(reservationService.findReservationByCondition(cond))
+                .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/reservations/reservers/{reserverId}", reserverId.id()))
+        mockMvc.perform(get("/reserve/reservations")
+                .param("reserver-id", invalidReserverId.toString()))
                 // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("reserverId") //
-                )));
-
-        // then
-        verify(reservationService, never()).findReservationByReserverId(any());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+        
+        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        verify(reservationService, only()).findReservationByCondition(cond);
     }
 
     @Test
-    void testFindReservationByReserverIdOnAuthenticationError() throws Exception {
+    public void testFindReservationByReserverIdOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
-        UserId reserverId = new UserId(1);
+        Integer reserverId = -1; 
 
         // when
-        mockMvc.perform(get("/member/reservations/reservers/{reserverId}", reserverId.id()))
+        mockMvc.perform(get("/reserve/reservations")
+                .param("reserver-id", reserverId.toString()))
                 // then
                 .andExpect(status().isUnauthorized());
 
         // then
-        verify(reservationService, never()).findReservationByReserverId(any());
+        verify(reservationService, never()).findReservationByCondition(any());
     }
 
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testGetOwnReservations() throws Exception {
+    public void testGetOwnReservations() throws Exception {
 
         // given
         when(reservationService.getOwnReservations())
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/member/reservations/own"))
+        mockMvc.perform(get("/reserve/reservations/own"))
                 // then
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
@@ -539,27 +565,30 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testGetOwnReservationsReturnEmpty() throws Exception {
+    public void testGetOwnReservationsReturnEmpty() throws Exception {
 
         // given
         when(reservationService.getOwnReservations())
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/member/reservations/own"))
+        mockMvc.perform(get("/reserve/reservations/own"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
+        
+        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        verify(reservationService, only()).getOwnReservations();
     }
 
     @Test
-    void testGetOwnReservationsOnAuthenticationError() throws Exception {
+    public void testGetOwnReservationsOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
 
         // when
-        mockMvc.perform(get("/member/reservations/own"))
+        mockMvc.perform(get("/reserve/reservations/own"))
                 // then
                 .andExpect(status().isUnauthorized());
 
@@ -569,7 +598,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testReserve() throws Exception {
+    public void testReserve() throws Exception {
 
         // given
         ReserveItemRequest req = createReserveItemRequest();
@@ -590,7 +619,7 @@ class ItemReservationControllerTest {
                         user1));
 
         // when
-        mockMvc.perform(post("/member/reservations")
+        mockMvc.perform(post("/reserve/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -607,7 +636,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testReserveOnParameterError() throws Exception {
+    public void testReserveOnParameterError() throws Exception {
 
         // given
         ReserveItemRequest req = ReserveItemRequest.builder()
@@ -615,7 +644,7 @@ class ItemReservationControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/member/reservations")
+        mockMvc.perform(post("/reserve/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -634,7 +663,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testReserveOnDuplicate() throws Exception {
+    public void testReserveOnDuplicate() throws Exception {
 
         ReserveItemRequest req = createReserveItemRequest();
         String requestBody = mapper.writeValueAsString(req);
@@ -643,7 +672,7 @@ class ItemReservationControllerTest {
         when(reservationService.reserve(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
-        mockMvc.perform(post("/member/reservations")
+        mockMvc.perform(post("/reserve/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -653,14 +682,14 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    void testReserveOnAuthenticationError() throws Exception {
+    public void testReserveOnAuthenticationError() throws Exception {
 
         // given
         ReserveItemRequest req = createReserveItemRequest();
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/member/reservations")
+        mockMvc.perform(post("/reserve/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 // then
@@ -673,27 +702,27 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testCancel() throws Exception {
+    public void testCancel() throws Exception {
 
         // given
         int reservationId = 1;
         doNothing().when(reservationService).cancel(new ReservationId(reservationId));
 
         // when
-        mockMvc.perform(delete("/member/reservations/{id}", reservationId))
+        mockMvc.perform(delete("/reserve/reservations/{id}", reservationId))
                 // then
                 .andExpect(status().isOk());
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testCancelOnParameterError() throws Exception {
+    public void testCancelOnParameterError() throws Exception {
 
         // given
         int invalidId = -1;
 
         // when
-        mockMvc.perform(delete("/member/reservations/{id}", invalidId))
+        mockMvc.perform(delete("/reserve/reservations/{id}", invalidId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isBadRequest())
@@ -707,7 +736,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testCancelOnOthreUserReservation() throws Exception {
+    public void testCancelOnOthreUserReservation() throws Exception {
 
         // given
         int reservationId = 1;
@@ -715,7 +744,7 @@ class ItemReservationControllerTest {
                 .when(reservationService).cancel(new ReservationId(reservationId));
 
         // when
-        mockMvc.perform(delete("/member/reservations/{id}", reservationId))
+        mockMvc.perform(delete("/reserve/reservations/{id}", reservationId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isForbidden())
@@ -724,7 +753,7 @@ class ItemReservationControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    void testDeleteOnNotFound() throws Exception {
+    public void testDeleteOnNotFound() throws Exception {
 
         // given
         int reservationId = 999;
@@ -732,7 +761,7 @@ class ItemReservationControllerTest {
                 .when(reservationService).cancel(new ReservationId(reservationId));
 
         // when
-        mockMvc.perform(delete("/member/reservations/{id}", reservationId))
+        mockMvc.perform(delete("/reserve/reservations/{id}", reservationId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isNotFound())
@@ -740,13 +769,13 @@ class ItemReservationControllerTest {
     }
 
     @Test
-    void testDeleteOnAuthenticationError() throws Exception {
+    public void testDeleteOnAuthenticationError() throws Exception {
 
         // given
         int reservationId = 1;
 
         // when
-        mockMvc.perform(delete("/member/reservations/{id}", reservationId))
+        mockMvc.perform(delete("/reserve/reservations/{id}", reservationId))
                 // then
                 .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
                 .andExpect(status().isUnauthorized());

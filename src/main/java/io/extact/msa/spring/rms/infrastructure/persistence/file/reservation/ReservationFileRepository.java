@@ -6,8 +6,8 @@ import java.util.List;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.AbstractFileRepository;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
-import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
-import io.extact.msa.spring.rms.application.member.ReservationQueryService;
+import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
+import io.extact.msa.spring.rms.application.member.ReserveItemQueryService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
@@ -15,7 +15,7 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
 public class ReservationFileRepository extends AbstractFileRepository<Reservation>
-        implements ReservationRepository, ReservationQueryService {
+        implements ReservationRepository, ReserveItemQueryService {
 
     public static final String FILE_ENTITY = "reservation";
 
@@ -27,34 +27,12 @@ public class ReservationFileRepository extends AbstractFileRepository<Reservatio
     public String getEntityName() {
         return FILE_ENTITY;
     }
-
-    @Override
-    public List<ReservationModelView> findByCondition(ReservationQueryCondition cond) {
-        ItemId itemId = cond.getItemIdAsOptional().orElse(null);
-        UserId reserverId = cond.getReserverIdAsOptional().orElse(null);
-        LocalDate from = cond.getFromAsOptional().orElse(null);
-        return this.findAll()
-                .stream()
-                .filter(r -> itemId == null || itemId.equals(r.getItemId()))
-                .filter(r -> reserverId == null || reserverId.equals(r.getReserverId()))
-                .filter(r -> from == null || from.equals(r.getPeriod().getFrom().toLocalDate()))
-                .map(model -> (ReservationModelView) model)
-                .toList();
-    }
     
     @Override
     public List<Reservation> findByItemId(ItemId itemId) {
         return this.findAll()
                 .stream()
                 .filter(reservation -> reservation.getItemId().equals(itemId))
-                .toList();
-    }
-
-    @Override
-    public List<Reservation> findByItemIdAndFromDate(ItemId itemId, LocalDate from) {
-        return this.findByItemId(itemId)
-                .stream()
-                .filter(reservation -> reservation.getPeriod().getFrom().toLocalDate().equals(from))
                 .toList();
     }
 
@@ -66,4 +44,17 @@ public class ReservationFileRepository extends AbstractFileRepository<Reservatio
                 .toList();
     }
 
+    @Override
+    public List<ReservationModelView> findByCondition(ReserveItemQueryCondition cond) {
+        Integer itemId = cond.getItemIdAsOptional().orElse(null);
+        Integer reserverId = cond.getReserverIdAsOptional().orElse(null);
+        LocalDate from = cond.getFromAsOptional().orElse(null);
+        return this.findAll()
+                .stream()
+                .filter(r -> itemId == null || itemId.equals(r.getItemId().id()))
+                .filter(r -> reserverId == null || reserverId.equals(r.getReserverId().id()))
+                .filter(r -> from == null || from.equals(r.getPeriod().getFrom().toLocalDate()))
+                .map(model -> (ReservationModelView) model)
+                .toList();
+    }
 }

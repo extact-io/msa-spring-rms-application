@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.admin;
 
-import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
+import static io.extact.msa.spring.rms.PersistedTestData.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;

@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
-import io.extact.msa.spring.rms.testutils.PersistedTestData;
 
 class ItemAdminResponseTest {
 

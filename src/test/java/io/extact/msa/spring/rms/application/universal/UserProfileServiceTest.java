@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.application.universal;
 
-import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
+import static io.extact.msa.spring.rms.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,14 +20,14 @@ import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
+import io.extact.msa.spring.platform.fw.test.utils.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.platform.fw.test.utils.TestAuthUtils;
 import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
-import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
-import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 
 @DataJpaTest // default rollback
 @ActiveProfiles({ "test", "jpa-all" })

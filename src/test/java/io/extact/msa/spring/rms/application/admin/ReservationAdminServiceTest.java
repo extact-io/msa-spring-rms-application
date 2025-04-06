@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.application.admin;
 
-import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
+import static io.extact.msa.spring.rms.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +21,7 @@ import io.extact.msa.spring.platform.core.async.AsyncInvoker;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
+import io.extact.msa.spring.platform.fw.test.utils.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.domain.DomainConfig;
@@ -33,7 +34,6 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
-import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.test.assertj.ToStringAssert;
 
 @DataJpaTest // default rollback

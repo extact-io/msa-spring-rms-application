@@ -9,22 +9,22 @@ import jakarta.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
+import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
 
 public class ReservationSpecification {
 
-    public static Specification<ReservationEntity> fromCondition(ReservationQueryCondition condition) {
+    public static Specification<ReservationEntity> fromCondition(ReserveItemQueryCondition condition) {
 
         return (root, _, cb) -> {
 
             List<Predicate> predicates = new ArrayList<>();
 
             condition.getItemIdAsOptional().ifPresent(itemId -> {
-                predicates.add(cb.equal(root.get("itemId"), itemId.id()));
+                predicates.add(cb.equal(root.get("itemId"), itemId));
             });
 
             condition.getReserverIdAsOptional().ifPresent(reserverId -> {
-                predicates.add(cb.equal(root.get("reserverId"), reserverId.id()));
+                predicates.add(cb.equal(root.get("reserverId"), reserverId));
             });
 
             condition.getFromAsOptional().ifPresent(from -> {

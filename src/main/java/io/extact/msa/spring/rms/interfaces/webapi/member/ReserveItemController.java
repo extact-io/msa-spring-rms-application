@@ -16,19 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsRequestCheckException;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
-import io.extact.msa.spring.rms.application.member.ItemReservationService;
-import io.extact.msa.spring.rms.application.member.ReservationQueryCondition;
-import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
+import io.extact.msa.spring.rms.application.member.ReserveItemService;
+import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
-import io.extact.msa.spring.rms.domain.user.model.UserId;
 import lombok.RequiredArgsConstructor;
 
-@RmsRestController("/reserve")
+@RmsRestController
 @RequiredArgsConstructor
-public class ItemReservationController {
+public class ReserveItemController {
 
-    private final ItemReservationService service;
+    private final ReserveItemService service;
 
     @GetMapping("/items")
     public List<ItemResponse> getItemAll() {
@@ -68,7 +66,7 @@ public class ItemReservationController {
     		@RequestParam(name = "reserver-id", required = false) Integer reserverId,
             @RequestParam(name = "from-date", required = false) LocalDate from) {
 
-    	ReservationQueryCondition cond = ReservationQueryCondition.builder()
+    	ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
     			.itemId(itemId)
     			.reserverId(reserverId)
     			.from(from)
@@ -80,31 +78,6 @@ public class ItemReservationController {
     	
         return service
                 .findReservationByCondition(cond)
-                .stream()
-                .map(ReserveItemResponse::from)
-                .toList();
-    }
-    
-    @GetMapping("/reservations/items/{itemId}")
-    public List<ReserveItemResponse> findReservationByItemId(
-            @PathVariable @RmsId Integer itemId,
-            @RequestParam(name = "from-date", required = false) LocalDate from) {
-
-        List<ReservationComposeModel> models = from != null
-                ? service.findReservationByItemIdAndFromDate(new ItemId(itemId), from)
-                : service.findReservationByItemId(new ItemId(itemId));
-
-        return models.stream()
-                .map(ReserveItemResponse::from)
-                .toList();
-    }
-
-    @GetMapping("/reservations/reservers/{reserverId}")
-    public List<ReserveItemResponse> findReservationByReserverId(
-            @PathVariable @RmsId Integer reserverId) {
-
-        return service
-                .findReservationByReserverId(new UserId(reserverId))
                 .stream()
                 .map(ReserveItemResponse::from)
                 .toList();

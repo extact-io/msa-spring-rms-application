@@ -12,13 +12,13 @@ import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
-import io.extact.msa.spring.rms.application.member.ItemReservationService;
+import io.extact.msa.spring.rms.application.member.ReserveItemService;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.application.universal.UserProfileService;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ItemAdminController;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationAdminController;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.UserAdminController;
-import io.extact.msa.spring.rms.interfaces.webapi.member.ItemReservationController;
+import io.extact.msa.spring.rms.interfaces.webapi.member.ReserveItemController;
 import io.extact.msa.spring.rms.interfaces.webapi.universal.LoginController;
 import io.extact.msa.spring.rms.interfaces.webapi.universal.UserProfileController;
 
@@ -56,8 +56,8 @@ public class WebApiConfig {
     // --- for member
 
     @Bean
-    ItemReservationController itemReservationController(ItemReservationService service) {
-        return new ItemReservationController(service);
+    ReserveItemController itemReservationController(ReserveItemService service) {
+        return new ReserveItemController(service);
     }
 
     // --- for universal

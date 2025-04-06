@@ -15,8 +15,8 @@ import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
 import io.extact.msa.spring.rms.application.admin.event.ReservationDependencyEventListener;
-import io.extact.msa.spring.rms.application.member.ItemReservationService;
-import io.extact.msa.spring.rms.application.member.ReservationQueryService;
+import io.extact.msa.spring.rms.application.member.ReserveItemService;
+import io.extact.msa.spring.rms.application.member.ReserveItemQueryService;
 import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.application.universal.UserProfileService;
@@ -76,17 +76,17 @@ public class ApplicationServiceConfig {
 
     // ---- for member
     @Bean
-    ItemReservationService reservationMemberService(
+    ReserveItemService reservationMemberService(
             LoginContext loginContext,
             ReservationCreator modelCreator,
             ReservationModelComposer modelComposer,
             ReservationDuplicateChecker duplicateChecker,
-            ReservationQueryService queryService,
+            ReserveItemQueryService queryService,
             ReservationRepository reservationRepository,
             ItemRepository itemRepository,
             UserRepository userRepository) {
 
-        return new ItemReservationService(
+        return new ReserveItemService(
                 loginContext,
                 modelCreator,
                 modelComposer,

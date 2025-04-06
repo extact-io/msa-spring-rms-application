@@ -1,6 +1,7 @@
 package io.extact.msa.spring.rms.application.member;
 
-import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
+import static io.extact.msa.spring.platform.fw.test.utils.IsEqualableAssert.*;
+import static io.extact.msa.spring.rms.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +26,8 @@ import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
+import io.extact.msa.spring.platform.fw.test.utils.RmsValidationExceptionAsserter;
+import io.extact.msa.spring.platform.fw.test.utils.TestAuthUtils;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.domain.DomainConfig;
@@ -41,18 +44,16 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
-import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
-import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 import io.extact.msa.spring.test.assertj.ToStringAssert;
 
 @DataJpaTest // default rollback
 @ActiveProfiles({ "test", "jpa-all" })
-class ItemReservationServiceTest {
+class ReserveItemServiceTest {
 
     private static final ReservationCreatable testCreator = new ReservationCreatable() {};
 
     @Autowired
-    private ItemReservationService service;
+    private ReserveItemService service;
 
     @Configuration(proxyBeanMethods = false)
     @Import({
@@ -75,17 +76,17 @@ class ItemReservationServiceTest {
         }
 
         @Bean
-        ItemReservationService reservationMemberService(
+        ReserveItemService reservationMemberService(
                 LoginContext loginContext,
                 ReservationCreator modelCreator,
                 ReservationModelComposer modelComposer,
                 ReservationDuplicateChecker duplicateChecker,
-                ReservationQueryService queryService,
+                ReserveItemQueryService queryService,
                 ReservationRepository reservationRepository,
                 ItemRepository itemRepository,
                 UserRepository userRepository) {
 
-            return new ItemReservationService(
+            return new ReserveItemService(
                     loginContext,
                     modelCreator,
                     modelComposer,
@@ -98,12 +99,12 @@ class ItemReservationServiceTest {
     }
 
     @BeforeEach
-    void beforeEach() {
+    public void beforeEach() {
         TestAuthUtils.signoutQuietly();
     }
 
     @Test
-    void testGetItemAll() {
+    public void testGetItemAll() {
         // when
         List<ItemModelView> items = service.getItemAll();
         // then
@@ -111,7 +112,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testFindCanRentedItemAtPeriod() { // 絞り込まれた結果
+    public void testFindCanRentedItemAtPeriod() { // 絞り込まれた結果
         // given
         LocalDateTime from = LocalDateTime.of(2020, 4, 1, 0, 0, 0);
         LocalDateTime to = LocalDateTime.of(2020, 4, 2, 23, 59, 0);
@@ -123,7 +124,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testFindCanRentedItemAtPeriodOnResultAll() { // 全件該当
+    public void testFindCanRentedItemAtPeriodOnResultAll() { // 全件該当
         // given
         LocalDateTime from = LocalDateTime.now();
         LocalDateTime to = LocalDateTime.now().plusHours(1);
@@ -135,7 +136,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testCanRentedItemAtPeriodOK() {
+    public void testCanRentedItemAtPeriodOK() {
         // given
         ItemId itemId = new ItemId(3);
         LocalDateTime from = LocalDateTime.of(2020, 4, 2, 10, 0, 0);
@@ -148,7 +149,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testCanRentedItemAtPeriodNG() {
+    public void testCanRentedItemAtPeriodNG() {
         // given
         ItemId itemId = new ItemId(3);
         LocalDateTime from = LocalDateTime.of(2020, 4, 1, 10, 0, 0);
@@ -161,75 +162,89 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testFindReservationByItemId() {
+    public void testFindReservationByItemId() {
         // given
-        ItemId itemId = new ItemId(3);
-
+        Integer itemId = 3;
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .itemId(itemId)
+                .build();
         // when
-        List<ReservationComposeModel> reservations = service.findReservationByItemId(itemId);
+        List<ReservationComposeModel> reservations = service.findReservationByCondition(cond);
         // then
-        ToStringAssert.assertThatToString(reservations).containsExactly(model1, model2, model3);
+        assertThatByEqualable(reservations).containsExactly(model1, model2, model3);
     }
 
     @Test
-    void testFindReservationByItemIdOnNotFound() {
+    public void testFindReservationByItemIdOnNotFound() {
         // given
-        ItemId itemId = new ItemId(1);
-
+        Integer itemId = 1;
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .itemId(itemId)
+                .build();
         // when
-        List<ReservationComposeModel> reservations = service.findReservationByItemId(itemId);
+        List<ReservationComposeModel> reservations = service.findReservationByCondition(cond);
         // then
         assertThat(reservations).isEmpty();
     }
 
     @Test
-    void testFindReservationByItemIdAndFromDate() {
+    public void testFindReservationByItemIdAndFromDate() {
         // given
-        ItemId itemId = new ItemId(3);
+        Integer itemId = 3;
         LocalDate fromDate = LocalDate.of(2020, 4, 1);
-
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .itemId(itemId)
+                .from(fromDate)
+                .build();
         // when
-        List<ReservationComposeModel> reservations = service.findReservationByItemIdAndFromDate(itemId, fromDate);
+        List<ReservationComposeModel> reservations = service.findReservationByCondition(cond);
         // then
-        ToStringAssert.assertThatToString(reservations).containsExactly(model1, model2);
+        assertThatByEqualable(reservations).containsExactly(model1, model2);
     }
 
     @Test
-    void testFindReservationByItemIdAndFromDateOnNotFound() {
+    public void testFindReservationByItemIdAndFromDateOnNotFound() {
         // given
-        ItemId itemId = new ItemId(3);
+        Integer itemId = 3;
         LocalDate fromDate = LocalDate.of(2019, 4, 1);
-
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .itemId(itemId)
+                .from(fromDate)
+                .build();
         // when
-        List<ReservationComposeModel> reservations = service.findReservationByItemIdAndFromDate(itemId, fromDate);
+        List<ReservationComposeModel> reservations = service.findReservationByCondition(cond);
         // then
         assertThat(reservations).isEmpty();
     }
 
     @Test
-    void testFindReservationByReserverId() {
+    public void testFindReservationByReserverId() {
         // given
-        UserId reserverId = new UserId(1);
-
+        Integer reserverId = 1;
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .reserverId(reserverId)
+                .build();
         // when
-        List<ReservationComposeModel> reservations = service.findReservationByReserverId(reserverId);
+        List<ReservationComposeModel> reservations = service.findReservationByCondition(cond);
         // then
-        ToStringAssert.assertThatToString(reservations).containsExactly(model1, model3);
+        assertThatByEqualable(reservations).containsExactly(model1, model3);
     }
 
     @Test
-    void testFindReservationByReserverIdOnNotFound() {
+    public void testFindReservationByReserverIdOnNotFound() {
         // given
-        UserId reserverId = new UserId(9);
-
+        Integer reserverId = 9;
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .reserverId(reserverId)
+                .build();
         // when
-        List<ReservationComposeModel> reservations = service.findReservationByReserverId(reserverId);
+        List<ReservationComposeModel> reservations = service.findReservationByCondition(cond);
         // then
         assertThat(reservations).isEmpty();
     }
 
     @Test
-    void testGetOwnReservations() {
+    public void testGetOwnReservations() {
         // given
         int reserverId = 1;
         TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
@@ -237,11 +252,11 @@ class ItemReservationServiceTest {
         // when
         List<ReservationComposeModel> reservations = service.getOwnReservations();
         // then
-        ToStringAssert.assertThatToString(reservations).containsExactly(model1, model3);
+        assertThatByEqualable(reservations).containsExactly(model1, model3);
     }
 
     @Test
-    void testGetOwnReservationsOnNotFound() {
+    public void testGetOwnReservationsOnNotFound() {
         // given
         int reserverId = 3;
         TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
@@ -253,7 +268,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testReserve(@Autowired ReservationRepository forResultAssert) {
+    public void testReserve(@Autowired ReservationRepository forResultAssert) {
         // given
         int reserverId = 1;
         ReserveItemCommand command = ReserveItemCommand.builder()
@@ -286,7 +301,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testReserveOnDuplicate(@Autowired ReservationRepository forResultAssert) {
+    public void testReserveOnDuplicate(@Autowired ReservationRepository forResultAssert) {
 
         // -- 事前条件
         int reserverId = 1;
@@ -326,7 +341,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testReserveOnValidationErrorOfProperty(@Autowired ReservationRepository forResultAssert) {
+    public void testReserveOnValidationErrorOfProperty(@Autowired ReservationRepository forResultAssert) {
         // given
         TestAuthUtils.signinByHeaderWithRolePrefix(1, "MEMBER");
         ReserveItemCommand command = ReserveItemCommand.builder()
@@ -351,7 +366,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testReserveOnItemNotExist(@Autowired ReservationRepository forResultAssert) {
+    public void testReserveOnItemNotExist(@Autowired ReservationRepository forResultAssert) {
         // given
         TestAuthUtils.signinByHeaderWithRolePrefix(1, "MEMBER");
         ReserveItemCommand command = ReserveItemCommand.builder()
@@ -373,7 +388,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testReserveOnUserNotExist(@Autowired ReservationRepository forResultAssert) {
+    public void testReserveOnUserNotExist(@Autowired ReservationRepository forResultAssert) {
         // given
         int reserverId = 999;  // unknown user
         TestAuthUtils.signinByHeaderWithRolePrefix(reserverId, "MEMBER");
@@ -396,7 +411,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testCancel(@Autowired ReservationRepository forResultAssert) {
+    public void testCancel(@Autowired ReservationRepository forResultAssert) {
         // given
         ReservationId cancelId = reservation3.getId();
         int reserverId = 1;
@@ -411,7 +426,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testCancelOnOthreUserReservation(@Autowired ReservationRepository forResultAssert) {
+    public void testCancelOnOthreUserReservation(@Autowired ReservationRepository forResultAssert) {
         // given
         ReservationId cancelId = reservation1.getId();
         int reserverId = 3;
@@ -430,7 +445,7 @@ class ItemReservationServiceTest {
     }
 
     @Test
-    void testCancelOnNotFound(@Autowired ReservationRepository forResultAssert) {
+    public void testCancelOnNotFound(@Autowired ReservationRepository forResultAssert) {
         // given
         ReservationId cancelId = new ReservationId(99);
         int reserverId = 1;

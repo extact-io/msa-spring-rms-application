@@ -18,12 +18,12 @@ import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.test.utils.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.domain.InMemoryIdentityGenerator;
 import io.extact.msa.spring.rms.domain.user.UserCreator.UserModelAttributes;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
-import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
 @ActiveProfiles("test")

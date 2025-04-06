@@ -23,6 +23,7 @@ import io.extact.msa.spring.platform.core.async.AsyncInvoker;
 import io.extact.msa.spring.platform.fw.domain.model.Identity;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
+import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
@@ -34,7 +35,6 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.testutils.PersistedTestData;
 import io.extact.msa.spring.test.assertj.ToStringAssert;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)

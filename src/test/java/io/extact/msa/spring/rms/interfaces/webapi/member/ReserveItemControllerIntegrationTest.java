@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.interfaces.webapi.member;
 
-import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
+import static io.extact.msa.spring.rms.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 
@@ -48,18 +48,18 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorH
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
 import io.extact.msa.spring.platform.fw.infrastructure.external.converter.ConfigConversionServiceBuilder;
 import io.extact.msa.spring.platform.fw.infrastructure.external.converter.ConfigMessageConveterBuilder;
+import io.extact.msa.spring.platform.fw.test.utils.TestAuthUtils;
+import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationAdminResponse;
 import io.extact.msa.spring.rms.interfaces.webapi.member.ReserveItemRequest.ReserveItemRequestBuilder;
-import io.extact.msa.spring.rms.testutils.PersistedTestData;
-import io.extact.msa.spring.rms.testutils.TestAuthUtils;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @EnableAutoConfigurationWithoutJpa
 @ActiveProfiles({ "test", "file-all" })
 @TestMethodOrder(OrderAnnotation.class)
-class ItemReservationControllerIntegrationTest {
+class ReserveItemControllerIntegrationTest {
 
     private static final int NO_SIDE_EFFECT_CASE = 1;
     private static final int WITH_SIDE_EFFECT_CASE = 99;
@@ -687,33 +687,33 @@ class ItemReservationControllerIntegrationTest {
     @HttpExchange
     public interface ReservationClient {
 
-        @GetExchange("/member/reserve/items")
+        @GetExchange("/reserve/items")
         List<ItemResponse> getItemAll();
 
-        @GetExchange("/member/reserve/items/rentable")
+        @GetExchange("/reserve/items/rentable")
         List<ItemResponse> findRentableItemAtPeriod(
                 @RequestParam LocalDateTime from,
                 @RequestParam LocalDateTime to);
 
-        @GetExchange("/member/reserve/items/{itemId}/rentable")
+        @GetExchange("/reserve/items/{itemId}/rentable")
         boolean isRentableItemAtPeriod(
                 @PathVariable @RmsId Integer itemId,
                 @RequestParam LocalDateTime from,
                 @RequestParam LocalDateTime to);
 
-        @GetExchange("/member/reserve/reservations")
+        @GetExchange("/reserve/reservations")
         public List<ReserveItemResponse> findReservationByParams(
                 @RequestParam(name = "item-id", required = false) Integer itemId,
                 @RequestParam(name = "reserver-id", required = false) Integer reserverId,
                 @RequestParam(name = "from-date", required = false) LocalDate from);
         
-        @GetExchange("/member/reserve/reservations/own")
+        @GetExchange("/reserve/reservations/own")
         List<ReserveItemResponse> getOwnReservations();
 
-        @PostExchange("/member/reserve/reservations")
+        @PostExchange("/reserve/reservations")
         ReserveItemResponse reserve(@RequestBody ReserveItemRequest request);
 
-        @DeleteExchange("/member/reserve/reservations/{reservationId}")
+        @DeleteExchange("/reserve/reservations/{reservationId}")
         void cancel(@PathVariable Integer reservationId);
 
         @GetExchange("/admin/reservations") // for assert use only

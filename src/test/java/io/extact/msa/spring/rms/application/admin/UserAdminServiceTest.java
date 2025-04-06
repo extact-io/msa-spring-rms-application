@@ -1,6 +1,6 @@
 package io.extact.msa.spring.rms.application.admin;
 
-import static io.extact.msa.spring.rms.testutils.PersistedTestData.*;
+import static io.extact.msa.spring.rms.PersistedTestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +20,7 @@ import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
+import io.extact.msa.spring.platform.fw.test.utils.RmsValidationExceptionAsserter;
 import io.extact.msa.spring.rms.application.admin.event.ReservationDependencyEventListener;
 import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
@@ -31,7 +32,6 @@ import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
-import io.extact.msa.spring.rms.testutils.RmsValidationExceptionAsserter;
 
 @DataJpaTest // default rollback
 @ActiveProfiles({ "test", "jpa-all" })

@@ -1,6 +1,5 @@
 package io.extact.msa.spring.rms.application.member;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +29,13 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @ApplicationService
-public class ItemReservationService {
+public class ReserveItemService {
 
     private final LoginContext loginContext;
     private final ReservationCreator modelCreator;
     private final ReservationModelComposer modelComposer;
     private final ReservationDuplicateChecker duplicateChecker;
-    private final ReservationQueryService queryService;
+    private final ReserveItemQueryService queryService;
     private final ReservationRepository reservationRepository;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
@@ -70,7 +69,7 @@ public class ItemReservationService {
                 .isEmpty();
     }
     
-    public List<ReservationComposeModel> findReservationByCondition(ReservationQueryCondition cond) {
+    public List<ReservationComposeModel> findReservationByCondition(ReserveItemQueryCondition cond) {
         return queryService
                 .findByCondition(cond)
                 .stream()
@@ -78,33 +77,12 @@ public class ItemReservationService {
                 .toList();
     }
 
-    public List<ReservationComposeModel> findReservationByItemId(ItemId itemId) {
-        return reservationRepository
-                .findByItemId(itemId)
-                .stream()
-                .map(modelComposer::composeModel)
-                .toList();
-    }
-
-    public List<ReservationComposeModel> findReservationByItemIdAndFromDate(ItemId itemId, LocalDate from) {
-        return reservationRepository
-                .findByItemIdAndFromDate(itemId, from)
-                .stream()
-                .map(modelComposer::composeModel)
-                .toList();
-    }
-
-    public List<ReservationComposeModel> findReservationByReserverId(UserId reserverId) {
-        return reservationRepository
-                .findByReserverId(reserverId)
-                .stream()
-                .map(modelComposer::composeModel)
-                .toList();
-    }
-
     public List<ReservationComposeModel> getOwnReservations() {
         int userId = loginContext.getLoginUser().getUserId();
-        return this.findReservationByReserverId(new UserId(userId));
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .reserverId(userId)
+                .build();
+        return this.findReservationByCondition(cond);
     }
 
     public ReservationComposeModel reserve(ReserveItemCommand command) {

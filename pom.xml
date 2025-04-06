@@ -49,6 +49,11 @@
 			<artifactId>msa-spring-test-lib</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.extact</groupId>
+			<artifactId>msa-spring-platform-fw-test-lib</artifactId>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

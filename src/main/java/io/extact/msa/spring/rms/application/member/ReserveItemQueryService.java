@@ -4,7 +4,7 @@ import java.util.List;
 
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 
-public interface ReservationQueryService {
+public interface ReserveItemQueryService {
     
     /**
      * 検索条件に一致する予約を取得する。
@@ -13,5 +13,5 @@ public interface ReservationQueryService {
      * @param cond 検索条件
      * @return 該当予約。該当がない場合は空リスト
      */
-    List<ReservationModelView> findByCondition(ReservationQueryCondition cond);
+    List<ReservationModelView> findByCondition(ReserveItemQueryCondition cond);
 }

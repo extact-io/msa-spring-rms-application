@@ -1,6 +1,5 @@
 package io.extact.msa.spring.rms.domain.reservation;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import io.extact.msa.spring.platform.fw.domain.repository.GenericRepository;
@@ -11,15 +10,6 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
 public interface ReservationRepository extends GenericRepository<Reservation>, IdentityGenerator {
-
-    /**
-     * レンタル品IDと利用開始日が一致する予約一覧を取得する。
-     *
-     * @param rentalItemId レンタル品ID
-     * @param from 利用開始日
-     * @return 該当予約。該当がない場合は空リスト
-     */
-    List<Reservation> findByItemIdAndFromDate(ItemId itemId, LocalDate from);
 
     /**
      * 指定されたユーザIDが予約者の予約一覧を取得する。
