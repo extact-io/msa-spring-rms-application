@@ -9,7 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
-import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEntity;
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntity;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
@@ -27,7 +27,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UserEntity implements TableEntity<User>, UserCreatable {
+public class UserEntity implements PhysicalEntity<User>, UserCreatable {
 
     @Id
     private Integer id;

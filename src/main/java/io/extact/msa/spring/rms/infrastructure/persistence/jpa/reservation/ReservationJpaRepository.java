@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.ModelEntityMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.AbstractJpaRepository;
-import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.ModelEntityMapper;
 import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
 import io.extact.msa.spring.rms.application.member.ReserveItemQueryService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;

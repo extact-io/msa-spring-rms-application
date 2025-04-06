@@ -7,7 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
-import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEntity;
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntity;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
@@ -23,7 +23,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter @Setter
 @ToString
-public class ItemEntity implements TableEntity<Item>, ItemCreatable {
+public class ItemEntity implements PhysicalEntity<Item>, ItemCreatable {
 
     @Id
     private Integer id;

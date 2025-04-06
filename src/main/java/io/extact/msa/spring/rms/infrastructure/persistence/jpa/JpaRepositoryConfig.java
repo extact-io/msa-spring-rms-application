@@ -13,7 +13,7 @@ import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.feature.profile.ConditionalOnAnyPersistenceProfile;
 import io.extact.msa.spring.platform.fw.feature.sqlinit.ProfileBasedDbInitializerConfig;
 import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
-import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.DefaultModelEntityMapper;
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.DefaultModelEntityMapper;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemEntity;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemJpaRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemJpaRepositoryDelegator;

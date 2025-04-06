@@ -10,7 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
-import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEntity;
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntity;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
@@ -30,7 +30,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class ReservationEntity implements TableEntity<Reservation>, ReservationCreatable {
+public class ReservationEntity implements PhysicalEntity<Reservation>, ReservationCreatable {
 
     @Id
     private Integer id;

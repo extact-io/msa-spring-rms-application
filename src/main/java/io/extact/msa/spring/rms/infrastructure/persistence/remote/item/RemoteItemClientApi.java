@@ -11,8 +11,10 @@ import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.annotation.PutExchange;
 
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.remote.GenericClientApi;
+
 @HttpExchange("/items")
-public interface RemoteItemClientApi {
+public interface RemoteItemClientApi extends GenericClientApi<RemoteItem> {
 
     @GetExchange("/{id}")
     RemoteItem get(@PathVariable Integer id);
@@ -24,10 +26,10 @@ public interface RemoteItemClientApi {
     void add(@RequestBody RemoteItem item);
 
     @PutExchange
-    void update(@RequestBody RemoteItem item);
+    boolean update(@RequestBody RemoteItem item);
 
     @DeleteExchange("/{id}")
-    void delete(@PathVariable Integer id);
+    boolean delete(@PathVariable Integer id);
 
     @GetExchange
     RemoteItem findDuplicationData(@RequestParam("serial-no") String serialNo);

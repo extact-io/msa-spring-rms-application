@@ -42,19 +42,17 @@ public class RemoteReservationRepository implements ReservationRepository, Reser
     }
 
     @Override
-    public List<ReservationModelView> findByCondition(ReserveItemQueryCondition cond) {
-        return null;
-    }
-
-    @Override
     public List<Reservation> findByReserverId(UserId reserverId) {
-        // TODO 自動生成されたメソッド・スタブ
         return null;
     }
 
     @Override
     public List<Reservation> findByItemId(ItemId itemId) {
-        // TODO 自動生成されたメソッド・スタブ
+        return null;
+    }
+
+    @Override
+    public List<ReservationModelView> findByCondition(ReserveItemQueryCondition cond) {
         return null;
     }
 }

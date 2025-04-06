@@ -27,9 +27,9 @@ import io.extact.msa.spring.platform.fw.domain.model.ModelCreator;
 import io.extact.msa.spring.platform.fw.domain.model.ValueModel;
 import io.extact.msa.spring.platform.fw.domain.repository.GenericRepository;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
+import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntity;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.JpaRepositoryDelegator;
-import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.TableEntity;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.rms.interfaces.console.MainScreenRunner;
 import io.extact.msa.spring.rms.interfaces.webapi.StartupLogRunner;
@@ -108,7 +108,7 @@ class ApplicationArchUnitTest {
                     resideInAnyPackage("..domain..model..")
                             .and(INTERFACES)
                             .and(simpleNameEndingWith("Creatable")))
-            .should().beAssignableTo(type(TableEntity.class).or(type(ModelArrayMapper.class)))
+            .should().beAssignableTo(type(PhysicalEntity.class).or(type(ModelArrayMapper.class)))
             .orShould(from(anonymousClassInImplementationClassOf(ModelCreator.class)));
 
     // ---------------------------------------------------------------------
@@ -498,7 +498,7 @@ class ApplicationArchUnitTest {
     static final ArchRule naming_table_entity_should_be_suffixed = classes()
             .that()
             .resideInAPackage("..persistence.jpa..")
-            .and().implement(TableEntity.class)
+            .and().implement(PhysicalEntity.class)
             .should().haveSimpleNameEndingWith("Entity");
 
     /**

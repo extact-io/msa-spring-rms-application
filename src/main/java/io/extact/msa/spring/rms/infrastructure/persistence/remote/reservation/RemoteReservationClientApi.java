@@ -5,15 +5,14 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.DeleteExchange;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.annotation.PutExchange;
 
-import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
-import io.extact.msa.spring.rms.domain.user.model.UserId;
+import io.extact.msa.spring.rms.interfaces.webapi.member.ReserveItemResponse;
 
 @HttpExchange("/reservations")
 public interface RemoteReservationClientApi {
@@ -22,7 +21,10 @@ public interface RemoteReservationClientApi {
     RemoteReservation get(@PathVariable Integer id);
 
     @GetExchange
-    List<RemoteReservation> getAll();
+    public List<ReserveItemResponse> findByCondition(
+            @RequestParam(name = "item-id", required = false) Integer itemId,
+            @RequestParam(name = "reserver-id", required = false) Integer reserverId,
+            @RequestParam(name = "from-date", required = false) LocalDate from);
 
     @PostExchange
     void add(@RequestBody RemoteReservation reservation);
@@ -35,11 +37,4 @@ public interface RemoteReservationClientApi {
 
     @GetExchange("/next-identity")
     int nextIdentity();
-
-
-	List<Reservation> findByItemIdAndFromDate(ItemId itemId, LocalDate from);
-
-	List<Reservation> findByReserverId(UserId reserverId);
-
-	List<Reservation> findByItemId(ItemId itemId);
 }
