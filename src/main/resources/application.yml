@@ -66,6 +66,11 @@ rms:
       sql:
         schema-locations: classpath:sql/item-schema.sql
         data-locations: classpath:sql/item-data.sql
+      remote:
+        url: http://localhost:${local.server.port}/items
+        format:
+          date: ${spring.mvc.format.date}
+          date-time: ${spring.mvc.format.date-time}
     reservation:
       csv:
         type: temporary
@@ -74,6 +79,11 @@ rms:
       sql:
         schema-locations: classpath:sql/reservation-schema.sql
         data-locations: classpath:sql/reservation-data.sql
+      remote:
+        url: http://localhost:${local.server.port}/reservations
+        format:
+          date: ${spring.mvc.format.date}
+          date-time: ${spring.mvc.format.date-time}
     user:
       csv:
         type: temporary
@@ -82,3 +92,8 @@ rms:
       sql:
         schema-locations: classpath:sql/user-schema.sql
         data-locations: classpath:sql/user-data.sql
+      remote:
+        url: http://localhost:${local.server.port}/users
+        format:
+          date: ${spring.mvc.format.date}
+          date-time: ${spring.mvc.format.date-time}

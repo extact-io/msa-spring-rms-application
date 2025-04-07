@@ -1,4 +1,4 @@
-package io.extact.msa.spring.rms.infrastructure.persistence.remote.item;
+package io.extact.msa.spring.rms.infrastructure.persistence.remote.user;
 
 import java.util.List;
 
@@ -13,24 +13,24 @@ import org.springframework.web.service.annotation.PutExchange;
 
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.remote.GenericClientApi;
 
-@HttpExchange("/items")
-public interface RemoteItemClientApi extends GenericClientApi<RemoteItem> {
+@HttpExchange("/users")
+public interface RemoteUserClientApi extends GenericClientApi<RemoteUser> {
 
     @GetExchange("/{id}")
     @Override
-    RemoteItem get(@PathVariable Integer id);
+    RemoteUser get(@PathVariable Integer id);
 
     @GetExchange
     @Override
-    List<RemoteItem> getAll();
+    List<RemoteUser> getAll();
 
     @PostExchange
     @Override
-    void add(@RequestBody RemoteItem item);
+    void add(@RequestBody RemoteUser item);
 
     @PutExchange
     @Override
-    boolean update(@RequestBody RemoteItem item);
+    boolean update(@RequestBody RemoteUser item);
 
     @DeleteExchange("/{id}")
     @Override
@@ -41,6 +41,8 @@ public interface RemoteItemClientApi extends GenericClientApi<RemoteItem> {
     int nextIdentity();
 
     @GetExchange
-    RemoteItem findBySerialNo(@RequestParam("serial-no") String serialNo);
+    RemoteUser findByLoginId(@RequestParam("login-id") String loginId);
 
+    @GetExchange
+    RemoteUser findByLoginIdAndPassword(@RequestParam("login-id") String loginId, @RequestParam String password);
 }

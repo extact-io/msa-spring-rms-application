@@ -51,7 +51,7 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
         Specification<ReservationEntity> spec = ReservationSpecification.fromCondition(cond);
         return delegator.findAll(spec, by(Direction.ASC, "id"))
                 .stream()
-                .map(ReservationModelViewAdapter::new)
+                .map(ReservationModelViewTableAdapter::new)
                 .map(adapter -> (ReservationModelView) adapter)
                 .toList();
     }

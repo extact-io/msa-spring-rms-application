@@ -3,17 +3,15 @@ package io.extact.msa.spring.rms.infrastructure.persistence.remote.item;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntity;
 import io.extact.msa.spring.rms.domain.item.model.Item;
-import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
+import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 
 public record RemoteItem(
         Integer id,
         String serialNo,
-        String itemName) implements PhysicalEntity<Item> {
+        String itemName) implements PhysicalEntity<Item>, ItemCreatable {
 
-    static RemoteItem from(ItemModelView model) {
-        if (model == null) {
-            return null;
-        }
+    public static RemoteItem from(Item model) {
         return new RemoteItem(
                 model.getId().id(),
                 model.getSerialNo(),
@@ -22,13 +20,13 @@ public record RemoteItem(
 
     @Override
     public Integer getId() {
-        // TODO 自動生成されたメソッド・スタブ
-        return null;
+        return id;
     }
 
     @Override
     public Item toModel(ModelValidator validator) {
-        // TODO 自動生成されたメソッド・スタブ
-        return null;
+        Item item = newInstance(new ItemId(id), serialNo, itemName);
+        item.configure(validator);
+        return item;
     }
 }

@@ -22,7 +22,7 @@ public class RemoteItemRepository extends AbstractRemoteRepository<Item, RemoteI
     }
 
     public Optional<Item> findDuplicationData(Item checkModel) {
-        RemoteItem found = clientApi.findDuplicationData(checkModel.getSerialNo());
+        RemoteItem found = clientApi.findBySerialNo(checkModel.getSerialNo());
         return Optional
                 .ofNullable(found)
                 .map(entityMapper::toModel);

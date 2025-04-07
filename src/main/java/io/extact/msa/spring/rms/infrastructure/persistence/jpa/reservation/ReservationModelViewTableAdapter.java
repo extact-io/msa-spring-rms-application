@@ -5,18 +5,15 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @RequiredArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
-public class ReservationModelViewAdapter implements ReservationModelView {
+public class ReservationModelViewTableAdapter implements ReservationModelView {
     
     private final ReservationEntity adaptee;
 
-    @EqualsAndHashCode.Include
     @ToString.Include
     @Override
     public ReservationId getId() {
