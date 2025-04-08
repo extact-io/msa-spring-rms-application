@@ -15,6 +15,7 @@ import org.springframework.web.service.annotation.PutExchange;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.remote.GenericClientApi;
 
 @HttpExchange("/reservations")
+// TODO:パスに個別の値はでてこないので、GenericClientApiに@GetExchangeを定義してスッキリさせる作戦ができるかも
 public interface RemoteReservationClientApi extends GenericClientApi<RemoteReservation> {
 
     @GetExchange("/{id}")

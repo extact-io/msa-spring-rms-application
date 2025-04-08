@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +45,7 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
+import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
 import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
 import io.extact.msa.spring.platform.fw.infrastructure.external.converter.ConfigConversionServiceBuilder;
@@ -80,14 +82,21 @@ class ReserveItemControllerIntegrationTest {
     @Configuration(proxyBeanMethods = false)
     @Import(WebApiApplication.class)
     static class TestConfig {
+        
         @Bean
-        ReservationClient reservationClient(Environment env) {
+        @ConfigurationProperties("rms.persistence.reservation.remote")
+        ExternalProperties externalProperties() {
+            return new ExternalProperties();
+        }
+        
+        @Bean
+        ReservationClient reservationClient(ExternalProperties prop, Environment env) {
 
             HttpMessageConverter<Object> converter = ConfigMessageConveterBuilder
-                    .builder(env)
+                    .builder(prop)
                     .build();
             ConversionService conversionService = ConfigConversionServiceBuilder
-                    .builder(env)
+                    .builder(prop)
                     .build();
 
             RestClient restClient = RestClient.builder()

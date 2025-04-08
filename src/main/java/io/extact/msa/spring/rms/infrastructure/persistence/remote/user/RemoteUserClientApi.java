@@ -26,11 +26,11 @@ public interface RemoteUserClientApi extends GenericClientApi<RemoteUser> {
 
     @PostExchange
     @Override
-    void add(@RequestBody RemoteUser item);
+    void add(@RequestBody RemoteUser user);
 
     @PutExchange
     @Override
-    boolean update(@RequestBody RemoteUser item);
+    boolean update(@RequestBody RemoteUser user);
 
     @DeleteExchange("/{id}")
     @Override
