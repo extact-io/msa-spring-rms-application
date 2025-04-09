@@ -40,7 +40,7 @@ public interface RemoteItemClientApi extends GenericClientApi<RemoteItem> {
     @Override
     int nextIdentity();
 
-    @GetExchange
+    @GetExchange("/unique")
     RemoteItem findBySerialNo(@RequestParam("serial-no") String serialNo);
 
 }

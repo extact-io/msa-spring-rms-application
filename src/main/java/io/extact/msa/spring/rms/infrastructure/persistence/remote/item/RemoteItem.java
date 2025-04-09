@@ -1,11 +1,15 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.remote.item;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntity;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 
+@JsonIgnoreProperties("pk")
 public record RemoteItem(
         Integer id,
         String serialNo,
@@ -28,5 +32,12 @@ public record RemoteItem(
         Item item = newInstance(new ItemId(id), serialNo, itemName);
         item.configure(validator);
         return item;
+    }
+    
+    public static void main(String[] args) throws Exception {
+        RemoteItem item = new RemoteItem(1, "AAAA", "BBB");
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(item);
+        System.out.println(json);
     }
 }

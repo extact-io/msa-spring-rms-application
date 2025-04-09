@@ -17,7 +17,13 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntit
 public abstract class RemoteStubController<M extends EntityModel, E extends PhysicalEntity<M>> {
     
     public abstract Map<Integer, E> entityMap();
+    abstract void init();
     
+    @GetMapping("/reset")
+    public void reset() {
+        init();
+    }
+
     @GetMapping("/{id}")
     public E get(@PathVariable Integer id) {
         return getAll().stream()

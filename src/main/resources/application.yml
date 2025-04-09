@@ -67,7 +67,7 @@ rms:
         schema-locations: classpath:sql/item-schema.sql
         data-locations: classpath:sql/item-data.sql
       remote:
-        url: http://localhost:${local.server.port}/items
+        url: http://tsukumo:${local.server.port}
         format:
           date: ${spring.mvc.format.date}
           date-time: ${spring.mvc.format.date-time}
@@ -80,7 +80,7 @@ rms:
         schema-locations: classpath:sql/reservation-schema.sql
         data-locations: classpath:sql/reservation-data.sql
       remote:
-        url: http://localhost:${local.server.port}/reservations
+        url: http://localhost:${local.server.port}
         format:
           date: ${spring.mvc.format.date}
           date-time: ${spring.mvc.format.date-time}
@@ -93,7 +93,7 @@ rms:
         schema-locations: classpath:sql/user-schema.sql
         data-locations: classpath:sql/user-data.sql
       remote:
-        url: http://localhost:${local.server.port}/users
+        url: http://localhost:${local.server.port}
         format:
           date: ${spring.mvc.format.date}
           date-time: ${spring.mvc.format.date-time}

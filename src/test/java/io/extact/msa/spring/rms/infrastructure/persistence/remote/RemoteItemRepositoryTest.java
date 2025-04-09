@@ -2,13 +2,16 @@ package io.extact.msa.spring.rms.infrastructure.persistence.remote;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.test.context.ActiveProfiles;
@@ -19,6 +22,8 @@ import io.extact.msa.spring.platform.core.auth.configure.AuthorizeHttpRequestCus
 import io.extact.msa.spring.platform.core.auth.header.RmsHeaderAuthConfig;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
+import io.extact.msa.spring.platform.core.log.LogConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
@@ -29,13 +34,14 @@ import io.extact.msa.spring.test.spring.NopTransactionManager;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @EnableAutoConfigurationWithoutJpa
 @ActiveProfiles({ "test", "item-remote" })
-class ItemRemoteRepositoryTest extends AbstractItemRepositoryTest {
-
+class RemoteItemRepositoryTest extends AbstractItemRepositoryTest {
+    
     @Autowired
     private ItemRepository repository;
 
     @Configuration(proxyBeanMethods = false)
     @Import({
+            LogConfig.class,
             EnvConfig.class,
             RestControllerConfig.class,
             RmsHeaderAuthConfig.class,
@@ -45,7 +51,7 @@ class ItemRemoteRepositoryTest extends AbstractItemRepositoryTest {
         @Bean
         AuthorizeHttpRequestCustomizer authorizeRequestCustomizer() {
             return (AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry configurer) -> configurer
-                    .anyRequest().permitAll();
+                    .anyRequest().authenticated();
         }
         @Bean
         RemoteItemStubController remoteItemStubController() {
@@ -55,6 +61,17 @@ class ItemRemoteRepositoryTest extends AbstractItemRepositoryTest {
         PlatformTransactionManager nopTransactionManager() {
             return new NopTransactionManager();
         }
+        @Bean
+        RemoteRepositoryTestInitializer remoteRepositoryTestInitializer(
+                @Qualifier("item") ExternalProperties prop,
+                Environment env) {
+            return new RemoteRepositoryTestInitializer(prop, env, "items");
+        }
+    }
+    
+    @BeforeEach
+    void beforeEach(@Autowired RemoteRepositoryTestInitializer initializer) {
+        initializer.reset();
     }
     
     @Override

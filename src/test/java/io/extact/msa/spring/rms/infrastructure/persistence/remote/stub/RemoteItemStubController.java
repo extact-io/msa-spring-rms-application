@@ -17,17 +17,18 @@ import io.extact.msa.spring.rms.infrastructure.persistence.remote.item.RemoteIte
 @RmsRestController("/items")
 public class RemoteItemStubController extends RemoteStubController<Item, RemoteItem> {
 
-    private final Map<Integer, RemoteItem> itemsMap = new LinkedHashMap<>();
+    private Map<Integer, RemoteItem> itemsMap;
 
     @PostConstruct
     void init() {
+        itemsMap = new LinkedHashMap<>();
         itemsMap.put(item1.getId().id(), RemoteItem.from(item1));
         itemsMap.put(item2.getId().id(), RemoteItem.from(item2));
         itemsMap.put(item3.getId().id(), RemoteItem.from(item3));
         itemsMap.put(item4.getId().id(), RemoteItem.from(item4));
     }
     
-    @GetMapping
+    @GetMapping("/unique")
     public RemoteItem findBySerialNo(@RequestParam("serial-no") String serialNo) {
         return itemsMap.values().stream()
                 .filter(item -> item.serialNo().equals(serialNo))
