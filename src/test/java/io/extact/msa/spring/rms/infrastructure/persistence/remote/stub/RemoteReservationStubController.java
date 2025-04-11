@@ -19,16 +19,17 @@ import io.extact.msa.spring.rms.infrastructure.persistence.remote.reservation.Re
 @RmsRestController("/reservations")
 public class RemoteReservationStubController extends RemoteStubController<Reservation, RemoteReservation> {
 
-    private final Map<Integer, RemoteReservation> reservationsMap = new LinkedHashMap<>();
+    private Map<Integer, RemoteReservation> reservationsMap;
 
     @PostConstruct
     void init() {
+        reservationsMap = new LinkedHashMap<>();
         reservationsMap.put(reservation1.getId().id(), RemoteReservation.from(reservation1));
         reservationsMap.put(reservation2.getId().id(), RemoteReservation.from(reservation2));
         reservationsMap.put(reservation3.getId().id(), RemoteReservation.from(reservation3));
     }
     
-    @GetMapping
+    @GetMapping("/cond")
     public List<RemoteReservation> findByCondition(
             @RequestParam(name = "item-id", required = false) Integer itemId,
             @RequestParam(name = "reserver-id", required = false) Integer reserverId,

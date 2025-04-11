@@ -33,7 +33,7 @@ public class RemoteRepositoryTestInitializer {
                 .build();
     }
     
-    public void reset() {
+    public void resetAndSignin() {
         TestAuthUtils.signinByHeader(1, "MEMBER");
         client.get()
                 .uri("/reset")

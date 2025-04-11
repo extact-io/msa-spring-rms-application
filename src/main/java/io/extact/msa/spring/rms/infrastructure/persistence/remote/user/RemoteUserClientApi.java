@@ -40,9 +40,9 @@ public interface RemoteUserClientApi extends GenericClientApi<RemoteUser> {
     @Override
     int nextIdentity();
 
-    @GetExchange
+    @GetExchange("/unique")
     RemoteUser findByLoginId(@RequestParam("login-id") String loginId);
 
-    @GetExchange
+    @GetExchange("/auth")
     RemoteUser findByLoginIdAndPassword(@RequestParam("login-id") String loginId, @RequestParam String password);
 }

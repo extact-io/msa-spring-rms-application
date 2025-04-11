@@ -1,5 +1,7 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.remote.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntity;
 import io.extact.msa.spring.rms.domain.user.model.User;
@@ -7,6 +9,7 @@ import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 
+@JsonIgnoreProperties("pk")
 public record RemoteUser(
         Integer id,
         String loginId,

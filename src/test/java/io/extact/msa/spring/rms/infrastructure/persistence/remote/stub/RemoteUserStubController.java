@@ -17,16 +17,17 @@ import io.extact.msa.spring.rms.infrastructure.persistence.remote.user.RemoteUse
 @RmsRestController("/users")
 public class RemoteUserStubController extends RemoteStubController<User, RemoteUser> {
 
-    private final Map<Integer, RemoteUser> usersMap = new LinkedHashMap<>();
+    private Map<Integer, RemoteUser> usersMap;
 
     @PostConstruct
     void init() {
+        usersMap = new LinkedHashMap<>();
         usersMap.put(user1.getId().id(), RemoteUser.from(user1));
         usersMap.put(user2.getId().id(), RemoteUser.from(user2));
         usersMap.put(user3.getId().id(), RemoteUser.from(user3));
     }
 
-    @GetMapping
+    @GetMapping("/unique")
     public RemoteUser findByLoginId(@RequestParam("login-id") String loginId) {
         return usersMap.values().stream()
                 .filter(user -> user.loginId().equals(loginId))
@@ -34,7 +35,7 @@ public class RemoteUserStubController extends RemoteStubController<User, RemoteU
                 .orElse(null);
     }
 
-    @GetMapping
+    @GetMapping("/auth")
     public RemoteUser findByLoginIdAndPassword(
             @RequestParam("login-id") String loginId,
             @RequestParam String password) {

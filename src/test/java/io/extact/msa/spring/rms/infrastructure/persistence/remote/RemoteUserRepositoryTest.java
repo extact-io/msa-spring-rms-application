@@ -25,19 +25,20 @@ import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.core.log.LogConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
-import io.extact.msa.spring.rms.domain.item.ItemRepository;
-import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.infrastructure.persistence.AbstractItemRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.remote.stub.RemoteItemStubController;
+import io.extact.msa.spring.rms.domain.user.UserRepository;
+import io.extact.msa.spring.rms.domain.user.model.UserId;
+import io.extact.msa.spring.rms.domain.user.model.UserType;
+import io.extact.msa.spring.rms.infrastructure.persistence.AbstractUserRepositoryTest;
+import io.extact.msa.spring.rms.infrastructure.persistence.remote.stub.RemoteUserStubController;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @EnableAutoConfigurationWithoutJpa
-@ActiveProfiles({ "test", "item-remote" })
-class RemoteItemRepositoryTest extends AbstractItemRepositoryTest {
+@ActiveProfiles({ "test", "user-remote" })
+class RemoteUserRepositoryTest extends AbstractUserRepositoryTest {
     
     @Autowired
-    private ItemRepository repository;
+    private UserRepository repository;
 
     @Configuration(proxyBeanMethods = false)
     @Import({
@@ -54,8 +55,8 @@ class RemoteItemRepositoryTest extends AbstractItemRepositoryTest {
                     .anyRequest().authenticated();
         }
         @Bean
-        RemoteItemStubController remoteItemStubController() {
-            return new RemoteItemStubController();
+        RemoteUserStubController remoteUserStubController() {
+            return new RemoteUserStubController();
         }
         @Bean
         PlatformTransactionManager nopTransactionManager() {
@@ -63,9 +64,9 @@ class RemoteItemRepositoryTest extends AbstractItemRepositoryTest {
         }
         @Bean
         RemoteRepositoryTestInitializer remoteRepositoryTestInitializer(
-                @Qualifier("item") ExternalProperties prop,
+                @Qualifier("user") ExternalProperties prop,
                 Environment env) {
-            return new RemoteRepositoryTestInitializer(prop, env, "items");
+            return new RemoteRepositoryTestInitializer(prop, env, "users");
         }
     }
     
@@ -75,7 +76,7 @@ class RemoteItemRepositoryTest extends AbstractItemRepositoryTest {
     }
     
     @Override
-    protected ItemRepository repository() {
+    protected UserRepository repository() {
         return this.repository;
     }
 
@@ -85,11 +86,37 @@ class RemoteItemRepositoryTest extends AbstractItemRepositoryTest {
 
         // when
         int firstTime = repository.nextIdentity();
-        repository.add(testCreator.newInstance(new ItemId(firstTime), "1st", ""));
+        repository.add(testCreator
+                .newInstance(
+                        new UserId(firstTime),
+                        "seq-test",
+                        "seq-test",
+                        UserType.MEMBER,
+                        "seq-test",
+                        "070-1111-8888",
+                        "seq-test"));
+
         int secondTime = repository.nextIdentity();
-        repository.add(testCreator.newInstance(new ItemId(secondTime), "2nd", ""));
+        repository.add(testCreator
+                .newInstance(
+                        new UserId(secondTime),
+                        "seq-test",
+                        "seq-test",
+                        UserType.MEMBER,
+                        "seq-test",
+                        "070-1111-8888",
+                        "seq-test"));
+
         int thirdTime = repository.nextIdentity();
-        repository.add(testCreator.newInstance(new ItemId(thirdTime), "3rd", ""));
+        repository.add(testCreator
+                .newInstance(
+                        new UserId(thirdTime),
+                        "seq-test",
+                        "seq-test",
+                        UserType.MEMBER,
+                        "seq-test",
+                        "070-1111-8888",
+                        "seq-test"));
 
         // then
         assertThat(secondTime).isEqualTo(firstTime + 1);

@@ -15,13 +15,16 @@ import org.springframework.web.service.annotation.PutExchange;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.remote.GenericClientApi;
 
 @HttpExchange("/reservations")
-// TODO:パスに個別の値はでてこないので、GenericClientApiに@GetExchangeを定義してスッキリさせる作戦ができるかも
 public interface RemoteReservationClientApi extends GenericClientApi<RemoteReservation> {
 
     @GetExchange("/{id}")
     @Override
     RemoteReservation get(@PathVariable Integer id);
 
+    @GetExchange
+    @Override
+    List<RemoteReservation> getAll();
+    
     @PostExchange
     @Override
     void add(@RequestBody RemoteReservation reservation);
@@ -38,7 +41,7 @@ public interface RemoteReservationClientApi extends GenericClientApi<RemoteReser
     @Override
     int nextIdentity();
     
-    @GetExchange
+    @GetExchange("/cond")
     public List<RemoteReservation> findByCondition(
             @RequestParam(name = "item-id", required = false) Integer itemId,
             @RequestParam(name = "reserver-id", required = false) Integer reserverId,
