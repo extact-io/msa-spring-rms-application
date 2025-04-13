@@ -43,6 +43,7 @@ import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
+import io.extact.msa.spring.platform.fw.feature.exception.RmsRequestCheckException;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
@@ -442,6 +443,18 @@ class ReserveItemControllerIntegrationTest {
                 });
     }
 
+    @Test
+    @Order(NO_SIDE_EFFECT_CASE)
+    void testFindReservationOnNoParameterError() {
+        // given
+        // when
+        assertThatThrownBy(() -> client.findReservationByParams(null, null, null))
+                // then
+                .isInstanceOfSatisfying(RmsRequestCheckException.class, thrown -> {
+                    assertThat(thrown).hasMessageContaining("at least one request parameter");
+                });
+    }
+    
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
     void testGetOwnReservations() {

@@ -31,7 +31,7 @@ public interface ReservationModelView extends EntityModelView<ReservationModelVi
         return Objects.equals(getId(), other.getId())
                 && Objects.equals(getPeriod(), other.getPeriod())
                 && Objects.equals(getNote(), other.getNote())
-                && Objects.equals(getReserverId(), other.getReserverId())
-                && Objects.equals(getItemId(), other.getItemId());
+                && Objects.equals(getItemId(), other.getItemId())
+                && Objects.equals(getReserverId(), other.getReserverId());
     }
 }

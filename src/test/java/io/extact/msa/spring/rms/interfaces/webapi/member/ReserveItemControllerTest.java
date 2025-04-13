@@ -31,10 +31,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
+import io.extact.msa.spring.platform.fw.feature.exception.RmsRequestCheckException;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
-import io.extact.msa.spring.rms.application.member.ReserveItemService;
-import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
 import io.extact.msa.spring.rms.application.member.ReserveItemCommand;
+import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
+import io.extact.msa.spring.rms.application.member.ReserveItemService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
@@ -47,7 +48,8 @@ import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 @ActiveProfiles("test")
 class ReserveItemControllerTest {
 
-    private static final ReservationCreatable testCreator = new ReservationCreatable() {};
+    private static final ReservationCreatable testCreator = new ReservationCreatable() {
+    };
     private static DateTimeFormatter dateTimeFormatter;
 
     @Autowired
@@ -80,7 +82,7 @@ class ReserveItemControllerTest {
 
         // given
         when(reservationService.getItemAll())
-            .thenReturn(List.of(item1, item2, item3, item4));
+                .thenReturn(List.of(item1, item2, item3, item4));
 
         // when
         mockMvc.perform(get("/reserve/items"))
@@ -98,14 +100,14 @@ class ReserveItemControllerTest {
 
         // given
         when(reservationService.getItemAll())
-            .thenReturn(List.of());
+                .thenReturn(List.of());
 
         // when
         mockMvc.perform(get("/reserve/items"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
-        
+
         // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).getItemAll();
     }
@@ -132,7 +134,7 @@ class ReserveItemControllerTest {
         LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
         when(reservationService.findRentableItemAtPeriod(from, to))
-            .thenReturn(List.of(item2, item4));
+                .thenReturn(List.of(item2, item4));
 
         // when
         mockMvc.perform(get("/reserve/items/rentable")
@@ -163,7 +165,7 @@ class ReserveItemControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
-        
+
         // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findRentableItemAtPeriod(from, to);
     }
@@ -206,7 +208,6 @@ class ReserveItemControllerTest {
         verify(reservationService, never()).findRentableItemAtPeriod(any(), any());
     }
 
-
     @Test
     @WithMockUser(roles = "MEMBER")
     public void testIsRentableItemAtPeriod() throws Exception {
@@ -217,7 +218,7 @@ class ReserveItemControllerTest {
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
         boolean returnValue = false;
         when(reservationService.isRentableItemAtPeriod(itemid, from, to))
-            .thenReturn(returnValue);
+                .thenReturn(returnValue);
 
         // when
         mockMvc.perform(get("/reserve/items/{itemId}/rentable", itemid.id())
@@ -234,7 +235,7 @@ class ReserveItemControllerTest {
 
         // given
         String itemid = "a"; // コンバートエラー
-        String from = "";    // リクエストパラメータなしエラー
+        String from = ""; // リクエストパラメータなしエラー
         String to = LocalDateTime.of(2025, 1, 1, 12, 0).toString();
 
         // when
@@ -271,8 +272,7 @@ class ReserveItemControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(allOf(
                         containsString("パラメーターエラーが発生しました"),
-                        containsString("from")
-                )));
+                        containsString("from"))));
 
         // then
         verify(reservationService, never()).isRentableItemAtPeriod(any(), any(), any());
@@ -302,7 +302,7 @@ class ReserveItemControllerTest {
     public void testFindReservationByItemId() throws Exception {
 
         // given
-        Integer itemId = 1; 
+        Integer itemId = 1;
         ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .itemId(itemId)
                 .build();
@@ -331,7 +331,7 @@ class ReserveItemControllerTest {
     public void testFindReservationByItemIdWithFromDate() throws Exception {
 
         // given
-        Integer itemId = 1; 
+        Integer itemId = 1;
         LocalDate fromDate = LocalDate.of(2024, 1, 1);
         ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .itemId(itemId)
@@ -363,7 +363,7 @@ class ReserveItemControllerTest {
     public void testFindReservationByItemIdWithFromDateNull() throws Exception {
 
         // given
-        Integer itemId = 1; 
+        Integer itemId = 1;
         LocalDate fromDate = null;
         ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .itemId(itemId)
@@ -385,14 +385,14 @@ class ReserveItemControllerTest {
     public void testFindReservationByItemIdReturnEmpty() throws Exception {
 
         // given
-        Integer itemId = 1; 
+        Integer itemId = 1;
         LocalDate fromDate = LocalDate.of(2024, 1, 1);
         ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
         when(reservationService.findReservationByCondition(cond))
-            .thenReturn(List.of());
+                .thenReturn(List.of());
 
         // when
         mockMvc.perform(get("/reserve/reservations")
@@ -401,7 +401,7 @@ class ReserveItemControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
-        
+
         // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findReservationByCondition(cond);
     }
@@ -411,7 +411,7 @@ class ReserveItemControllerTest {
     public void testFindReservationByItemIdOnParameterError() throws Exception {
 
         // given
-        Integer invalidItemId = -1; 
+        Integer invalidItemId = -1;
         ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .itemId(invalidItemId)
                 .build();
@@ -424,7 +424,7 @@ class ReserveItemControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
-        
+
         // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findReservationByCondition(cond);
     }
@@ -493,7 +493,7 @@ class ReserveItemControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
-        
+
         // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findReservationByCondition(cond);
     }
@@ -503,7 +503,7 @@ class ReserveItemControllerTest {
     public void testFindReservationByReserverIdOnParameterError() throws Exception {
 
         // given
-        Integer invalidReserverId = -1; 
+        Integer invalidReserverId = -1;
         ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .reserverId(invalidReserverId)
                 .build();
@@ -516,7 +516,7 @@ class ReserveItemControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
-        
+
         // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findReservationByCondition(cond);
     }
@@ -526,7 +526,7 @@ class ReserveItemControllerTest {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
-        Integer reserverId = -1; 
+        Integer reserverId = -1;
 
         // when
         mockMvc.perform(get("/reserve/reservations")
@@ -538,6 +538,21 @@ class ReserveItemControllerTest {
         verify(reservationService, never()).findReservationByCondition(any());
     }
 
+    @Test
+    @WithMockUser(roles = "MEMBER")
+    public void testFindReservationOnNoParameterError() throws Exception {
+
+        // given
+        // when
+        mockMvc.perform(get("/reserve/reservations"))
+                // then
+                .andExpect(status().isBadRequest())
+                //.andExpect(header("rms-exception").);
+                .andExpect(header().string("rms-exception", RmsRequestCheckException.class.getSimpleName()));
+
+        // then
+        verify(reservationService, never()).findReservationByCondition(any());
+    }
 
     @Test
     @WithMockUser(roles = "MEMBER")
@@ -576,7 +591,7 @@ class ReserveItemControllerTest {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
-        
+
         // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).getOwnReservations();
     }

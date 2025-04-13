@@ -15,7 +15,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemEntity;
  * 次の観点でテストを作成している。
  * ・testConstructor: コンストラクタが正しく値を設定するか
  * ・testSetters: 各セッターの動作確認
- * ・testFromUser: from メソッドが正しく User モデルをエンティティに変換するか
+ * ・testFromUser: from メソッドが正しく Item モデルをエンティティに変換するか
  * ・testToModel: toModel メソッドが正しくエンティティをモデルに変換するか
  */
 class ItemEntityTest {

@@ -9,6 +9,8 @@ import static io.extact.msa.spring.test.archunit.ArchUnitUtils.*;
 
 import java.util.Optional;
 
+import org.springframework.web.service.annotation.HttpExchange;
+
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClass.Predicates;
@@ -173,6 +175,16 @@ class ApplicationArchUnitTest {
             .matching("..rms.infrastructure.persistence.jpa.(*)..")
             .should().notDependOnEachOther();
 
+    /**
+     * persistence.remote配下のパッケージ(item/reservation/user)は独立し相互に依存していないこと。
+     * <p>
+     * ・reservationパッケージがitemパッケージを利用しているといったことがないこと
+     */
+    @ArchTest
+    static final ArchRule isolate_each_persistence_remote_not_depend_on_each_other = SlicesRuleDefinition.slices()
+            .matching("..rms.infrastructure.persistence.remote.(*)..")
+            .should().notDependOnEachOther();
+
     // ---------------------------------------------------------------------
     // レイヤごとの依存可能モジュールの検証
     // ---------------------------------------------------------------------
@@ -287,9 +299,11 @@ class ApplicationArchUnitTest {
                             "lombok..",
                             "..fw.exception..",
                             "..fw.domain.model..",
+                            "..fw.infrastructure.persistence",
                             "..fw.infrastructure.persistence.file..",
                             "..rms.application..",
                             "..rms.domain..model..",
+                            "..rms.infrastructure.persistence",
                             "..rms.infrastructure.persistence.file..")
                                     .or(type(io.extact.msa.spring.rms.domain.item.ItemRepository.class))
                                     .or(type(io.extact.msa.spring.rms.domain.reservation.ReservationRepository.class)) //
@@ -297,7 +311,7 @@ class ApplicationArchUnitTest {
             );
 
     /**
-     * persistence.persistenceパッケージから依存してOKなモジュールの検証
+     * persistence.jpaパッケージから依存してOKなモジュールの検証
      */
     @ArchTest
     static final ArchRule dependency_persistence_jpa = classes()
@@ -312,10 +326,37 @@ class ApplicationArchUnitTest {
                     "lombok..",
                     "..fw.exception..",
                     "..fw.domain.model..",
+                    "..fw.infrastructure.persistence",
                     "..fw.infrastructure.persistence.jpa..",
                     "..rms.domain..model..",
                     "..rms.application..",
                     "..rms.infrastructure.persistence.jpa..")
+                            .or(type(io.extact.msa.spring.rms.domain.item.ItemRepository.class))
+                            .or(type(io.extact.msa.spring.rms.domain.reservation.ReservationRepository.class))
+                            .or(type(io.extact.msa.spring.rms.domain.user.UserRepository.class)) //
+            );
+
+    /**
+     * persistence.remoteパッケージから依存してOKなモジュールの検証
+     */
+    @ArchTest
+    static final ArchRule dependency_persistence_remote = classes()
+            .that()
+            .resideInAPackage("..infrastructure.persistence.remote..")
+            .and(not(configurationClasses()))
+            .should()
+            .onlyDependOnClassesThat(resideInAnyPackage(
+                    "java..",
+                    "org.springframework.web..", // Spring WebなのでOK
+                    "com.fasterxml.jackson.*",
+                    "lombok..",
+                    "..fw.exception..",
+                    "..fw.domain.model..",
+                    "..fw.infrastructure.persistence",
+                    "..fw.infrastructure.persistence.remote..",
+                    "..rms.domain..model..",
+                    "..rms.application..",
+                    "..rms.infrastructure.persistence.remote..")
                             .or(type(io.extact.msa.spring.rms.domain.item.ItemRepository.class))
                             .or(type(io.extact.msa.spring.rms.domain.reservation.ReservationRepository.class))
                             .or(type(io.extact.msa.spring.rms.domain.user.UserRepository.class)) //
@@ -521,6 +562,38 @@ class ApplicationArchUnitTest {
             .resideInAPackage("..persistence.jpa..")
             .and(subInterface(JpaRepositoryDelegator.class))
             .should().haveSimpleNameEndingWith("JpaRepositoryDelegator");
+
+    /**
+     * persistence.remoteパッケージ配下のPhysicalEntityの実装クラスのプレフィックスは"Remote"となっていること。
+     */
+    @ArchTest
+    static final ArchRule naming_remote_entity_should_be_prefixed = classes()
+            .that()
+            .resideInAPackage("..persistence.remote..")
+            .and().implement(PhysicalEntity.class)
+            .should().haveSimpleNameStartingWith("Remote");
+
+    /**
+     * persistence.remoteパッケージ配下のGenericRepositoryの実装クラスのFQCNの
+     * サフィックスが".Remoteで始まり、Repositoryで終わる"となっていること。
+     */
+    @ArchTest
+    static final ArchRule naming_remote_repository_should_be_matched = classes()
+            .that()
+            .resideInAPackage("..persistence.remote..")
+            .and().implement(GenericRepository.class)
+            .should().haveNameMatching("^.*\\.Remote.*Repository$");
+
+    /**
+     * persistence.remoteパッケージ配下のHttpInterfaceのインターフェースのサフィックスは
+     * "ClientApi"となっていること。
+     */
+    @ArchTest
+    static final ArchRule naming_remote_repository_httpinterface_should_be_suffixed = classes()
+            .that()
+            .resideInAPackage("..persistence.remote..")
+            .and().areAnnotatedWith(HttpExchange.class)
+            .should().haveSimpleNameEndingWith("ClientApi");
 
     // --------------------------------------------------------------- private methods
 

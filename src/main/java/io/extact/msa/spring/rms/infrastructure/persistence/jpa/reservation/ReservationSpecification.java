@@ -10,7 +10,10 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReservationSpecification {
 
     public static Specification<ReservationEntity> fromCondition(ReserveItemQueryCondition condition) {

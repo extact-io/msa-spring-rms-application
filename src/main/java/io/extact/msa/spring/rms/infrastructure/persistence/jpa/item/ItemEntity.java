@@ -31,7 +31,10 @@ public class ItemEntity implements PhysicalEntity<Item>, ItemCreatable {
     private String itemName;
 
     public static ItemEntity from(Item model) {
-        return new ItemEntity(model.getId().id(), model.getSerialNo(), model.getItemName());
+        return new ItemEntity(
+                model.getId().id(), 
+                model.getSerialNo(), 
+                model.getItemName());
     }
 
     @Override

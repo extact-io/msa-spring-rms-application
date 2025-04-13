@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsRequestCheckException;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
-import io.extact.msa.spring.rms.application.member.ReserveItemService;
 import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
+import io.extact.msa.spring.rms.application.member.ReserveItemService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class ReserveItemController {
             @RequestParam LocalDateTime to) {
 
         return service
-        		.findRentableItemAtPeriod(from, to)
+                .findRentableItemAtPeriod(from, to)
                 .stream()
                 .map(ItemResponse::from)
                 .toList();
@@ -63,19 +63,19 @@ public class ReserveItemController {
     @GetMapping("/reservations")
     public List<ReserveItemResponse> findReservationByCondition(
             @RequestParam(name = "item-id", required = false) Integer itemId,
-    		@RequestParam(name = "reserver-id", required = false) Integer reserverId,
+            @RequestParam(name = "reserver-id", required = false) Integer reserverId,
             @RequestParam(name = "from-date", required = false) LocalDate from) {
 
-    	ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
-    			.itemId(itemId)
-    			.reserverId(reserverId)
-    			.from(from)
-    			.build();
-    	
-    	if (!cond.hasAnyCondition()) {
-    	    throw new RmsRequestCheckException("search requires at least one request parameter.");
-    	}
-    	
+        ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
+                .itemId(itemId)
+                .reserverId(reserverId)
+                .from(from)
+                .build();
+
+        if (!cond.hasAnyCondition()) {
+            throw new RmsRequestCheckException("search requires at least one request parameter.");
+        }
+
         return service
                 .findReservationByCondition(cond)
                 .stream()
