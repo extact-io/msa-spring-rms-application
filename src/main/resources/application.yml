@@ -67,7 +67,7 @@ rms:
         schema-locations: classpath:sql/item-schema.sql
         data-locations: classpath:sql/item-data.sql
       remote:
-        url: http://tsukumo:${local.server.port}
+        url: http://localhost:${local.server.port}
         format:
           date: ${spring.mvc.format.date}
           date-time: ${spring.mvc.format.date-time}

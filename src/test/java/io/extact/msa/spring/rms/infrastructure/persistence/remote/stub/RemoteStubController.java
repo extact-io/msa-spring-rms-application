@@ -15,10 +15,10 @@ import io.extact.msa.spring.platform.fw.domain.model.EntityModel;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntity;
 
 public abstract class RemoteStubController<M extends EntityModel, E extends PhysicalEntity<M>> {
-    
+
     public abstract Map<Integer, E> entityMap();
     abstract void init();
-    
+
     @GetMapping("/reset")
     public void reset() {
         init();
@@ -31,7 +31,7 @@ public abstract class RemoteStubController<M extends EntityModel, E extends Phys
                 .findAny()
                 .orElse(null);
     }
-    
+
     @GetMapping
     public Collection<E> getAll() {
         return entityMap().values();
@@ -54,7 +54,7 @@ public abstract class RemoteStubController<M extends EntityModel, E extends Phys
     public boolean delete(@PathVariable Integer id) {
         return entityMap().remove(id) != null;
     }
-    
+
     @GetMapping("/next-identity")
     public int nextIdentity() {
         return Collections.max(entityMap().keySet()) + 1;

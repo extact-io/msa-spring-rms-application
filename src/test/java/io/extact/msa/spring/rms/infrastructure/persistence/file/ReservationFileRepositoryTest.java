@@ -71,7 +71,7 @@ class ReservationFileRepositoryTest extends AbstractReservationRepositoryTest {
     protected ReservationRepository repository() {
         return this.repository;
     }
-    
+
     @Override
     protected ReserveItemQueryService queryService() {
         return this.queryService;
