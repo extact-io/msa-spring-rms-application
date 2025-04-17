@@ -33,8 +33,8 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntit
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.JpaRepositoryDelegator;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.StartupLogRunner;
 import io.extact.msa.spring.rms.interfaces.console.MainScreenRunner;
-import io.extact.msa.spring.rms.interfaces.webapi.StartupLogRunner;
 
 @AnalyzeClasses(packages = "io.extact.msa.spring.rms", importOptions = ImportOption.DoNotIncludeTests.class)
 class ApplicationArchUnitTest {

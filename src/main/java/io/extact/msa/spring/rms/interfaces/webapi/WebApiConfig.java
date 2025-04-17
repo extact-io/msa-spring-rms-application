@@ -4,9 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import io.extact.msa.spring.platform.core.env.ActiveProfileResolver;
-import io.extact.msa.spring.platform.core.env.EnvConfig;
-import io.extact.msa.spring.platform.core.env.MainModuleInformation;
 import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
@@ -24,17 +21,11 @@ import io.extact.msa.spring.rms.interfaces.webapi.universal.UserProfileControlle
 
 @Configuration(proxyBeanMethods = false)
 @Import({
-        EnvConfig.class,
         RestControllerConfig.class,
         WebSecurityConfig.class,
         JwtEncodeConfig.class, // for LoginController
 })
 public class WebApiConfig {
-
-    @Bean
-    StartupLogRunner startupLogRunner(MainModuleInformation moduleInfo, ActiveProfileResolver profileResolver) {
-        return new StartupLogRunner(moduleInfo, profileResolver);
-    }
 
     // --- for admin
 

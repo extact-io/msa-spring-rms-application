@@ -44,16 +44,21 @@ rms:
   log:
     server:
       enable: false
+  jwt-encode:
+    enable: true
+    private-key: classpath:/jwt.key
+    clock:
+      type: SYSTEM
+      fixed-datetime: 2024-01-01T12:30 # typeがSYSTEMの場合は無視される
+    claim:
+      issuer: JsonWebTokenIntegrationTest
+      exp: 60                 # 有効期限（分単位）
   jwt-deencode:
     public-key: classpath:/jwt.pub.key
     claim:
       issuer: ${rms.jwt-encode.claim.issuer}
   rest:
     controller:
-      format:
-        date: ${spring.mvc.format.date}
-        date-time: ${spring.mvc.format.date-time}
-    client:
       format:
         date: ${spring.mvc.format.date}
         date-time: ${spring.mvc.format.date-time}
