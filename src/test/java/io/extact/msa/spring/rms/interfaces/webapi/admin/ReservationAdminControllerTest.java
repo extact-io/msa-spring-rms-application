@@ -44,7 +44,8 @@ import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationUpdateRequest
 @ActiveProfiles("test")
 class ReservationAdminControllerTest {
 
-    private static final ReservationCreatable testCreator = new ReservationCreatable() {};
+    private static final ReservationCreatable testCreator = new ReservationCreatable() {
+    };
     private static DateTimeFormatter dateTimeFormatter;
 
     @Autowired
@@ -67,7 +68,9 @@ class ReservationAdminControllerTest {
     }
 
     @BeforeAll
-    static void beforeAll(@Value("${rms.rest.client.format.date-time}") String dateTimePattern) {
+    static void beforeAll(
+            @Value("${rms.persistence.reservation.remote.format.date-time}") //
+            String dateTimePattern) {
         dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
     }
 
@@ -77,7 +80,7 @@ class ReservationAdminControllerTest {
 
         // given
         when(reservationService.getAll())
-            .thenReturn(List.of(model1, model2, model3));
+                .thenReturn(List.of(model1, model2, model3));
 
         // when
         mockMvc.perform(get("/admin/reservations"))
@@ -110,7 +113,7 @@ class ReservationAdminControllerTest {
 
         // given
         when(reservationService.getAll())
-            .thenReturn(List.of());
+                .thenReturn(List.of());
 
         // when
         mockMvc.perform(get("/admin/reservations"))
@@ -329,7 +332,6 @@ class ReservationAdminControllerTest {
         // then
         verify(reservationService, never()).delete(any());
     }
-
 
     private ReservationUpdateRequestBuilder createReservationUpdateRequestBuilder() {
         return ReservationUpdateRequest.builder()

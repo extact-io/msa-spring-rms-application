@@ -72,7 +72,9 @@ class ReserveItemControllerTest {
     }
 
     @BeforeAll
-    static void beforeAll(@Value("${rms.rest.client.format.date-time}") String dateTimePattern) {
+    static void beforeAll(
+            @Value("${rms.persistence.reservation.remote.format.date-time}") //
+            String dateTimePattern) {
         dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
     }
 
