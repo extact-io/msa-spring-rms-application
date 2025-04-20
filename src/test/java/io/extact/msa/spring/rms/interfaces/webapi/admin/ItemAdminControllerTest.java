@@ -1,11 +1,9 @@
 package io.extact.msa.spring.rms.interfaces.webapi.admin;
 
 import static io.extact.msa.spring.rms.PersistedTestData.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
@@ -16,11 +14,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -45,14 +45,14 @@ import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
  * ・Request  → Commadの項目マッピングの確認
  * ・Response ← Modelの項目マッピングの確認
  */
-@WebMvcTest(ItemAdminController.class)
+@WebMvcTest
 @ActiveProfiles("test")
 class ItemAdminControllerTest {
 
     private static final ItemCreatable testCreator = new ItemCreatable() {};
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvcTester mockMvc;
     @Autowired
     private ObjectMapper mapper;
     @MockitoBean
@@ -77,14 +77,21 @@ class ItemAdminControllerTest {
         // given
         when(itemService.getAll())
                 .thenReturn(List.of(item1, item2, item3, item4));
+
         // when
-        mockMvc.perform(get("/admin/items"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(4))
-                .andExpect(jsonPath("$[0].id").value(item1.getId().id()))
-                .andExpect(jsonPath("$[0].serialNo").value(item1.getSerialNo()))
-                .andExpect(jsonPath("$[0].itemName").value(item1.getItemName())); // 2件目以降の確認は省略
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/admin/items")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(4))
+                .hasPathSatisfying("$[0].id", p -> p.assertThat().isEqualTo(item1.getId().id()))
+                .hasPathSatisfying("$[0].serialNo", p -> p.assertThat().isEqualTo(item1.getSerialNo()))
+                .hasPathSatisfying("$[0].itemName", p -> p.assertThat().isEqualTo(item1.getItemName())); // 2件目以降の確認は省略
     }
 
     @Test
@@ -94,11 +101,18 @@ class ItemAdminControllerTest {
         // given
         when(itemService.getAll())
                 .thenReturn(List.of());
+
         // when
-        mockMvc.perform(get("/admin/items"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/admin/items")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
     }
 
     @Test
@@ -108,12 +122,16 @@ class ItemAdminControllerTest {
         // @WithMockUserなし
 
         // when
-        mockMvc.perform(get("/admin/items"))
-                // then
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/admin/items")
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(itemService, never()).getAll();
+
     }
 
     @Test
@@ -132,14 +150,24 @@ class ItemAdminControllerTest {
                 .thenReturn(testCreator.newInstance(new ItemId(5), req.serialNo(), req.itemName()));
 
         // when
-        mockMvc.perform(post("/admin/items")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(5))
-                .andExpect(jsonPath("$.serialNo").value("newNo"))
-                .andExpect(jsonPath("$.itemName").value("追加アイテム"));
+                .content(body)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(5))
+                .hasPathSatisfying("$.serialNo", p -> p.assertThat().isEqualTo("newNo"))
+                .hasPathSatisfying("$.itemName", p -> p.assertThat().isEqualTo("追加アイテム"));
+                // -- JSONデシリアライズを使うのであれば↓のようにも簡潔にできる
+                //.convertTo(ItemAdminResponse.class)
+                //.extracting("id", "serialNo", "itemName")
+                //.containsExactly(5, "newNo", "追加アイテム");
     }
 
     @Test
@@ -152,18 +180,19 @@ class ItemAdminControllerTest {
         String body = mapper.writeValueAsString(request);
 
         // when
-        mockMvc.perform(post("/admin/items")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("serialNo") //
-                )));
+                .content(body)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "serialNo");
+
         verify(itemService, never()).add(any());
     }
 
@@ -183,13 +212,18 @@ class ItemAdminControllerTest {
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
         // when
-        mockMvc.perform(post("/admin/items")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isConflict())
-                .andExpect(content().string(containsString("DUPLICATE")));
+                .content(body)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.CONFLICT)
+                .bodyText()
+                .contains("DUPLICATE");
     }
 
     @Test
@@ -203,14 +237,16 @@ class ItemAdminControllerTest {
         String body = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/admin/items")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+                .content(body)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(itemService, never()).add(any());
     }
 
@@ -231,14 +267,20 @@ class ItemAdminControllerTest {
                 .thenReturn(testCreator.newInstance(new ItemId(5), req.serialNo(), req.itemName()));
 
         // when
-        mockMvc.perform(put("/admin/items")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(5))
-                .andExpect(jsonPath("$.serialNo").value("UPDATE-1"))
-                .andExpect(jsonPath("$.itemName").value("UPDATE-2"));
+                .content(body)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(5))
+                .hasPathSatisfying("$.serialNo", p -> p.assertThat().isEqualTo("UPDATE-1"))
+                .hasPathSatisfying("$.itemName", p -> p.assertThat().isEqualTo("UPDATE-2"));
     }
 
     @Test
@@ -253,19 +295,18 @@ class ItemAdminControllerTest {
         String body = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/admin/items")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("id"), //
-                        containsString("serialNo"), //
-                        containsString("itemName"))));
+                .content(body)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "id", "serialNo", "itemName");
         verify(itemService, never()).update(any());
     }
 
@@ -285,13 +326,19 @@ class ItemAdminControllerTest {
         when(itemService.update(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
-        mockMvc.perform(put("/admin/items")
+        // when
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+                .content(body)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyText()
+                .contains("NOT_FOUND");
     }
 
     @Test
@@ -309,13 +356,19 @@ class ItemAdminControllerTest {
         when(itemService.update(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
-        mockMvc.perform(put("/admin/items")
+        // when
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isConflict())
-                .andExpect(content().string(containsString("DUPLICATE")));
+                .content(body)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.CONFLICT)
+                .bodyText()
+                .contains("DUPLICATE");
     }
 
     @Test
@@ -329,14 +382,17 @@ class ItemAdminControllerTest {
                 .build();
         String body = mapper.writeValueAsString(req);
 
-        mockMvc.perform(put("/admin/items")
+        // when
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/items")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(body))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+                .content(body)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(itemService, never()).update(any());
     }
 
@@ -349,9 +405,14 @@ class ItemAdminControllerTest {
         Mockito.doNothing().when(itemService).delete(new ItemId(deleteId));
 
         // when
-        mockMvc.perform(delete("/admin/items/{id}", deleteId))
-                // then
-                .andExpect(status().isOk());
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/items/{id}", deleteId)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk();
     }
 
     @Test
@@ -362,15 +423,16 @@ class ItemAdminControllerTest {
         int deleteId = -1;
 
         // when
-        mockMvc.perform(delete("/admin/items/{id}", deleteId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"), //
-                        containsString("id"))));
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/items/{id}", deleteId)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "id");
         verify(itemService, never()).delete(any());
    }
 
@@ -384,11 +446,16 @@ class ItemAdminControllerTest {
                 .when(itemService).delete(new ItemId(deleteId));
 
         // when
-        mockMvc.perform(delete("/admin/items/{id}", deleteId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/items/{id}", deleteId)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyText()
+                .contains("NOT_FOUND");
    }
 
     @Test
@@ -398,12 +465,14 @@ class ItemAdminControllerTest {
         int deleteId = 1;
 
         // when
-        mockMvc.perform(delete("/admin/items/{id}", deleteId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/items/{id}", deleteId)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(itemService, never()).delete(any());
    }
 }
