@@ -1,11 +1,9 @@
 package io.extact.msa.spring.rms.interfaces.webapi.member;
 
 import static io.extact.msa.spring.rms.PersistedTestData.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,11 +18,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -44,7 +44,12 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 
-@WebMvcTest(ReserveItemController.class)
+/**
+ * Controller 単体テスト。
+ * ControllerAdvice / Spring Security / Method Validation を有効にしている。
+ * Spring Boot 3.4 で追加された AssertJ 向け MockMvcTester を使用。
+ */
+@WebMvcTest
 @ActiveProfiles("test")
 class ReserveItemControllerTest {
 
@@ -53,7 +58,7 @@ class ReserveItemControllerTest {
     private static DateTimeFormatter dateTimeFormatter;
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvcTester mockMvc;
     @Autowired
     private ObjectMapper mapper;
     @MockitoBean
@@ -78,59 +83,82 @@ class ReserveItemControllerTest {
         dateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern);
     }
 
+    // ---------------------------------------------------------------------
+    // item
+    // ---------------------------------------------------------------------
+
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testGetItemAll() throws Exception {
+    void testGetItemAll() throws Exception {
 
         // given
         when(reservationService.getItemAll())
                 .thenReturn(List.of(item1, item2, item3, item4));
 
         // when
-        mockMvc.perform(get("/reserve/items"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(4))
-                .andExpect(jsonPath("$[0].id").value(item1.getId().id()))
-                .andExpect(jsonPath("$[0].serialNo").value(item1.getSerialNo()))
-                .andExpect(jsonPath("$[0].itemName").value(item1.getItemName())); // 2件目以降の確認は省略
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(4))
+                .hasPathSatisfying("$[0].id", p -> p.assertThat().isEqualTo(item1.getId().id()))
+                .hasPathSatisfying("$[0].serialNo", p -> p.assertThat().isEqualTo(item1.getSerialNo()))
+                .hasPathSatisfying("$[0].itemName", p -> p.assertThat().isEqualTo(item1.getItemName())); // 2件目以降は省略
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testGetItemAllReturnEmpty() throws Exception {
+    void testGetItemAllReturnEmpty() throws Exception {
 
         // given
         when(reservationService.getItemAll())
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reserve/items"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
 
         // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).getItemAll();
     }
 
     @Test
-    public void testGetItemAllOnAuthenticationError() throws Exception {
+    void testGetItemAllOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUser(roles = "MEMBER")なし
+        // @WithMockUser なし
 
         // when
-        mockMvc.perform(get("/reserve/items"))
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items")
+                .exchange();
 
         // then
+        assertThat(result).hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).getItemAll();
     }
 
+    // ---------------------------------------------------------------------
+    // rentable items
+    // ---------------------------------------------------------------------
+
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindRentableItemAtPeriod() throws Exception {
+    void testFindRentableItemAtPeriod() throws Exception {
 
         // given
         LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
@@ -139,20 +167,26 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of(item2, item4));
 
         // when
-        mockMvc.perform(get("/reserve/items/rentable")
-                .param("from", from.toString())
-                .param("to", to.toString()))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(item2.getId().id()))
-                .andExpect(jsonPath("$[0].serialNo").value(item2.getSerialNo()))
-                .andExpect(jsonPath("$[0].itemName").value(item2.getItemName())); // 2件目以降の確認は省略
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items/rentable")
+                .queryParam("from", from.toString())
+                .queryParam("to", to.toString())
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(2))
+                .hasPathSatisfying("$[0].id", p -> p.assertThat().isEqualTo(item2.getId().id()))
+                .hasPathSatisfying("$[0].serialNo", p -> p.assertThat().isEqualTo(item2.getSerialNo()))
+                .hasPathSatisfying("$[0].itemName", p -> p.assertThat().isEqualTo(item2.getItemName())); // 2件目以降は省略
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindRentableItemAtPeriodReturnEmpty() throws Exception {
+    void testFindRentableItemAtPeriodReturnEmpty() throws Exception {
 
         // given
         LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
@@ -161,12 +195,18 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reserve/items/rentable")
-                .param("from", from.toString())
-                .param("to", to.toString()))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items/rentable")
+                .queryParam("from", from.toString())
+                .queryParam("to", to.toString())
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
 
         // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findRentableItemAtPeriod(from, to);
@@ -174,26 +214,28 @@ class ReserveItemControllerTest {
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindRentableItemAtPeriodOnParameterError() throws Exception {
+    void testFindRentableItemAtPeriodOnParameterError() throws Exception {
 
         // given
         // when
-        mockMvc.perform(get("/reserve/items/rentable")
-                .param("from", ""))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("from") //
-                )));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items/rentable")
+                .queryParam("from", "") // パラメータ不足
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "from");
 
         // then
         verify(reservationService, never()).findRentableItemAtPeriod(any(), any());
     }
 
     @Test
-    public void testFindRentableItemAtPeriodOnAuthenticationError() throws Exception {
+    void testFindRentableItemAtPeriodOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
@@ -201,107 +243,128 @@ class ReserveItemControllerTest {
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
 
         // when
-        mockMvc.perform(get("/reserve/items/rentable")
-                .param("from", from.toString())
-                .param("to", to.toString()))
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items/rentable")
+                .queryParam("from", from.toString())
+                .queryParam("to", to.toString())
+                .exchange();
 
         // then
+        assertThat(result).hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).findRentableItemAtPeriod(any(), any());
     }
 
+    // ---------------------------------------------------------------------
+    // isRentable
+    // ---------------------------------------------------------------------
+
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testIsRentableItemAtPeriod() throws Exception {
+    void testIsRentableItemAtPeriod() throws Exception {
 
         // given
-        ItemId itemid = new ItemId(1);
+        ItemId itemId = new ItemId(1);
         LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
         boolean returnValue = false;
-        when(reservationService.isRentableItemAtPeriod(itemid, from, to))
+        when(reservationService.isRentableItemAtPeriod(itemId, from, to))
                 .thenReturn(returnValue);
 
         // when
-        mockMvc.perform(get("/reserve/items/{itemId}/rentable", itemid.id())
-                .param("from", from.toString())
-                .param("to", to.toString()))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(content().string(String.valueOf(returnValue)));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items/{itemId}/rentable", itemId.id())
+                .queryParam("from", from.toString())
+                .queryParam("to", to.toString())
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyText()
+                .isEqualTo(String.valueOf(returnValue));
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testIsRentableItemAtPeriodOnPathVariableError() throws Exception {
+    void testIsRentableItemAtPeriodOnPathVariableError() throws Exception {
 
         // given
-        String itemid = "a"; // コンバートエラー
-        String from = ""; // リクエストパラメータなしエラー
+        String itemId = "a"; // コンバートエラー
+        String from = ""; // リクエストパラメータなし
         String to = LocalDateTime.of(2025, 1, 1, 12, 0).toString();
 
         // when
-        mockMvc.perform(get("/reserve/items/{itemId}/rentable", itemid)
-                .param("from", from)
-                .param("to", to))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("itemId") // パスパラメータのチェックで中断される
-                )));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items/{itemId}/rentable", itemId)
+                .queryParam("from", from)
+                .queryParam("to", to)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "itemId");
         verify(reservationService, never()).isRentableItemAtPeriod(any(), any(), any());
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testIsRentableItemAtPeriodOnRequestPrameterError() throws Exception {
+    void testIsRentableItemAtPeriodOnRequestParameterError() throws Exception {
 
         // given
-        String itemid = "1";
-        String from = ""; // リクエストパラメータなしエラー
+        String itemId = "1";
+        String from = ""; // リクエストパラメータなし
         String to = LocalDateTime.of(2025, 1, 1, 12, 0).toString();
 
         // when
-        mockMvc.perform(get("/reserve/items/{itemId}/rentable", itemid)
-                .param("from", from)
-                .param("to", to))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("from"))));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items/{itemId}/rentable", itemId)
+                .queryParam("from", from)
+                .queryParam("to", to)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "from");
         verify(reservationService, never()).isRentableItemAtPeriod(any(), any(), any());
     }
 
     @Test
-    public void testIsRentableItemAtPeriodOnAuthenticationError() throws Exception {
+    void testIsRentableItemAtPeriodOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
-        ItemId itemid = new ItemId(1);
+        ItemId itemId = new ItemId(1);
         LocalDateTime from = LocalDateTime.of(2025, 1, 1, 9, 0);
         LocalDateTime to = LocalDateTime.of(2025, 1, 1, 12, 0);
 
         // when
-        mockMvc.perform(get("/reserve/items/{itemId}/rentable", itemid.id())
-                .param("from", from.toString())
-                .param("to", to.toString()))
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/items/{itemId}/rentable", itemId.id())
+                .queryParam("from", from.toString())
+                .queryParam("to", to.toString())
+                .exchange();
 
         // then
+        assertThat(result).hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).isRentableItemAtPeriod(any(), any(), any());
     }
 
+    // ---------------------------------------------------------------------
+    // findReservationByCondition(with itemId)
+    // ---------------------------------------------------------------------
+
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindReservationByItemId() throws Exception {
+    void testFindReservationByItemId() throws Exception {
 
         // given
         Integer itemId = 1;
@@ -312,25 +375,35 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("item-id", itemId.toString()))
-                // then
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
-                .andExpect(jsonPath("$[0].fromDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
-                .andExpect(jsonPath("$[0].toDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
-                .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
-                .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
-                .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
-                .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
-                .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("item-id", itemId.toString())
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(2))
+                .hasPathSatisfying("$[0].id", p -> p.assertThat().isEqualTo(model1.reservation().getId().id()))
+                .hasPathSatisfying("$[0].fromDateTime",
+                        p -> p.assertThat()
+                                .isEqualTo(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .hasPathSatisfying("$[0].toDateTime",
+                        p -> p.assertThat()
+                                .isEqualTo(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
+                .hasPathSatisfying("$[0].note", p -> p.assertThat().isEqualTo(model1.reservation().getNote()))
+                .hasPathSatisfying("$[0].itemId", p -> p.assertThat().isEqualTo(model1.reservation().getItemId().id()))
+                .hasPathSatisfying("$[0].serialNo", p -> p.assertThat().isEqualTo(model1.rentalItem().getSerialNo()))
+                .hasPathSatisfying("$[0].itemName", p -> p.assertThat().isEqualTo(model1.rentalItem().getItemName()))
+                .hasPathSatisfying("$[0].reserverId",
+                        p -> p.assertThat().isEqualTo(model1.reservation().getReserverId().id())); // 2件目以降は省略
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindReservationByItemIdWithFromDate() throws Exception {
+    void testFindReservationByItemIdWithFromDate() throws Exception {
 
         // given
         Integer itemId = 1;
@@ -343,26 +416,36 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("item-id", itemId.toString())
-                .param("from-date", fromDate.toString()))
-                // then
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
-                .andExpect(jsonPath("$[0].fromDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
-                .andExpect(jsonPath("$[0].toDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
-                .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
-                .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
-                .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
-                .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
-                .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("item-id", itemId.toString())
+                .queryParam("from-date", fromDate.toString())
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(2))
+                .hasPathSatisfying("$[0].id", p -> p.assertThat().isEqualTo(model1.reservation().getId().id()))
+                .hasPathSatisfying("$[0].fromDateTime",
+                        p -> p.assertThat()
+                                .isEqualTo(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .hasPathSatisfying("$[0].toDateTime",
+                        p -> p.assertThat()
+                                .isEqualTo(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
+                .hasPathSatisfying("$[0].note", p -> p.assertThat().isEqualTo(model1.reservation().getNote()))
+                .hasPathSatisfying("$[0].itemId", p -> p.assertThat().isEqualTo(model1.reservation().getItemId().id()))
+                .hasPathSatisfying("$[0].serialNo", p -> p.assertThat().isEqualTo(model1.rentalItem().getSerialNo()))
+                .hasPathSatisfying("$[0].itemName", p -> p.assertThat().isEqualTo(model1.rentalItem().getItemName()))
+                .hasPathSatisfying("$[0].reserverId",
+                        p -> p.assertThat().isEqualTo(model1.reservation().getReserverId().id())); // 2件目以降は省略
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindReservationByItemIdWithFromDateNull() throws Exception {
+    void testFindReservationByItemIdWithFromDateNull() throws Exception {
 
         // given
         Integer itemId = 1;
@@ -375,16 +458,23 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("item-id", itemId.toString())
-                .param("from-date", ""))
-                // then
-                .andExpect(jsonPath("$.length()").value(2)); // 以降省略
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("item-id", itemId.toString())
+                .queryParam("from-date", "")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(2)); // 以降省略
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindReservationByItemIdReturnEmpty() throws Exception {
+    void testFindReservationByItemIdReturnEmpty() throws Exception {
 
         // given
         Integer itemId = 1;
@@ -397,20 +487,25 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("item-id", itemId.toString())
-                .param("from-date", fromDate.toString()))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("item-id", itemId.toString())
+                .queryParam("from-date", fromDate.toString())
+                .exchange();
 
-        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
+        // mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findReservationByCondition(cond);
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindReservationByItemIdOnParameterError() throws Exception {
+    void testFindReservationByItemIdOnParameterError() throws Exception {
 
         // given
         Integer invalidItemId = -1;
@@ -421,36 +516,47 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("item-id", invalidItemId.toString()))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("item-id", invalidItemId.toString())
+                .exchange();
 
-        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
+        // mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findReservationByCondition(cond);
     }
 
     @Test
-    public void testFindReservationByItemIdOnAuthenticationError() throws Exception {
+    void testFindReservationByItemIdOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
         Integer itemId = -1;
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("item-id", itemId.toString()))
-                // then
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("item-id", itemId.toString())
+                .exchange();
 
         // then
+        assertThat(result).hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).findReservationByCondition(any());
     }
 
+    // ---------------------------------------------------------------------
+    // findReservationByCondition(with resereverId)
+    // ---------------------------------------------------------------------
+
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindReservationByReserverId() throws Exception {
+    void testFindReservationByReserverId() throws Exception {
 
         // given
         Integer reserverId = 1;
@@ -461,25 +567,35 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("reserver-id", reserverId.toString()))
-                // then
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
-                .andExpect(jsonPath("$[0].fromDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
-                .andExpect(jsonPath("$[0].toDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
-                .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
-                .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
-                .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
-                .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
-                .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("reserver-id", reserverId.toString())
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(2))
+                .hasPathSatisfying("$[0].id", p -> p.assertThat().isEqualTo(model1.reservation().getId().id()))
+                .hasPathSatisfying("$[0].fromDateTime",
+                        p -> p.assertThat()
+                                .isEqualTo(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .hasPathSatisfying("$[0].toDateTime",
+                        p -> p.assertThat()
+                                .isEqualTo(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
+                .hasPathSatisfying("$[0].note", p -> p.assertThat().isEqualTo(model1.reservation().getNote()))
+                .hasPathSatisfying("$[0].itemId", p -> p.assertThat().isEqualTo(model1.reservation().getItemId().id()))
+                .hasPathSatisfying("$[0].serialNo", p -> p.assertThat().isEqualTo(model1.rentalItem().getSerialNo()))
+                .hasPathSatisfying("$[0].itemName", p -> p.assertThat().isEqualTo(model1.rentalItem().getItemName()))
+                .hasPathSatisfying("$[0].reserverId",
+                        p -> p.assertThat().isEqualTo(model1.reservation().getReserverId().id())); // 2件目以降は省略
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindReservationByReserverIdReturnEmpty() throws Exception {
+    void testFindReservationByReserverIdReturnEmpty() throws Exception {
 
         // given
         Integer reserverId = 1;
@@ -490,19 +606,24 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("reserver-id", reserverId.toString()))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("reserver-id", reserverId.toString())
+                .exchange();
 
-        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
+        // mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findReservationByCondition(cond);
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindReservationByReserverIdOnParameterError() throws Exception {
+    void testFindReservationByReserverIdOnParameterError() throws Exception {
 
         // given
         Integer invalidReserverId = -1;
@@ -513,109 +634,148 @@ class ReserveItemControllerTest {
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("reserver-id", invalidReserverId.toString()))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("reserver-id", invalidReserverId.toString())
+                .exchange();
 
-        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
+        // mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).findReservationByCondition(cond);
     }
 
     @Test
-    public void testFindReservationByReserverIdOnAuthenticationError() throws Exception {
+    void testFindReservationByReserverIdOnAuthenticationError() throws Exception {
 
         // given
         // @WithMockUser(roles = "MEMBER")なし
         Integer reserverId = -1;
 
         // when
-        mockMvc.perform(get("/reserve/reservations")
-                .param("reserver-id", reserverId.toString()))
-                // then
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .queryParam("reserver-id", reserverId.toString())
+                .exchange();
 
         // then
+        assertThat(result).hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).findReservationByCondition(any());
     }
 
+    // ---------------------------------------------------------------------
+    // findReservationByCondition(parameter error)
+    // ---------------------------------------------------------------------
+
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testFindReservationOnNoParameterError() throws Exception {
+    void testFindReservationOnNoParameterError() throws Exception {
 
         // given
         // when
-        mockMvc.perform(get("/reserve/reservations"))
-                // then
-                .andExpect(status().isBadRequest())
-                //.andExpect(header("rms-exception").);
-                .andExpect(header().string("rms-exception", RmsRequestCheckException.class.getSimpleName()));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations")
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .hasHeader("rms-exception", RmsRequestCheckException.class.getSimpleName());
         verify(reservationService, never()).findReservationByCondition(any());
     }
 
+    // ---------------------------------------------------------------------
+    // getOwnReservations
+    // ---------------------------------------------------------------------
+
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testGetOwnReservations() throws Exception {
+    void testGetOwnReservations() throws Exception {
 
         // given
         when(reservationService.getOwnReservations())
                 .thenReturn(List.of(model1, model2));
 
         // when
-        mockMvc.perform(get("/reserve/reservations/own"))
-                // then
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(model1.reservation().getId().id()))
-                .andExpect(jsonPath("$[0].fromDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
-                .andExpect(jsonPath("$[0].toDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
-                .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
-                .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
-                .andExpect(jsonPath("$[0].serialNo").value(model1.rentalItem().getSerialNo()))
-                .andExpect(jsonPath("$[0].itemName").value(model1.rentalItem().getItemName()))
-                .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id())); // 2件目以降の確認は省略
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations/own")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(2))
+                .hasPathSatisfying("$[0].id", p -> p.assertThat().isEqualTo(model1.reservation().getId().id()))
+                .hasPathSatisfying("$[0].fromDateTime",
+                        p -> p.assertThat()
+                                .isEqualTo(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .hasPathSatisfying("$[0].toDateTime",
+                        p -> p.assertThat()
+                                .isEqualTo(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
+                .hasPathSatisfying("$[0].note", p -> p.assertThat().isEqualTo(model1.reservation().getNote()))
+                .hasPathSatisfying("$[0].itemId", p -> p.assertThat().isEqualTo(model1.reservation().getItemId().id()))
+                .hasPathSatisfying("$[0].serialNo", p -> p.assertThat().isEqualTo(model1.rentalItem().getSerialNo()))
+                .hasPathSatisfying("$[0].itemName", p -> p.assertThat().isEqualTo(model1.rentalItem().getItemName()))
+                .hasPathSatisfying("$[0].reserverId",
+                        p -> p.assertThat().isEqualTo(model1.reservation().getReserverId().id())); // 2件目以降は省略
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testGetOwnReservationsReturnEmpty() throws Exception {
+    void testGetOwnReservationsReturnEmpty() throws Exception {
 
         // given
         when(reservationService.getOwnReservations())
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/reserve/reservations/own"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations/own")
+                .exchange();
 
-        // then -- mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
+
+        // mockのデフォルトの空リストと判別がつくように呼ばれていることを検証する
         verify(reservationService, only()).getOwnReservations();
     }
 
     @Test
-    public void testGetOwnReservationsOnAuthenticationError() throws Exception {
+    void testGetOwnReservationsOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUser(roles = "MEMBER")なし
+        // @WithMockUser なし
 
         // when
-        mockMvc.perform(get("/reserve/reservations/own"))
-                // then
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/reserve/reservations/own")
+                .exchange();
 
         // then
+        assertThat(result).hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).getOwnReservations();
     }
 
+    // ---------------------------------------------------------------------
+    // reserve
+    // ---------------------------------------------------------------------
+
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testReserve() throws Exception {
+    void testReserve() throws Exception {
 
         // given
         ReserveItemRequest req = createReserveItemRequest();
@@ -636,52 +796,59 @@ class ReserveItemControllerTest {
                         user1));
 
         // when
-        mockMvc.perform(post("/reserve/reservations")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/reserve/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(newId.id()))
-                .andExpect(jsonPath("$.fromDateTime").value(dateTimeFormatter.format(req.fromDateTime())))
-                .andExpect(jsonPath("$.toDateTime").value(dateTimeFormatter.format(req.toDateTime())))
-                .andExpect(jsonPath("$.note").value(req.note()))
-                .andExpect(jsonPath("$.itemId").value(req.itemId()))
-                .andExpect(jsonPath("$.serialNo").value(item1.getSerialNo()))
-                .andExpect(jsonPath("$.itemName").value(item1.getItemName()))
-                .andExpect(jsonPath("$.reserverId").value(reserverId.id()));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(newId.id()))
+                .hasPathSatisfying("$.fromDateTime",
+                        p -> p.assertThat().isEqualTo(dateTimeFormatter.format(req.fromDateTime())))
+                .hasPathSatisfying("$.toDateTime",
+                        p -> p.assertThat().isEqualTo(dateTimeFormatter.format(req.toDateTime())))
+                .hasPathSatisfying("$.note", p -> p.assertThat().isEqualTo(req.note()))
+                .hasPathSatisfying("$.itemId", p -> p.assertThat().isEqualTo(req.itemId()))
+                .hasPathSatisfying("$.serialNo", p -> p.assertThat().isEqualTo(item1.getSerialNo()))
+                .hasPathSatisfying("$.itemName", p -> p.assertThat().isEqualTo(item1.getItemName()))
+                .hasPathSatisfying("$.reserverId", p -> p.assertThat().isEqualTo(reserverId.id()));
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testReserveOnParameterError() throws Exception {
+    void testReserveOnParameterError() throws Exception {
 
         // given
-        ReserveItemRequest req = ReserveItemRequest.builder()
-                .build(); // empty value
+        ReserveItemRequest req = ReserveItemRequest.builder().build(); // empty value
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/reserve/reservations")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/reserve/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("fromDateTime"),
-                        containsString("toDateTime"),
-                        containsString("itemId") //
-                )));
+                .content(requestBody)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました",
+                        "fromDateTime", "toDateTime", "itemId");
         verify(reservationService, never()).reserve(any());
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testReserveOnDuplicate() throws Exception {
+    void testReserveOnDuplicate() throws Exception {
 
+        // given
         ReserveItemRequest req = createReserveItemRequest();
         String requestBody = mapper.writeValueAsString(req);
 
@@ -689,71 +856,87 @@ class ReserveItemControllerTest {
         when(reservationService.reserve(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
-        mockMvc.perform(post("/reserve/reservations")
+        // when
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/reserve/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isConflict())
-                .andExpect(content().string(containsString("DUPLICATE")));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.CONFLICT)
+                .bodyText()
+                .contains("DUPLICATE");
     }
 
     @Test
-    public void testReserveOnAuthenticationError() throws Exception {
+    void testReserveOnAuthenticationError() throws Exception {
 
         // given
         ReserveItemRequest req = createReserveItemRequest();
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/reserve/reservations")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/reserve/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+                .content(requestBody)
+                .exchange();
 
         // then
+        assertThat(result).hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).reserve(any());
     }
 
+    // ---------------------------------------------------------------------
+    // cancel
+    // ---------------------------------------------------------------------
+
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testCancel() throws Exception {
+    void testCancel() throws Exception {
 
         // given
         int reservationId = 1;
         doNothing().when(reservationService).cancel(new ReservationId(reservationId));
 
         // when
-        mockMvc.perform(delete("/reserve/reservations/{id}", reservationId))
-                // then
-                .andExpect(status().isOk());
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/reserve/reservations/{id}", reservationId)
+                .exchange();
+
+        // then
+        assertThat(result).hasStatusOk();
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testCancelOnParameterError() throws Exception {
+    void testCancelOnParameterError() throws Exception {
 
         // given
         int invalidId = -1;
 
         // when
-        mockMvc.perform(delete("/reserve/reservations/{id}", invalidId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"), //
-                        containsString("id"))));
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/reserve/reservations/{id}", invalidId)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "id");
         verify(reservationService, never()).cancel(any());
     }
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testCancelOnOthreUserReservation() throws Exception {
+    void testCancelOnOtherUserReservation() throws Exception {
 
         // given
         int reservationId = 1;
@@ -761,16 +944,25 @@ class ReserveItemControllerTest {
                 .when(reservationService).cancel(new ReservationId(reservationId));
 
         // when
-        mockMvc.perform(delete("/reserve/reservations/{id}", reservationId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isForbidden())
-                .andExpect(content().string(containsString("FORBIDDEN")));
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/reserve/reservations/{id}", reservationId)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.FORBIDDEN)
+                .bodyText()
+                .contains("FORBIDDEN");
     }
+
+    // ---------------------------------------------------------------------
+    // reserve
+    // ---------------------------------------------------------------------
 
     @Test
     @WithMockUser(roles = "MEMBER")
-    public void testDeleteOnNotFound() throws Exception {
+    void testDeleteOnNotFound() throws Exception {
 
         // given
         int reservationId = 999;
@@ -778,28 +970,36 @@ class ReserveItemControllerTest {
                 .when(reservationService).cancel(new ReservationId(reservationId));
 
         // when
-        mockMvc.perform(delete("/reserve/reservations/{id}", reservationId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/reserve/reservations/{id}", reservationId)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyText()
+                .contains("NOT_FOUND");
     }
 
     @Test
-    public void testDeleteOnAuthenticationError() throws Exception {
+    void testDeleteOnAuthenticationError() throws Exception {
 
         // given
         int reservationId = 1;
 
         // when
-        mockMvc.perform(delete("/reserve/reservations/{id}", reservationId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/reserve/reservations/{id}", reservationId)
+                .exchange();
 
         // then
+        assertThat(result).hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).cancel(any());
     }
+
+    // -------------------------------------------------------- private methods
 
     private ReserveItemRequest createReserveItemRequest() {
 

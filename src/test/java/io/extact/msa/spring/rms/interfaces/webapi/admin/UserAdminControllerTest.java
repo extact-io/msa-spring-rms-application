@@ -1,25 +1,26 @@
 package io.extact.msa.spring.rms.interfaces.webapi.admin;
 
 import static io.extact.msa.spring.rms.PersistedTestData.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,14 +36,15 @@ import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 
-@WebMvcTest(UserAdminController.class)
+@WebMvcTest
 @ActiveProfiles("test")
 class UserAdminControllerTest {
 
-    private static final UserCreatable testCreator = new UserCreatable() {};
+    private static final UserCreatable testCreator = new UserCreatable() {
+    };
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvcTester mockMvc;
     @Autowired
     private ObjectMapper mapper;
     @MockitoBean
@@ -52,10 +54,11 @@ class UserAdminControllerTest {
     @Import({
             EnvConfig.class,
             RestControllerConfig.class,
-            WebSecurityConfig.class })
+            WebSecurityConfig.class
+    })
     static class TestConfig {
         @Bean
-        UserAdminController itemAdminController(UserAdminService service) {
+        UserAdminController userAdminController(UserAdminService service) {
             return new UserAdminController(service);
         }
     }
@@ -65,21 +68,27 @@ class UserAdminControllerTest {
     void testGetAll() throws Exception {
 
         // given
-        when(userService.getAll())
-                .thenReturn(List.of(user1, user2));
+        when(userService.getAll()).thenReturn(List.of(user1, user2));
 
         // when
-        mockMvc.perform(get("/admin/users"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(user1.getId().id()))
-                .andExpect(jsonPath("$[0].loginId").value(user1.getLoginId()))
-                .andExpect(jsonPath("$[0].password").value(user1.getPassword()))
-                .andExpect(jsonPath("$[0].userType").value(user1.getUserType().name()))
-                .andExpect(jsonPath("$[0].userName").value(user1.getProfile().getUserName()))
-                .andExpect(jsonPath("$[0].phoneNumber").value(user1.getProfile().getPhoneNumber()))
-                .andExpect(jsonPath("$[0].contact").value(user1.getProfile().getContact()));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/admin/users")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(2))
+                .hasPathSatisfying("$[0].id", p -> p.assertThat().isEqualTo(user1.getId().id()))
+                .hasPathSatisfying("$[0].loginId", p -> p.assertThat().isEqualTo(user1.getLoginId()))
+                .hasPathSatisfying("$[0].password", p -> p.assertThat().isEqualTo(user1.getPassword()))
+                .hasPathSatisfying("$[0].userType", p -> p.assertThat().isEqualTo(user1.getUserType().name()))
+                .hasPathSatisfying("$[0].userName", p -> p.assertThat().isEqualTo(user1.getProfile().getUserName()))
+                .hasPathSatisfying("$[0].phoneNumber",
+                        p -> p.assertThat().isEqualTo(user1.getProfile().getPhoneNumber()))
+                .hasPathSatisfying("$[0].contact", p -> p.assertThat().isEqualTo(user1.getProfile().getContact()));
     }
 
     @Test
@@ -90,23 +99,33 @@ class UserAdminControllerTest {
         when(userService.getAll()).thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/admin/users"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/admin/users")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
     }
 
     @Test
     void testGetAllOnAuthenticationError() throws Exception {
 
         // given
-        // @WithMockUser(roles = "ADMIN")なし
+        // @WithMockUserなし
 
         // when
-        mockMvc.perform(get("/admin/users"))
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/admin/users")
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(userService, never()).getAll();
     }
 
@@ -120,28 +139,34 @@ class UserAdminControllerTest {
 
         UserAddCommand shouldBePassed = req.toCommand();
         when(userService.add(shouldBePassed))
-            .thenReturn(testCreator.newInstance(
-                    new UserId(2),
-                    req.loginId(),
-                    req.password(),
-                    req.userType(),
-                    req.userName(),
-                    req.phoneNumber(),
-                    req.contact()));
+                .thenReturn(testCreator.newInstance(
+                        new UserId(2),
+                        req.loginId(),
+                        req.password(),
+                        req.userType(),
+                        req.userName(),
+                        req.phoneNumber(),
+                        req.contact()));
 
         // when
-        mockMvc.perform(post("/admin/users")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(2))
-                .andExpect(jsonPath("$.loginId").value(req.loginId()))
-                .andExpect(jsonPath("$.password").value(req.password()))
-                .andExpect(jsonPath("$.userType").value(req.userType().name()))
-                .andExpect(jsonPath("$.userName").value(req.userName()))
-                .andExpect(jsonPath("$.phoneNumber").value(req.phoneNumber()))
-                .andExpect(jsonPath("$.contact").value(req.contact()));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(2))
+                .hasPathSatisfying("$.loginId", p -> p.assertThat().isEqualTo(req.loginId()))
+                .hasPathSatisfying("$.password", p -> p.assertThat().isEqualTo(req.password()))
+                .hasPathSatisfying("$.userType", p -> p.assertThat().isEqualTo(req.userType().name()))
+                .hasPathSatisfying("$.userName", p -> p.assertThat().isEqualTo(req.userName()))
+                .hasPathSatisfying("$.phoneNumber", p -> p.assertThat().isEqualTo(req.phoneNumber()))
+                .hasPathSatisfying("$.contact", p -> p.assertThat().isEqualTo(req.contact()));
     }
 
     @Test
@@ -154,20 +179,21 @@ class UserAdminControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/admin/users")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("loginId"),
-                        containsString("password"),
-                        containsString("userType") //
-                )));
+                .content(requestBody)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました",
+                        "loginId",
+                        "password",
+                        "userType");
         verify(userService, never()).add(any());
     }
 
@@ -184,13 +210,18 @@ class UserAdminControllerTest {
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
         // when
-        mockMvc.perform(post("/admin/users")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isConflict())
-                .andExpect(content().string(containsString("DUPLICATE")));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.CONFLICT)
+                .bodyText()
+                .contains("DUPLICATE");
     }
 
     @Test
@@ -201,14 +232,16 @@ class UserAdminControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/admin/users")
+        MvcTestResult result = mockMvc
+                .post()
+                .uri("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+                .content(requestBody)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(userService, never()).add(any());
     }
 
@@ -233,18 +266,24 @@ class UserAdminControllerTest {
                         req.contact()));
 
         // when
-        mockMvc.perform(put("/admin/users")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(req.id()))
-                .andExpect(jsonPath("$.loginId").value(paddingloginId))
-                .andExpect(jsonPath("$.password").value(req.password()))
-                .andExpect(jsonPath("$.userType").value(req.userType().name()))
-                .andExpect(jsonPath("$.userName").value(req.userName()))
-                .andExpect(jsonPath("$.phoneNumber").value(req.phoneNumber()))
-                .andExpect(jsonPath("$.contact").value(req.contact()));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(req.id()))
+                .hasPathSatisfying("$.loginId", p -> p.assertThat().isEqualTo(paddingloginId))
+                .hasPathSatisfying("$.password", p -> p.assertThat().isEqualTo(req.password()))
+                .hasPathSatisfying("$.userType", p -> p.assertThat().isEqualTo(req.userType().name()))
+                .hasPathSatisfying("$.userName", p -> p.assertThat().isEqualTo(req.userName()))
+                .hasPathSatisfying("$.phoneNumber", p -> p.assertThat().isEqualTo(req.phoneNumber()))
+                .hasPathSatisfying("$.contact", p -> p.assertThat().isEqualTo(req.contact()));
     }
 
     @Test
@@ -257,19 +296,20 @@ class UserAdminControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/admin/users")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("password"),
-                        containsString("userType") //
-                )));
+                .content(requestBody)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました",
+                        "password",
+                        "userType");
         verify(userService, never()).update(any());
     }
 
@@ -286,13 +326,18 @@ class UserAdminControllerTest {
                 .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
         // when
-        mockMvc.perform(put("/admin/users")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyText()
+                .contains("NOT_FOUND");
     }
 
     @Test
@@ -303,12 +348,17 @@ class UserAdminControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/admin/users")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
+        verify(userService, never()).update(any());
     }
 
     @Test
@@ -317,12 +367,17 @@ class UserAdminControllerTest {
 
         // given
         int userId = 1;
-        doNothing().when(userService).delete(new UserId(userId));
+        Mockito.doNothing().when(userService).delete(new UserId(userId));
 
         // when
-        mockMvc.perform(delete("/admin/users/{id}", userId))
-                // then
-                .andExpect(status().isOk());
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/users/{id}", userId)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk();
     }
 
     @Test
@@ -333,15 +388,16 @@ class UserAdminControllerTest {
         int invalidId = -1;
 
         // when
-        mockMvc.perform(delete("/admin/users/{id}", invalidId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"), //
-                        containsString("id"))));
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/users/{id}", invalidId)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "id");
         verify(userService, never()).delete(any());
     }
 
@@ -351,15 +407,20 @@ class UserAdminControllerTest {
 
         // given
         int userId = 999;
-        doThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND))
+        Mockito.doThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND))
                 .when(userService).delete(new UserId(userId));
 
         // when
-        mockMvc.perform(delete("/admin/users/{id}", userId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/users/{id}", userId)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyText()
+                .contains("NOT_FOUND");
     }
 
     @Test
@@ -369,12 +430,14 @@ class UserAdminControllerTest {
         int userId = 1;
 
         // when
-        mockMvc.perform(delete("/admin/users/{id}", userId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/users/{id}", userId)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(userService, never()).delete(any());
     }
 

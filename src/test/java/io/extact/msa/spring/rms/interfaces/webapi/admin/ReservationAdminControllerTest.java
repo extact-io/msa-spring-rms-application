@@ -1,11 +1,9 @@
 package io.extact.msa.spring.rms.interfaces.webapi.admin;
 
 import static io.extact.msa.spring.rms.PersistedTestData.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,17 +11,20 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,7 +41,7 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationUpdateRequest.ReservationUpdateRequestBuilder;
 
-@WebMvcTest(ReservationAdminController.class)
+@WebMvcTest
 @ActiveProfiles("test")
 class ReservationAdminControllerTest {
 
@@ -49,7 +50,7 @@ class ReservationAdminControllerTest {
     private static DateTimeFormatter dateTimeFormatter;
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvcTester mockMvc;
     @Autowired
     private ObjectMapper mapper;
     @MockitoBean
@@ -59,7 +60,8 @@ class ReservationAdminControllerTest {
     @Import({
             EnvConfig.class,
             RestControllerConfig.class,
-            WebSecurityConfig.class })
+            WebSecurityConfig.class
+    })
     static class TestConfig {
         @Bean
         ReservationAdminController reservationAdminController(ReservationAdminService service) {
@@ -83,28 +85,43 @@ class ReservationAdminControllerTest {
                 .thenReturn(List.of(model1, model2, model3));
 
         // when
-        mockMvc.perform(get("/admin/reservations"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(3))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].fromDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
-                .andExpect(jsonPath("$[0].toDateTime")
-                        .value(dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
-                .andExpect(jsonPath("$[0].note").value(model1.reservation().getNote()))
-                .andExpect(jsonPath("$[0].itemId").value(model1.reservation().getItemId().id()))
-                .andExpect(jsonPath("$[0].reserverId").value(model1.reservation().getReserverId().id()))
-                .andExpect(jsonPath("$[0].item.id").value(model1.rentalItem().getId().id()))
-                .andExpect(jsonPath("$[0].item.serialNo").value(model1.rentalItem().getSerialNo()))
-                .andExpect(jsonPath("$[0].item.itemName").value(model1.rentalItem().getItemName()))
-                .andExpect(jsonPath("$[0].reserver.id").value(model1.reserver().getId().id()))
-                .andExpect(jsonPath("$[0].reserver.loginId").value(model1.reserver().getLoginId()))
-                .andExpect(jsonPath("$[0].reserver.password").value(model1.reserver().getPassword()))
-                .andExpect(jsonPath("$[0].reserver.userType").value(model1.reserver().getUserType().name()))
-                .andExpect(jsonPath("$[0].reserver.userName").value(model1.reserver().getProfile().getUserName()))
-                .andExpect(jsonPath("$[0].reserver.phoneNumber").value(model1.reserver().getProfile().getPhoneNumber()))
-                .andExpect(jsonPath("$[0].reserver.contact").value(model1.reserver().getProfile().getContact()));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/admin/reservations")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(3))
+                .hasPathSatisfying("$[0].id", p -> p.assertThat().isEqualTo(model1.reservation().getId().id()))
+                .hasPathSatisfying("$[0].fromDateTime", p -> p.assertThat().isEqualTo(
+                        dateTimeFormatter.format(model1.reservation().getPeriod().getFrom())))
+                .hasPathSatisfying("$[0].toDateTime", p -> p.assertThat().isEqualTo(
+                        dateTimeFormatter.format(model1.reservation().getPeriod().getTo())))
+                .hasPathSatisfying("$[0].note", p -> p.assertThat().isEqualTo(model1.reservation().getNote()))
+                .hasPathSatisfying("$[0].itemId", p -> p.assertThat().isEqualTo(model1.reservation().getItemId().id()))
+                .hasPathSatisfying("$[0].reserverId",
+                        p -> p.assertThat().isEqualTo(model1.reservation().getReserverId().id()))
+                .hasPathSatisfying("$[0].item.id", p -> p.assertThat().isEqualTo(model1.rentalItem().getId().id()))
+                .hasPathSatisfying("$[0].item.serialNo",
+                        p -> p.assertThat().isEqualTo(model1.rentalItem().getSerialNo()))
+                .hasPathSatisfying("$[0].item.itemName",
+                        p -> p.assertThat().isEqualTo(model1.rentalItem().getItemName()))
+                .hasPathSatisfying("$[0].reserver.id", p -> p.assertThat().isEqualTo(model1.reserver().getId().id()))
+                .hasPathSatisfying("$[0].reserver.loginId",
+                        p -> p.assertThat().isEqualTo(model1.reserver().getLoginId()))
+                .hasPathSatisfying("$[0].reserver.password",
+                        p -> p.assertThat().isEqualTo(model1.reserver().getPassword()))
+                .hasPathSatisfying("$[0].reserver.userType",
+                        p -> p.assertThat().isEqualTo(model1.reserver().getUserType().name()))
+                .hasPathSatisfying("$[0].reserver.userName",
+                        p -> p.assertThat().isEqualTo(model1.reserver().getProfile().getUserName()))
+                .hasPathSatisfying("$[0].reserver.phoneNumber",
+                        p -> p.assertThat().isEqualTo(model1.reserver().getProfile().getPhoneNumber()))
+                .hasPathSatisfying("$[0].reserver.contact",
+                        p -> p.assertThat().isEqualTo(model1.reserver().getProfile().getContact()));
     }
 
     @Test
@@ -116,10 +133,16 @@ class ReservationAdminControllerTest {
                 .thenReturn(List.of());
 
         // when
-        mockMvc.perform(get("/admin/reservations"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/admin/reservations")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.length()", p -> p.assertThat().isEqualTo(0));
     }
 
     @Test
@@ -129,10 +152,14 @@ class ReservationAdminControllerTest {
         // @WithMockUser(roles = "ADMIN")なし
 
         // when
-        mockMvc.perform(get("/admin/reservations"))
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/admin/reservations")
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).getAll();
     }
 
@@ -157,27 +184,38 @@ class ReservationAdminControllerTest {
                         user2));
 
         // when
-        mockMvc.perform(put("/admin/reservations")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(req.id()))
-                .andExpect(jsonPath("$.fromDateTime").value(dateTimeFormatter.format(req.fromDateTime())))
-                .andExpect(jsonPath("$.toDateTime").value(dateTimeFormatter.format(req.toDateTime())))
-                .andExpect(jsonPath("$.note").value(req.note()))
-                .andExpect(jsonPath("$.itemId").value(reservation2.getItemId().id()))
-                .andExpect(jsonPath("$.reserverId").value(reservation2.getReserverId().id()))
-                .andExpect(jsonPath("$.item.id").value(item3.getId().id()))
-                .andExpect(jsonPath("$.item.serialNo").value(item3.getSerialNo()))
-                .andExpect(jsonPath("$.item.itemName").value(item3.getItemName()))
-                .andExpect(jsonPath("$.reserver.id").value(user2.getId().id()))
-                .andExpect(jsonPath("$.reserver.loginId").value(user2.getLoginId()))
-                .andExpect(jsonPath("$.reserver.password").value(user2.getPassword()))
-                .andExpect(jsonPath("$.reserver.userType").value(user2.getUserType().name()))
-                .andExpect(jsonPath("$.reserver.userName").value(user2.getProfile().getUserName()))
-                .andExpect(jsonPath("$.reserver.phoneNumber").value(user2.getProfile().getPhoneNumber()))
-                .andExpect(jsonPath("$.reserver.contact").value(user2.getProfile().getContact()));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(req.id()))
+                .hasPathSatisfying("$.fromDateTime",
+                        p -> p.assertThat().isEqualTo(dateTimeFormatter.format(req.fromDateTime())))
+                .hasPathSatisfying("$.toDateTime",
+                        p -> p.assertThat().isEqualTo(dateTimeFormatter.format(req.toDateTime())))
+                .hasPathSatisfying("$.note", p -> p.assertThat().isEqualTo(req.note()))
+                .hasPathSatisfying("$.itemId", p -> p.assertThat().isEqualTo(reservation2.getItemId().id()))
+                .hasPathSatisfying("$.reserverId", p -> p.assertThat().isEqualTo(reservation2.getReserverId().id()))
+                .hasPathSatisfying("$.item.id", p -> p.assertThat().isEqualTo(item3.getId().id()))
+                .hasPathSatisfying("$.item.serialNo", p -> p.assertThat().isEqualTo(item3.getSerialNo()))
+                .hasPathSatisfying("$.item.itemName", p -> p.assertThat().isEqualTo(item3.getItemName()))
+                .hasPathSatisfying("$.reserver.id", p -> p.assertThat().isEqualTo(user2.getId().id()))
+                .hasPathSatisfying("$.reserver.loginId", p -> p.assertThat().isEqualTo(user2.getLoginId()))
+                .hasPathSatisfying("$.reserver.password", p -> p.assertThat().isEqualTo(user2.getPassword()))
+                .hasPathSatisfying("$.reserver.userType", p -> p.assertThat().isEqualTo(user2.getUserType().name()))
+                .hasPathSatisfying("$.reserver.userName",
+                        p -> p.assertThat().isEqualTo(user2.getProfile().getUserName()))
+                .hasPathSatisfying("$.reserver.phoneNumber",
+                        p -> p.assertThat().isEqualTo(user2.getProfile().getPhoneNumber()))
+                .hasPathSatisfying("$.reserver.contact",
+                        p -> p.assertThat().isEqualTo(user2.getProfile().getContact()));
     }
 
     @Test
@@ -185,25 +223,25 @@ class ReservationAdminControllerTest {
     void testUpdateOnParameterError() throws Exception {
 
         // given
-        ReservationUpdateRequest request = ReservationUpdateRequest.builder()
-                .build(); // empty value
-        String requestBody = mapper.writeValueAsString(request);
+        ReservationUpdateRequest req = ReservationUpdateRequest.builder().build();
+        String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/admin/reservations")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("id"),
-                        containsString("fromDateTime"),
-                        containsString("toDateTime") //
-                )));
+                .content(requestBody)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました",
+                        "id",
+                        "fromDateTime",
+                        "toDateTime");
         verify(reservationService, never()).update(any());
     }
 
@@ -220,13 +258,18 @@ class ReservationAdminControllerTest {
                 .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
         // when
-        mockMvc.perform(put("/admin/reservations")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyText()
+                .contains("NOT_FOUND");
     }
 
     @Test
@@ -241,13 +284,19 @@ class ReservationAdminControllerTest {
         when(reservationService.update(shouldBePassed))
                 .thenThrow(new BusinessFlowException("from mock", CauseType.DUPLICATE));
 
-        mockMvc.perform(put("/admin/reservations")
+        // given
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isConflict())
-                .andExpect(content().string(containsString("DUPLICATE")));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.CONFLICT)
+                .bodyText()
+                .contains("DUPLICATE");
     }
 
     @Test
@@ -258,12 +307,17 @@ class ReservationAdminControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/admin/reservations")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/admin/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
+        verify(reservationService, never()).update(any());
     }
 
     @Test
@@ -272,12 +326,17 @@ class ReservationAdminControllerTest {
 
         // given
         int reservationId = 1;
-        doNothing().when(reservationService).delete(new ReservationId(reservationId));
+        Mockito.doNothing().when(reservationService).delete(new ReservationId(reservationId));
 
         // when
-        mockMvc.perform(delete("/admin/reservations/{id}", reservationId))
-                // then
-                .andExpect(status().isOk());
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/reservations/{id}", reservationId)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk();
     }
 
     @Test
@@ -288,15 +347,16 @@ class ReservationAdminControllerTest {
         int invalidId = -1;
 
         // when
-        mockMvc.perform(delete("/admin/reservations/{id}", invalidId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"), //
-                        containsString("id"))));
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/reservations/{id}", invalidId)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "id");
         verify(reservationService, never()).delete(any());
     }
 
@@ -306,15 +366,20 @@ class ReservationAdminControllerTest {
 
         // given
         int reservationId = 999;
-        doThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND))
+        Mockito.doThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND))
                 .when(reservationService).delete(new ReservationId(reservationId));
 
-        // when
-        mockMvc.perform(delete("/admin/reservations/{id}", reservationId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+        //  when
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/reservations/{id}", reservationId)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyText()
+                .contains("NOT_FOUND");
     }
 
     @Test
@@ -324,12 +389,14 @@ class ReservationAdminControllerTest {
         int reservationId = 1;
 
         // when
-        mockMvc.perform(delete("/admin/reservations/{id}", reservationId))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .delete()
+                .uri("/admin/reservations/{id}", reservationId)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(reservationService, never()).delete(any());
     }
 

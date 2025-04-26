@@ -1,15 +1,10 @@
 package io.extact.msa.spring.rms.interfaces.webapi.universal;
 
 import static io.extact.msa.spring.rms.PersistedTestData.*;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +12,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,16 +26,15 @@ import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
-import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 
-@WebMvcTest(LoginController.class)
+@WebMvcTest
 @ActiveProfiles("test")
-public class LoginControllerTest {
+class LoginControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvcTester mockMvc;
     @Autowired
     private ObjectMapper mapper;
     @MockitoBean
@@ -46,10 +42,11 @@ public class LoginControllerTest {
 
     @Configuration(proxyBeanMethods = false)
     @Import({
-            EnvConfig.class,
-            RestControllerConfig.class,
-            WebSecurityConfig.class,
-            JwtEncodeConfig.class })
+        EnvConfig.class,
+        RestControllerConfig.class,
+        WebSecurityConfig.class,
+        JwtEncodeConfig.class
+    })
     static class TestConfig {
         @Bean
         LoginController loginController(LoginService service) {
@@ -59,147 +56,171 @@ public class LoginControllerTest {
 
     @Test
     void testLoginForGet() throws Exception {
-
         // given
         String loginId = "loginId";
         String password = "password";
         when(loginService.login(loginId, password))
-                .thenReturn(PersistedTestData.user1);
+            .thenReturn(user1);
 
         // when
-        mockMvc.perform(get("/login")
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/login")
                 .param("loginId", loginId)
-                .param("password", password))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(header().string(AUTHORIZATION, not(blankOrNullString())))
-                .andExpect(jsonPath("$.id").value(user1.getId().id()))
-                .andExpect(jsonPath("$.loginId").value(user1.getLoginId()))
-                .andExpect(jsonPath("$.password").value(user1.getPassword()))
-                .andExpect(jsonPath("$.userType").value(user1.getUserType().name()))
-                .andExpect(jsonPath("$.userName").value(user1.getProfile().getUserName()))
-                .andExpect(jsonPath("$.phoneNumber").value(user1.getProfile().getPhoneNumber()))
-                .andExpect(jsonPath("$.contact").value(user1.getProfile().getContact()));
+                .param("password", password)
+                .exchange();
+
+        // then
+        assertThat(result)
+            .hasStatusOk();
+        assertThat(result)
+            .headers()
+            .hasEntrySatisfying(AUTHORIZATION, v -> assertThat(v)
+                    .element(0)
+                    .asString()
+                    .matches("^Bearer .+$"));
+        assertThat(result)
+            .bodyJson()
+            .hasPathSatisfying("$.id",    p -> p.assertThat().isEqualTo(user1.getId().id()))
+            .hasPathSatisfying("$.loginId", p -> p.assertThat().isEqualTo(user1.getLoginId()))
+            .hasPathSatisfying("$.password", p -> p.assertThat().isEqualTo(user1.getPassword()))
+            .hasPathSatisfying("$.userType", p -> p.assertThat().isEqualTo(user1.getUserType().name()))
+            .hasPathSatisfying("$.userName", p -> p.assertThat().isEqualTo(user1.getProfile().getUserName()))
+            .hasPathSatisfying("$.phoneNumber", p -> p.assertThat().isEqualTo(user1.getProfile().getPhoneNumber()))
+            .hasPathSatisfying("$.contact", p -> p.assertThat().isEqualTo(user1.getProfile().getContact()));
     }
 
     @Test
     void testLoginForGetOnFail() throws Exception {
-
         // given
         String loginId = "errorId";
         String password = "errorPass";
         when(loginService.login(loginId, password))
-                .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
+            .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
         // when
-        mockMvc.perform(get("/login")
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/login")
                 .param("loginId", loginId)
-                .param("password", password))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(header().doesNotExist(AUTHORIZATION))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+                .param("password", password)
+                .exchange();
+
+        // then
+        assertThat(result)
+            .hasStatus(HttpStatus.NOT_FOUND)
+            .doesNotContainHeader(AUTHORIZATION)
+            .bodyText()
+            .contains("NOT_FOUND");
     }
 
     @Test
     void testLoginForGetOnParameterError() throws Exception {
-
         // given
         String loginId = "12345678901"; // 桁数オーバー
         String password = "12345678901"; // 桁数オーバー
 
         // when
-        mockMvc.perform(get("/login")
-                .param("loginId", loginId)
-                .param("password", password))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("loginId"),
-                        containsString("password") //
-                )));
+        MvcTestResult result = mockMvc
+            .get()
+            .uri("/login")
+            .param("loginId", loginId)
+            .param("password", password)
+            .exchange();
 
         // then
+        assertThat(result)
+            .hasStatus(HttpStatus.BAD_REQUEST)
+            .bodyText()
+            .contains("パラメーターエラーが発生しました", "loginId", "password");
         verify(loginService, never()).login(any(), any());
     }
 
     @Test
     void testLoginForPost() throws Exception {
-
         // given
         String loginId = "loginId";
         String password = "password";
         LoginRequest req = new LoginRequest(loginId, password);
-        String requestBody = mapper.writeValueAsString(req);
-
+        String body = mapper.writeValueAsString(req);
         when(loginService.login(loginId, password))
-                .thenReturn(PersistedTestData.user1);
+            .thenReturn(user1);
 
         // when
-        mockMvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(header().string(AUTHORIZATION, not(blankOrNullString())))
-                .andExpect(jsonPath("$.id").value(user1.getId().id()))
-                .andExpect(jsonPath("$.loginId").value(user1.getLoginId()))
-                .andExpect(jsonPath("$.password").value(user1.getPassword()))
-                .andExpect(jsonPath("$.userType").value(user1.getUserType().name()))
-                .andExpect(jsonPath("$.userName").value(user1.getProfile().getUserName()))
-                .andExpect(jsonPath("$.phoneNumber").value(user1.getProfile().getPhoneNumber()))
-                .andExpect(jsonPath("$.contact").value(user1.getProfile().getContact()));
+        MvcTestResult result = mockMvc
+            .post()
+            .uri("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(body)
+            .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk();
+        assertThat(result)
+                .headers()
+                .hasEntrySatisfying(AUTHORIZATION, v -> assertThat(v)
+                        .element(0)
+                        .asString()
+                        .isNotBlank());
+        assertThat(result)
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(user1.getId().id()))
+                .hasPathSatisfying("$.loginId", p -> p.assertThat().isEqualTo(user1.getLoginId()))
+                .hasPathSatisfying("$.password", p -> p.assertThat().isEqualTo(user1.getPassword()))
+                .hasPathSatisfying("$.userType", p -> p.assertThat().isEqualTo(user1.getUserType().name()))
+                .hasPathSatisfying("$.userName", p -> p.assertThat().isEqualTo(user1.getProfile().getUserName()))
+                .hasPathSatisfying("$.phoneNumber", p -> p.assertThat().isEqualTo(user1.getProfile().getPhoneNumber()))
+                .hasPathSatisfying("$.contact", p -> p.assertThat().isEqualTo(user1.getProfile().getContact()));
     }
 
     @Test
     void testLoginForPostOnFail() throws Exception {
-
         // given
         String loginId = "errorId";
         String password = "errorPass";
         LoginRequest req = new LoginRequest(loginId, password);
-        String requestBody = mapper.writeValueAsString(req);
-
+        String body = mapper.writeValueAsString(req);
         when(loginService.login(loginId, password))
-                .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
+            .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
         // when
-        mockMvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(header().doesNotExist(AUTHORIZATION))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+        MvcTestResult result = mockMvc
+            .post()
+            .uri("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(body)
+            .exchange();
+
+        // then
+        assertThat(result)
+            .hasStatus(HttpStatus.NOT_FOUND)
+            .doesNotContainHeader(AUTHORIZATION)
+            .bodyText()
+            .contains("NOT_FOUND");
     }
 
     @Test
     void testLoginForPostOnParameterError() throws Exception {
-
         // given
         String loginId = "12345678901"; // 桁数オーバー
         String password = "12345678901"; // 桁数オーバー
         LoginRequest req = new LoginRequest(loginId, password);
-        String requestBody = mapper.writeValueAsString(req);
+        String body = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(post("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("loginId"),
-                        containsString("password") //
-                )));
+        MvcTestResult result = mockMvc
+            .post()
+            .uri("/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(body)
+            .exchange();
 
         // then
+        assertThat(result)
+            .hasStatus(HttpStatus.BAD_REQUEST)
+            .bodyText()
+            .contains("パラメーターエラーが発生しました", "loginId", "password");
         verify(loginService, never()).login(any(), any());
     }
 }

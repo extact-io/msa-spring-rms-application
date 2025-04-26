@@ -1,11 +1,9 @@
 package io.extact.msa.spring.rms.interfaces.webapi.universal;
 
 import static io.extact.msa.spring.rms.PersistedTestData.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +11,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.assertj.MockMvcTester;
+import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -30,14 +30,15 @@ import io.extact.msa.spring.rms.application.universal.UserProfileUpdateCommand;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 
-@WebMvcTest(UserProfileController.class)
+@WebMvcTest
 @ActiveProfiles("test")
 class UserProfileControllerTest {
 
-    private static final UserCreatable testCreator = new UserCreatable() {};
+    private static final UserCreatable testCreator = new UserCreatable() {
+    };
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvcTester mockMvc;
     @Autowired
     private ObjectMapper mapper;
     @MockitoBean
@@ -47,7 +48,8 @@ class UserProfileControllerTest {
     @Import({
             EnvConfig.class,
             RestControllerConfig.class,
-            WebSecurityConfig.class })
+            WebSecurityConfig.class
+    })
     static class TestConfig {
         @Bean
         UserProfileController userProfileController(UserProfileService service) {
@@ -60,20 +62,25 @@ class UserProfileControllerTest {
     void testGetOwnProfile() throws Exception {
 
         // given
-        when(profileService.getOwnProfile())
-                .thenReturn(user1);
+        when(profileService.getOwnProfile()).thenReturn(user1);
 
         // when
-        mockMvc.perform(get("/profiles/own"))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user1.getId().id()))
-                .andExpect(jsonPath("$.loginId").value(user1.getLoginId()))
-                .andExpect(jsonPath("$.password").value(user1.getPassword()))
-                .andExpect(jsonPath("$.userType").value(user1.getUserType().name()))
-                .andExpect(jsonPath("$.userName").value(user1.getProfile().getUserName()))
-                .andExpect(jsonPath("$.phoneNumber").value(user1.getProfile().getPhoneNumber()))
-                .andExpect(jsonPath("$.contact").value(user1.getProfile().getContact()));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/profiles/own")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(user1.getId().id()))
+                .hasPathSatisfying("$.loginId", p -> p.assertThat().isEqualTo(user1.getLoginId()))
+                .hasPathSatisfying("$.password", p -> p.assertThat().isEqualTo(user1.getPassword()))
+                .hasPathSatisfying("$.userType", p -> p.assertThat().isEqualTo(user1.getUserType().name()))
+                .hasPathSatisfying("$.userName", p -> p.assertThat().isEqualTo(user1.getProfile().getUserName()))
+                .hasPathSatisfying("$.phoneNumber", p -> p.assertThat().isEqualTo(user1.getProfile().getPhoneNumber()))
+                .hasPathSatisfying("$.contact", p -> p.assertThat().isEqualTo(user1.getProfile().getContact()));
     }
 
     @Test
@@ -85,11 +92,16 @@ class UserProfileControllerTest {
                 .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
         // when
-        mockMvc.perform(get("/profiles/own"))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/profiles/own")
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyText()
+                .contains("NOT_FOUND");
     }
 
     @Test
@@ -98,11 +110,14 @@ class UserProfileControllerTest {
         // @WithMockUserなし
 
         // when
-        mockMvc.perform(get("/profiles/own"))
-                // then
-                .andExpect(status().isUnauthorized());
+        MvcTestResult result = mockMvc
+                .get()
+                .uri("/profiles/own")
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(profileService, never()).getOwnProfile();
     }
 
@@ -126,18 +141,24 @@ class UserProfileControllerTest {
                         req.contact()));
 
         // when
-        mockMvc.perform(put("/profiles/own")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/profiles/own")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(user1.getId().id()))
-                .andExpect(jsonPath("$.loginId").value(user1.getLoginId()))
-                .andExpect(jsonPath("$.password").value(req.password()))
-                .andExpect(jsonPath("$.userType").value(user1.getUserType().name()))
-                .andExpect(jsonPath("$.userName").value(req.userName()))
-                .andExpect(jsonPath("$.phoneNumber").value(req.phoneNumber()))
-                .andExpect(jsonPath("$.contact").value(req.contact()));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatusOk()
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(user1.getId().id()))
+                .hasPathSatisfying("$.loginId", p -> p.assertThat().isEqualTo(user1.getLoginId()))
+                .hasPathSatisfying("$.password", p -> p.assertThat().isEqualTo(req.password()))
+                .hasPathSatisfying("$.userType", p -> p.assertThat().isEqualTo(user1.getUserType().name()))
+                .hasPathSatisfying("$.userName", p -> p.assertThat().isEqualTo(req.userName()))
+                .hasPathSatisfying("$.phoneNumber", p -> p.assertThat().isEqualTo(req.phoneNumber()))
+                .hasPathSatisfying("$.contact", p -> p.assertThat().isEqualTo(req.contact()));
     }
 
     @Test
@@ -150,19 +171,20 @@ class UserProfileControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/profiles/own")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/profiles/own")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(allOf(
-                        containsString("パラメーターエラーが発生しました"),
-                        containsString("password"),
-                        containsString("userName") //
-                )));
+                .content(requestBody)
+                .exchange();
 
         // then
+        assertThat(result)
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました",
+                        "password",
+                        "userName");
         verify(profileService, never()).updateOwnProfile(any());
     }
 
@@ -179,13 +201,18 @@ class UserProfileControllerTest {
                 .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
 
         // when
-        mockMvc.perform(put("/profiles/own")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/profiles/own")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string(containsString("NOT_FOUND")));
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyText()
+                .contains("NOT_FOUND");
     }
 
     @Test
@@ -196,12 +223,16 @@ class UserProfileControllerTest {
         String requestBody = mapper.writeValueAsString(req);
 
         // when
-        mockMvc.perform(put("/profiles/own")
+        MvcTestResult result = mockMvc
+                .put()
+                .uri("/profiles/own")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
-                // then
-                .andDo(result -> result.getResponse().setCharacterEncoding("UTF-8"))
-                .andExpect(status().isUnauthorized());
+                .content(requestBody)
+                .exchange();
+
+        // then
+        assertThat(result)
+                .hasStatus(HttpStatus.UNAUTHORIZED);
     }
 
     private UserProfileUpdateRequest createUserProfileUpdateRequest() {
