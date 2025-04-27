@@ -26,11 +26,10 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
-import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
-import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
 import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
+import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
 import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
@@ -83,9 +82,7 @@ class LoginControllerIntegrationTest {
         // when
         assertThatThrownBy(() -> client.login(loginId, password))
                 // then
-                .isInstanceOfSatisfying(BusinessFlowException.class, thrown -> {
-                    assertThat(thrown.getCauseType()).isEqualTo(CauseType.NOT_FOUND);
-                });
+                .isInstanceOf(SecurityConstraintException.class);
     }
 
     @Test
@@ -124,9 +121,7 @@ class LoginControllerIntegrationTest {
         // when
         assertThatThrownBy(() -> client.login(req))
                 // then
-                .isInstanceOfSatisfying(BusinessFlowException.class, thrown -> {
-                    assertThat(thrown.getCauseType()).isEqualTo(CauseType.NOT_FOUND);
-                });
+                .isInstanceOf(SecurityConstraintException.class);
     }
 
     @Test

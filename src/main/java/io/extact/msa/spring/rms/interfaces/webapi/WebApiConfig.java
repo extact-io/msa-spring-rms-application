@@ -20,12 +20,16 @@ import io.extact.msa.spring.rms.interfaces.webapi.universal.LoginController;
 import io.extact.msa.spring.rms.interfaces.webapi.universal.UserProfileController;
 
 @Configuration(proxyBeanMethods = false)
-@Import({
-        RestControllerConfig.class,
-        WebSecurityConfig.class,
-        JwtEncodeConfig.class, // for LoginController
-})
 public class WebApiConfig {
+
+    @Import({
+            RestControllerConfig.class,
+            RmsRestControllerExceptionHandler.class,
+            WebSecurityConfig.class,
+            JwtEncodeConfig.class, // for LoginController
+    })
+    public static class WebApiContextConfigs {
+    }
 
     // --- for admin
 
@@ -61,5 +65,12 @@ public class WebApiConfig {
     @Bean
     UserProfileController userProfileController(UserProfileService service) {
         return new UserProfileController(service);
+    }
+
+    // --- for exception handler
+
+    @Bean
+    RmsRestControllerExceptionHandler rmsRestControllerExceptionHandler() {
+        return new RmsRestControllerExceptionHandler();
     }
 }

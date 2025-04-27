@@ -22,12 +22,9 @@ import org.springframework.test.web.servlet.assertj.MvcTestResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.extact.msa.spring.platform.core.env.EnvConfig;
-import io.extact.msa.spring.platform.core.jwt.encode.JwtEncodeConfig;
-import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
-import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
-import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
+import io.extact.msa.spring.rms.application.universal.LoginFailedException;
 import io.extact.msa.spring.rms.application.universal.LoginService;
-import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
+import io.extact.msa.spring.rms.interfaces.webapi.WebApiConfig.WebApiContextConfigs;
 
 @WebMvcTest
 @ActiveProfiles("test")
@@ -42,10 +39,8 @@ class LoginControllerTest {
 
     @Configuration(proxyBeanMethods = false)
     @Import({
-        EnvConfig.class,
-        RestControllerConfig.class,
-        WebSecurityConfig.class,
-        JwtEncodeConfig.class
+            EnvConfig.class,
+            WebApiContextConfigs.class
     })
     static class TestConfig {
         @Bean
@@ -60,7 +55,7 @@ class LoginControllerTest {
         String loginId = "loginId";
         String password = "password";
         when(loginService.login(loginId, password))
-            .thenReturn(user1);
+                .thenReturn(user1);
 
         // when
         MvcTestResult result = mockMvc
@@ -72,22 +67,22 @@ class LoginControllerTest {
 
         // then
         assertThat(result)
-            .hasStatusOk();
+                .hasStatusOk();
         assertThat(result)
-            .headers()
-            .hasEntrySatisfying(AUTHORIZATION, v -> assertThat(v)
-                    .element(0)
-                    .asString()
-                    .matches("^Bearer .+$"));
+                .headers()
+                .hasEntrySatisfying(AUTHORIZATION, v -> assertThat(v)
+                        .element(0)
+                        .asString()
+                        .matches("^Bearer .+$"));
         assertThat(result)
-            .bodyJson()
-            .hasPathSatisfying("$.id",    p -> p.assertThat().isEqualTo(user1.getId().id()))
-            .hasPathSatisfying("$.loginId", p -> p.assertThat().isEqualTo(user1.getLoginId()))
-            .hasPathSatisfying("$.password", p -> p.assertThat().isEqualTo(user1.getPassword()))
-            .hasPathSatisfying("$.userType", p -> p.assertThat().isEqualTo(user1.getUserType().name()))
-            .hasPathSatisfying("$.userName", p -> p.assertThat().isEqualTo(user1.getProfile().getUserName()))
-            .hasPathSatisfying("$.phoneNumber", p -> p.assertThat().isEqualTo(user1.getProfile().getPhoneNumber()))
-            .hasPathSatisfying("$.contact", p -> p.assertThat().isEqualTo(user1.getProfile().getContact()));
+                .bodyJson()
+                .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(user1.getId().id()))
+                .hasPathSatisfying("$.loginId", p -> p.assertThat().isEqualTo(user1.getLoginId()))
+                .hasPathSatisfying("$.password", p -> p.assertThat().isEqualTo(user1.getPassword()))
+                .hasPathSatisfying("$.userType", p -> p.assertThat().isEqualTo(user1.getUserType().name()))
+                .hasPathSatisfying("$.userName", p -> p.assertThat().isEqualTo(user1.getProfile().getUserName()))
+                .hasPathSatisfying("$.phoneNumber", p -> p.assertThat().isEqualTo(user1.getProfile().getPhoneNumber()))
+                .hasPathSatisfying("$.contact", p -> p.assertThat().isEqualTo(user1.getProfile().getContact()));
     }
 
     @Test
@@ -96,7 +91,7 @@ class LoginControllerTest {
         String loginId = "errorId";
         String password = "errorPass";
         when(loginService.login(loginId, password))
-            .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
+                .thenThrow(new LoginFailedException("from mock"));
 
         // when
         MvcTestResult result = mockMvc
@@ -108,10 +103,8 @@ class LoginControllerTest {
 
         // then
         assertThat(result)
-            .hasStatus(HttpStatus.NOT_FOUND)
-            .doesNotContainHeader(AUTHORIZATION)
-            .bodyText()
-            .contains("NOT_FOUND");
+                .hasStatus(HttpStatus.UNAUTHORIZED)
+                .doesNotContainHeader(AUTHORIZATION);
     }
 
     @Test
@@ -122,17 +115,17 @@ class LoginControllerTest {
 
         // when
         MvcTestResult result = mockMvc
-            .get()
-            .uri("/login")
-            .param("loginId", loginId)
-            .param("password", password)
-            .exchange();
+                .get()
+                .uri("/login")
+                .param("loginId", loginId)
+                .param("password", password)
+                .exchange();
 
         // then
         assertThat(result)
-            .hasStatus(HttpStatus.BAD_REQUEST)
-            .bodyText()
-            .contains("パラメーターエラーが発生しました", "loginId", "password");
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "loginId", "password");
         verify(loginService, never()).login(any(), any());
     }
 
@@ -144,15 +137,15 @@ class LoginControllerTest {
         LoginRequest req = new LoginRequest(loginId, password);
         String body = mapper.writeValueAsString(req);
         when(loginService.login(loginId, password))
-            .thenReturn(user1);
+                .thenReturn(user1);
 
         // when
         MvcTestResult result = mockMvc
-            .post()
-            .uri("/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(body)
-            .exchange();
+                .post()
+                .uri("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .exchange();
 
         // then
         assertThat(result)
@@ -182,22 +175,20 @@ class LoginControllerTest {
         LoginRequest req = new LoginRequest(loginId, password);
         String body = mapper.writeValueAsString(req);
         when(loginService.login(loginId, password))
-            .thenThrow(new BusinessFlowException("from mock", CauseType.NOT_FOUND));
+                .thenThrow(new LoginFailedException("from mock"));
 
         // when
         MvcTestResult result = mockMvc
-            .post()
-            .uri("/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(body)
-            .exchange();
+                .post()
+                .uri("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .exchange();
 
         // then
         assertThat(result)
-            .hasStatus(HttpStatus.NOT_FOUND)
-            .doesNotContainHeader(AUTHORIZATION)
-            .bodyText()
-            .contains("NOT_FOUND");
+                .hasStatus(HttpStatus.UNAUTHORIZED)
+                .doesNotContainHeader(AUTHORIZATION);
     }
 
     @Test
@@ -210,17 +201,17 @@ class LoginControllerTest {
 
         // when
         MvcTestResult result = mockMvc
-            .post()
-            .uri("/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(body)
-            .exchange();
+                .post()
+                .uri("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .exchange();
 
         // then
         assertThat(result)
-            .hasStatus(HttpStatus.BAD_REQUEST)
-            .bodyText()
-            .contains("パラメーターエラーが発生しました", "loginId", "password");
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyText()
+                .contains("パラメーターエラーが発生しました", "loginId", "password");
         verify(loginService, never()).login(any(), any());
     }
 }

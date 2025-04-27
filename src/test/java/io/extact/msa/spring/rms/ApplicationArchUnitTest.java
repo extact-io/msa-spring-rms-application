@@ -202,13 +202,16 @@ class ApplicationArchUnitTest {
             .resideInAnyPackage(
                     "java..",
                     "jakarta.validation..",
-                    "org.springframework.web..", // Spring MVCには依存してOK
+                    "org.springframework.web..",    // Spring MVCには依存してOK
+                    "org.springframework.http..",   // Spring MVCには依存してOK
+                    "org.slf4j..",
                     "lombok..",
                     "..core.generic..",
                     "..core.env..",
                     "..core.auth..",
                     "..core.jwt..",
                     "..fw.domain..",
+                    "..fw.exception..",
                     "..fw.application..",
                     "..fw.interfaces",
                     "..fw.interfaces.webapi..",

@@ -20,7 +20,9 @@ import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 
 @Configuration(proxyBeanMethods = false)
-@Import({ ValidatorConfig.class, EventPublisherConfig.class })
+@Import({
+        ValidatorConfig.class,
+        EventPublisherConfig.class })
 public class DomainConfig {
 
     @Bean

@@ -27,14 +27,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
-import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.application.admin.UserAddCommand;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
 import io.extact.msa.spring.rms.application.admin.UserUpdateCommand;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
-import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
+import io.extact.msa.spring.rms.interfaces.webapi.WebApiConfig.WebApiContextConfigs;
 
 @WebMvcTest
 @ActiveProfiles("test")
@@ -53,8 +52,7 @@ class UserAdminControllerTest {
     @Configuration(proxyBeanMethods = false)
     @Import({
             EnvConfig.class,
-            RestControllerConfig.class,
-            WebSecurityConfig.class
+            WebApiContextConfigs.class
     })
     static class TestConfig {
         @Bean

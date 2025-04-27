@@ -31,14 +31,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
-import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationUpdateCommand;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation.ReservationCreatable;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
-import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
+import io.extact.msa.spring.rms.interfaces.webapi.WebApiConfig.WebApiContextConfigs;
 import io.extact.msa.spring.rms.interfaces.webapi.admin.ReservationUpdateRequest.ReservationUpdateRequestBuilder;
 
 @WebMvcTest
@@ -59,8 +58,7 @@ class ReservationAdminControllerTest {
     @Configuration(proxyBeanMethods = false)
     @Import({
             EnvConfig.class,
-            RestControllerConfig.class,
-            WebSecurityConfig.class
+            WebApiContextConfigs.class
     })
     static class TestConfig {
         @Bean

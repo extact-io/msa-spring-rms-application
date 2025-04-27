@@ -27,13 +27,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
-import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.application.admin.ItemAddCommand;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ItemUpdateCommand;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
+import io.extact.msa.spring.rms.interfaces.webapi.WebApiConfig.WebApiContextConfigs;
 
 /**
  * Controllerの単体テストクラス。
@@ -49,7 +48,8 @@ import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
 @ActiveProfiles("test")
 class ItemAdminControllerTest {
 
-    private static final ItemCreatable testCreator = new ItemCreatable() {};
+    private static final ItemCreatable testCreator = new ItemCreatable() {
+    };
 
     @Autowired
     private MockMvcTester mockMvc;
@@ -61,8 +61,8 @@ class ItemAdminControllerTest {
     @Configuration(proxyBeanMethods = false)
     @Import({
             EnvConfig.class,
-            RestControllerConfig.class,
-            WebSecurityConfig.class})
+            WebApiContextConfigs.class
+    })
     static class TestConfig {
         @Bean
         ItemAdminController itemAdminController(ItemAdminService service) {
@@ -164,10 +164,10 @@ class ItemAdminControllerTest {
                 .hasPathSatisfying("$.id", p -> p.assertThat().isEqualTo(5))
                 .hasPathSatisfying("$.serialNo", p -> p.assertThat().isEqualTo("newNo"))
                 .hasPathSatisfying("$.itemName", p -> p.assertThat().isEqualTo("追加アイテム"));
-                // -- JSONデシリアライズを使うのであれば↓のようにも簡潔にできる
-                //.convertTo(ItemAdminResponse.class)
-                //.extracting("id", "serialNo", "itemName")
-                //.containsExactly(5, "newNo", "追加アイテム");
+        // -- JSONデシリアライズを使うのであれば↓のようにも簡潔にできる
+        //.convertTo(ItemAdminResponse.class)
+        //.extracting("id", "serialNo", "itemName")
+        //.containsExactly(5, "newNo", "追加アイテム");
     }
 
     @Test
@@ -434,7 +434,7 @@ class ItemAdminControllerTest {
                 .bodyText()
                 .contains("パラメーターエラーが発生しました", "id");
         verify(itemService, never()).delete(any());
-   }
+    }
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -456,7 +456,7 @@ class ItemAdminControllerTest {
                 .hasStatus(HttpStatus.NOT_FOUND)
                 .bodyText()
                 .contains("NOT_FOUND");
-   }
+    }
 
     @Test
     void testDeleteOnAuthenticationError() throws Exception {
@@ -474,5 +474,5 @@ class ItemAdminControllerTest {
         assertThat(result)
                 .hasStatus(HttpStatus.UNAUTHORIZED);
         verify(itemService, never()).delete(any());
-   }
+    }
 }

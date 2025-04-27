@@ -15,8 +15,8 @@ import io.extact.msa.spring.rms.application.admin.ItemAdminService;
 import io.extact.msa.spring.rms.application.admin.ReservationAdminService;
 import io.extact.msa.spring.rms.application.admin.UserAdminService;
 import io.extact.msa.spring.rms.application.admin.event.ReservationDependencyEventListener;
-import io.extact.msa.spring.rms.application.member.ReserveItemService;
 import io.extact.msa.spring.rms.application.member.ReserveItemQueryService;
+import io.extact.msa.spring.rms.application.member.ReserveItemService;
 import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.application.universal.UserProfileService;
@@ -31,7 +31,8 @@ import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
 
 @Configuration(proxyBeanMethods = false)
-@Import({ AsyncConfig.class, // for ReservationModelComposer
+@Import({
+        AsyncConfig.class, // for ReservationModelComposer
         EventPublisherConfig.class })
 public class ApplicationServiceConfig {
 

@@ -32,7 +32,6 @@ import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsRequestCheckException;
-import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.application.member.ReserveItemCommand;
 import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
 import io.extact.msa.spring.rms.application.member.ReserveItemService;
@@ -42,7 +41,7 @@ import io.extact.msa.spring.rms.domain.reservation.model.Reservation.Reservation
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
-import io.extact.msa.spring.rms.interfaces.webapi.WebSecurityConfig;
+import io.extact.msa.spring.rms.interfaces.webapi.WebApiConfig.WebApiContextConfigs;
 
 /**
  * Controller 単体テスト。
@@ -67,8 +66,8 @@ class ReserveItemControllerTest {
     @Configuration(proxyBeanMethods = false)
     @Import({
             EnvConfig.class,
-            RestControllerConfig.class,
-            WebSecurityConfig.class })
+            WebApiContextConfigs.class
+    })
     static class TestConfig {
         @Bean
         ReserveItemController reservationMemberController(ReserveItemService service) {
