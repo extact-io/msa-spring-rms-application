@@ -1,13 +1,17 @@
 package io.extact.msa.spring.rms.infrastructure.persistence;
 
 import static io.extact.msa.spring.test.assertj.ToStringAssert.*;
+import static io.extact.msa.spring.test.junit5.Constants.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +24,7 @@ import io.extact.msa.spring.rms.domain.user.model.UserType;
 
 @Transactional
 @Rollback
+@TestMethodOrder(OrderAnnotation.class)
 public abstract class AbstractUserRepositoryTest {
 
     protected static final UserCreatable testCreator = new UserCreatable() {};
@@ -84,6 +89,7 @@ public abstract class AbstractUserRepositoryTest {
     }
 
     @Test
+    @Order(WITH_SIDE_EFFECT)
     void testUpdate() {
         // given
         User updateUser = testCreator
@@ -122,6 +128,7 @@ public abstract class AbstractUserRepositoryTest {
     }
 
     @Test
+    @Order(WITH_SIDE_EFFECT)
     void testAdd() {
         // given
         User addUser = testCreator
@@ -140,6 +147,7 @@ public abstract class AbstractUserRepositoryTest {
     }
 
     @Test
+    @Order(WITH_SIDE_EFFECT)
     void testDelete() {
         // given
         User deleteUser = repository().find(new UserId(1)).get();

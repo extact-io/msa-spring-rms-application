@@ -1,0 +1,44 @@
+package io.extact.msa.spring.rms.infrastructure.persistence.remote;
+
+import static org.assertj.core.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import io.extact.msa.spring.rms.domain.item.ItemRepository;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
+import io.extact.msa.spring.rms.infrastructure.persistence.AbstractItemRepositoryTest;
+
+public abstract class AbstractRemoteItemRepositoryTest extends AbstractItemRepositoryTest {
+
+    @Autowired
+    private ItemRepository repository;
+
+    @BeforeEach
+    void beforeEach(@Autowired RemoteRepositoryTestInitializer initializer) {
+        initializer.resetAndSignin("SYSTEM");
+    }
+
+    @Override
+    protected ItemRepository repository() {
+        return this.repository;
+    }
+
+    @Test
+    @Override
+    protected void testNextIdentity() {
+
+        // when
+        int firstTime = repository.nextIdentity();
+        repository.add(testCreator.newInstance(new ItemId(firstTime), "1st", ""));
+        int secondTime = repository.nextIdentity();
+        repository.add(testCreator.newInstance(new ItemId(secondTime), "2nd", ""));
+        int thirdTime = repository.nextIdentity();
+        repository.add(testCreator.newInstance(new ItemId(thirdTime), "3rd", ""));
+
+        // then
+        assertThat(secondTime).isEqualTo(firstTime + 1);
+        assertThat(thirdTime).isEqualTo(secondTime + 1);
+    }
+}

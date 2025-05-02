@@ -31,7 +31,7 @@ public class FileRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("item-file")
-    class ItemFileConfiguration {
+    static class ItemFileConfiguration {
         @Bean
         ModelArrayMapper<Item> rentalItemArrayMapper(ModelValidator validator) {
             return new ItemArrayMapper(validator);
@@ -46,7 +46,7 @@ public class FileRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("reservation-file")
-    class ReservationFileConfiguration {
+    static class ReservationFileConfiguration {
         @Bean
         ModelArrayMapper<Reservation> reservationArrayMapper(ModelValidator validator) {
             return new ReservationArrayMapper(validator);
@@ -61,7 +61,7 @@ public class FileRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("user-file")
-    class UserFileConfiguration {
+    static class UserFileConfiguration {
         @Bean
         ModelArrayMapper<User> userAccountArrayMapper(ModelValidator validator) {
             return new UserArrayMapper(validator);

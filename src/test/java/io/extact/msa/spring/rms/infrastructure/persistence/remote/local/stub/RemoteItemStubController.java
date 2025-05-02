@@ -1,4 +1,4 @@
-package io.extact.msa.spring.rms.infrastructure.persistence.remote.stub;
+package io.extact.msa.spring.rms.infrastructure.persistence.remote.local.stub;
 
 import static io.extact.msa.spring.rms.PersistedTestData.*;
 

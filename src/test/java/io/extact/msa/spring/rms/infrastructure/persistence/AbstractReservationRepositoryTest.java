@@ -2,6 +2,7 @@ package io.extact.msa.spring.rms.infrastructure.persistence;
 
 import static io.extact.msa.spring.platform.fw.test.utils.IsEqualableAssert.*;
 import static io.extact.msa.spring.test.assertj.ToStringAssert.*;
+import static io.extact.msa.spring.test.junit5.Constants.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,7 +11,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,7 @@ import io.extact.msa.spring.rms.domain.user.model.UserId;
 
 @Transactional
 @Rollback
+@TestMethodOrder(OrderAnnotation.class)
 public abstract class AbstractReservationRepositoryTest {
 
     protected static final ReservationCreatable testCreator = new ReservationCreatable() {
@@ -94,6 +99,7 @@ public abstract class AbstractReservationRepositoryTest {
     }
 
     @Test
+    @Order(WITH_SIDE_EFFECT)
     void testUpdate() {
         // given
         Reservation updateReservation = testCreator
@@ -132,6 +138,7 @@ public abstract class AbstractReservationRepositoryTest {
     }
 
     @Test
+    @Order(WITH_SIDE_EFFECT)
     void testAdd() {
 
         // given
@@ -154,6 +161,7 @@ public abstract class AbstractReservationRepositoryTest {
     }
 
     @Test
+    @Order(WITH_SIDE_EFFECT)
     void testDelete() {
         // given
         Reservation deleteReservation = reservation3;
@@ -184,7 +192,7 @@ public abstract class AbstractReservationRepositoryTest {
 
     protected abstract void testNextIdentity();
 
-    
+
     // ------ reservation unique spec
 
     @Test
@@ -237,7 +245,7 @@ public abstract class AbstractReservationRepositoryTest {
         // then
         assertThat(actual).isEmpty();
     }
-    
+
     @Test
     public void testFindByConditionWithItemIdAndFromDate() {
 
@@ -249,7 +257,7 @@ public abstract class AbstractReservationRepositoryTest {
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
-        
+
         // when
         List<ReservationModelView> actual = queryService().findByCondition(cond);
 
@@ -285,10 +293,10 @@ public abstract class AbstractReservationRepositoryTest {
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
-        
+
         // when
         List<ReservationModelView> actual = queryService().findByCondition(cond);
-        
+
         // then
         assertThat(actual).isEmpty();
 
@@ -300,10 +308,10 @@ public abstract class AbstractReservationRepositoryTest {
                 .itemId(itemId)
                 .from(fromDate)
                 .build();
-        
+
         // when
         actual = queryService().findByCondition(cond);
-        
+
         // then
         assertThat(actual).isEmpty();
     }

@@ -1,10 +1,5 @@
-package io.extact.msa.spring.rms.infrastructure.persistence.remote;
+package io.extact.msa.spring.rms.infrastructure.persistence.remote.local;
 
-import static org.assertj.core.api.Assertions.*;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -18,31 +13,26 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import io.extact.msa.spring.platform.core.CoreConfig;
 import io.extact.msa.spring.platform.core.auth.configure.AuthorizeHttpRequestCustomizer;
 import io.extact.msa.spring.platform.core.auth.header.RmsHeaderAuthConfig;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
-import io.extact.msa.spring.platform.core.env.EnvConfig;
-import io.extact.msa.spring.platform.core.log.LogConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
-import io.extact.msa.spring.rms.domain.item.ItemRepository;
-import io.extact.msa.spring.rms.domain.item.model.ItemId;
-import io.extact.msa.spring.rms.infrastructure.persistence.AbstractItemRepositoryTest;
-import io.extact.msa.spring.rms.infrastructure.persistence.remote.stub.RemoteItemStubController;
+import io.extact.msa.spring.rms.infrastructure.persistence.remote.AbstractRemoteUserRepositoryTest;
+import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryConfig;
+import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryTestInitializer;
+import io.extact.msa.spring.rms.infrastructure.persistence.remote.local.stub.RemoteUserStubController;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @EnableAutoConfigurationWithoutJpa
-@ActiveProfiles({ "test", "item-remote" })
-class RemoteItemRepositoryTest extends AbstractItemRepositoryTest {
-    
-    @Autowired
-    private ItemRepository repository;
+@ActiveProfiles({ "test", "user-remote" })
+class RemoteUserRepositoryUsingLocalStubTest extends AbstractRemoteUserRepositoryTest {
 
     @Configuration(proxyBeanMethods = false)
     @Import({
-            LogConfig.class,
-            EnvConfig.class,
+            CoreConfig.class,
             RestControllerConfig.class,
             RmsHeaderAuthConfig.class,
             RemoteRepositoryConfig.class
@@ -54,8 +44,8 @@ class RemoteItemRepositoryTest extends AbstractItemRepositoryTest {
                     .anyRequest().authenticated();
         }
         @Bean
-        RemoteItemStubController remoteItemStubController() {
-            return new RemoteItemStubController();
+        RemoteUserStubController remoteUserStubController() {
+            return new RemoteUserStubController();
         }
         @Bean
         PlatformTransactionManager nopTransactionManager() {
@@ -63,36 +53,9 @@ class RemoteItemRepositoryTest extends AbstractItemRepositoryTest {
         }
         @Bean
         RemoteRepositoryTestInitializer remoteRepositoryTestInitializer(
-                @Qualifier("item") ExternalProperties prop,
+                @Qualifier("user") ExternalProperties prop,
                 Environment env) {
-            return new RemoteRepositoryTestInitializer(prop, env, "items");
+            return new RemoteRepositoryTestInitializer(prop, env, "users");
         }
-    }
-    
-    @BeforeEach
-    void beforeEach(@Autowired RemoteRepositoryTestInitializer initializer) {
-        initializer.resetAndSignin();
-    }
-    
-    @Override
-    protected ItemRepository repository() {
-        return this.repository;
-    }
-
-    @Test
-    @Override
-    protected void testNextIdentity() {
-
-        // when
-        int firstTime = repository.nextIdentity();
-        repository.add(testCreator.newInstance(new ItemId(firstTime), "1st", ""));
-        int secondTime = repository.nextIdentity();
-        repository.add(testCreator.newInstance(new ItemId(secondTime), "2nd", ""));
-        int thirdTime = repository.nextIdentity();
-        repository.add(testCreator.newInstance(new ItemId(thirdTime), "3rd", ""));
-
-        // then
-        assertThat(secondTime).isEqualTo(firstTime + 1);
-        assertThat(thirdTime).isEqualTo(secondTime + 1);
     }
 }

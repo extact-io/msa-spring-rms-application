@@ -44,20 +44,20 @@ public class RemoteRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("item-remote")
-    class ItemRemoteConfiguration {
-        
+    static class ItemRemoteConfiguration {
+
         @Bean("item")
         @ConfigurationProperties("rms.persistence.item.remote")
         ExternalProperties externalProperties() {
             return new ExternalProperties();
         }
-        
+
         @Bean
         RemoteItemClientApi remoteItemClientApi(@Qualifier("item") ExternalProperties prop, Environment env) {
             HttpServiceProxyFactory factory = httpServiceProxyFactory(prop, env);
             return factory.createClient(RemoteItemClientApi.class);
         }
-        
+
         @Bean
         RemoteItemRepository itemJpaRepository(RemoteItemClientApi client, ModelValidator validator) {
             return new RemoteItemRepository(
@@ -68,20 +68,20 @@ public class RemoteRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("reservation-remote")
-    class ReservationRemoteConfiguration {
-        
+    static class ReservationRemoteConfiguration {
+
         @Bean("reservation")
         @ConfigurationProperties("rms.persistence.reservation.remote")
         ExternalProperties externalPropertiesForItem() {
             return new ExternalProperties();
         }
-        
+
         @Bean
         RemoteReservationClientApi remoteReservationClientApi(@Qualifier("reservation") ExternalProperties prop, Environment env) {
             HttpServiceProxyFactory factory = httpServiceProxyFactory(prop, env);
             return factory.createClient(RemoteReservationClientApi.class);
         }
-        
+
         @Bean
         RemoteReservationRepository remoteReservationRepository(RemoteReservationClientApi client, ModelValidator validator) {
             return new RemoteReservationRepository(
@@ -92,20 +92,20 @@ public class RemoteRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)
     @Profile("user-remote")
-    class UserRemoteConfiguration {
-        
+    static class UserRemoteConfiguration {
+
         @Bean("user")
         @ConfigurationProperties("rms.persistence.user.remote")
         ExternalProperties externalPropertiesForItem() {
             return new ExternalProperties();
         }
-        
+
         @Bean
         RemoteUserClientApi remoteUserClientApi(@Qualifier("user") ExternalProperties prop, Environment env) {
             HttpServiceProxyFactory factory = httpServiceProxyFactory(prop, env);
             return factory.createClient(RemoteUserClientApi.class);
         }
-        
+
         @Bean
         RemoteUserRepository remoteUserRepository(RemoteUserClientApi client, ModelValidator validator) {
             return new RemoteUserRepository(
@@ -113,9 +113,9 @@ public class RemoteRepositoryConfig {
                     new DefaultModelEntityMapper<>(RemoteUser::from, validator));
         }
     }
-    
-    HttpServiceProxyFactory httpServiceProxyFactory(ExternalProperties prop, Environment env) {
-        
+
+    static HttpServiceProxyFactory httpServiceProxyFactory(ExternalProperties prop, Environment env) {
+
         ConversionService conversionService = ConfigConversionServiceBuilder
                 .builder(prop)
                 .build();

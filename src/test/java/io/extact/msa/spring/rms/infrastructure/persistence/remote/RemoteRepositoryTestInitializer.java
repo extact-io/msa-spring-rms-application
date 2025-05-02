@@ -18,9 +18,9 @@ public class RemoteRepositoryTestInitializer {
     private final ExternalProperties prop;
     private final Environment env;
     private final String resource;
-    
+
     private RestClient client;
-    
+
     @PostConstruct
     void init() {
         UriBuilderFactory uriFactory = CustomUriBuilderFactory.newInstance()
@@ -32,9 +32,13 @@ public class RemoteRepositoryTestInitializer {
                 .requestInitializer(new LoginUserHeaderRequestInitializer())
                 .build();
     }
-    
+
     public void resetAndSignin() {
-        TestAuthUtils.signinByHeader(1, "MEMBER");
+        this.resetAndSignin("MEMBER");
+    }
+
+    public void resetAndSignin(String role) {
+        TestAuthUtils.signinByHeader(1, role);
         client.get()
                 .uri("/reset")
                 .retrieve()

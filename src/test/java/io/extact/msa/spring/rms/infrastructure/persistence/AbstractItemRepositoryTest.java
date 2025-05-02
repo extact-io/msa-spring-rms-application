@@ -1,13 +1,17 @@
 package io.extact.msa.spring.rms.infrastructure.persistence;
 
 import static io.extact.msa.spring.test.assertj.ToStringAssert.*;
+import static io.extact.msa.spring.test.junit5.Constants.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +32,7 @@ import io.extact.msa.spring.rms.domain.item.model.ItemId;
  */
 @Transactional
 @Rollback
+@TestMethodOrder(OrderAnnotation.class)
 public abstract class AbstractItemRepositoryTest {
 
     protected static final ItemCreatable testCreator = new ItemCreatable() {};
@@ -69,6 +74,7 @@ public abstract class AbstractItemRepositoryTest {
     }
 
     @Test
+    @Order(WITH_SIDE_EFFECT)
     void testUpdate() {
         // given
         Item updateItem = testCreator.newInstance(new ItemId(4), "UPDATE", "UPDATE");
@@ -100,6 +106,7 @@ public abstract class AbstractItemRepositoryTest {
     }
 
     @Test
+    @Order(WITH_SIDE_EFFECT)
     void testAdd() {
         // given
         Item addItem = testCreator.newInstance(new ItemId(5), "ADD", "ADD");
@@ -120,6 +127,7 @@ public abstract class AbstractItemRepositoryTest {
     }
 
     @Test
+    @Order(WITH_SIDE_EFFECT)
     void testDelete() {
         // given
         Item deleteItem = item1;

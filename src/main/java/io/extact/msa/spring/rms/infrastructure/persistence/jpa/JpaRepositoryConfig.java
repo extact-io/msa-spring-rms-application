@@ -35,7 +35,7 @@ public class JpaRepositoryConfig {
     @Profile("item-jpa")
     @EntityScan(basePackageClasses = ItemEntity.class)
     @EnableJpaRepositories(basePackageClasses = ItemJpaRepositoryDelegator.class)
-    class ItemJpaConfiguration {
+    static class ItemJpaConfiguration {
         @Bean
         ItemJpaRepository itemJpaRepository(ItemJpaRepositoryDelegator delegator, ModelValidator validator) {
             return new ItemJpaRepository(
@@ -48,7 +48,7 @@ public class JpaRepositoryConfig {
     @Profile("reservation-jpa")
     @EntityScan(basePackageClasses = ReservationEntity.class)
     @EnableJpaRepositories(basePackageClasses = ReservationJpaRepository.class)
-    class ReservationJpaConfiguration {
+    static class ReservationJpaConfiguration {
         @Bean
         ReservationJpaRepository reservationJpaRepository(
                 ReservationJpaRepositoryDelegator delegator,
@@ -63,7 +63,7 @@ public class JpaRepositoryConfig {
     @Profile("user-jpa")
     @EntityScan(basePackageClasses = UserEntity.class)
     @EnableJpaRepositories(basePackageClasses = UserJpaRepository.class)
-    class UserJpaConfiguration {
+    static class UserJpaConfiguration {
         @Bean
         UserJpaRepository userJpaRepository(UserJpaRepositoryDelegator delegator, ModelValidator validator) {
             return new UserJpaRepository(
