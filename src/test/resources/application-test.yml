@@ -7,7 +7,7 @@ spring:
 rms:
   debug:
     configdump:
-      enable: false
+      enable: off
       #system-properties: on
       #system-environment: on
   jwt-encode:
@@ -19,3 +19,5 @@ rms:
     claim:
       issuer: JsonWebTokenIntegrationTest
       exp: 60                 # 有効期限（分単位）
+  remote-stub:
+    image: "msa-spring-rms-remote-resources:0.0.1-SNAPSHOT"

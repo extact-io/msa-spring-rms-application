@@ -16,7 +16,8 @@ public abstract class AbstractRemoteItemRepositoryTest extends AbstractItemRepos
     private ItemRepository repository;
 
     @BeforeEach
-    void beforeEach(@Autowired RemoteRepositoryTestInitializer initializer) {
+    void beforeEach(@Autowired RemoteRepositoryTestInitializer initializer) throws InterruptedException {
+        //Thread.sleep(1000);
         initializer.resetAndSignin("SYSTEM");
     }
 

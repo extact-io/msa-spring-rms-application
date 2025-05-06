@@ -1,5 +1,7 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.remote.remote;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.context.annotation.Bean;
@@ -7,9 +9,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import io.extact.msa.spring.platform.core.CoreConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
@@ -17,16 +20,19 @@ import io.extact.msa.spring.rms.infrastructure.persistence.remote.AbstractRemote
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryTestInitializer;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
+import lombok.extern.slf4j.Slf4j;
 
 @RestClientTest
-@TestPropertySource(properties = "rms.persistence.user.remote.url=http://localhost:8081/remote")
+@Testcontainers
 @ActiveProfiles({ "test", "user-remote" })
+@Slf4j
 class RemoteUserRepositoryUsingRemoteStubTest extends AbstractRemoteUserRepositoryTest {
 
     @Configuration(proxyBeanMethods = false)
     @Import({
             CoreConfig.class,
-            RemoteRepositoryConfig.class
+            RemoteRepositoryConfig.class,
+            TestcontainersConfig.class
     })
     static class WebSecurityConfig implements WebMvcConfigurer {
         @Bean
@@ -39,5 +45,10 @@ class RemoteUserRepositoryUsingRemoteStubTest extends AbstractRemoteUserReposito
                 Environment env) {
             return new RemoteRepositoryTestInitializer(prop, env, "users");
         }
+    }
+
+    @BeforeAll
+    static void beforeAll(@Autowired GenericContainer<?> stubContainer) {
+        TestcontainersConfig.followOutputContainerLog(stubContainer);
     }
 }
