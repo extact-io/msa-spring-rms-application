@@ -29,7 +29,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         ReservationAdminController.class,
                         UserAdminController.class));
 
-        configurer.addPathPrefix("/reserve",
+        configurer.addPathPrefix("/member",
                 HandlerTypePredicate.forAssignableType(
                         ReserveItemController.class));
     }
@@ -38,7 +38,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     AuthorizeHttpRequestCustomizer authorizeRequestCustomizer() {
         return (AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry configurer) -> configurer
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/reserve/**").hasRole("MEMBER")
+                .requestMatchers("/member/**").hasRole("MEMBER")
                 .requestMatchers("/profile").authenticated()
                 .requestMatchers("/login").permitAll()
                 .anyRequest().authenticated();

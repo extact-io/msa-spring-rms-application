@@ -1,16 +1,19 @@
-FROM docker.io/eclipse-temurin:17-jre-alpine
+# Perform the extraction in a separate builder container
+FROM bellsoft/liberica-openjre-debian:24-cds AS builder
+WORKDIR /builder
 
-LABEL org.opencontainers.image.source=https://github.com/extact-io/msa-rms-service-item
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} application.jar
 
-WORKDIR /msa-service-item
+RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
 
-# Install packages
-RUN apk update && apk add curl
+# This is the runtime container
+FROM bellsoft/liberica-openjre-debian:24-cds
+WORKDIR /application
 
-# Copy the binary built in the 1st stage
-COPY ./target/msa-rms-service-item.jar ./
-COPY ./target/libs ./libs
+COPY --from=builder /builder/extracted/dependencies/ ./
+COPY --from=builder /builder/extracted/spring-boot-loader/ ./
+COPY --from=builder /builder/extracted/snapshot-dependencies/ ./
+COPY --from=builder /builder/extracted/application/ ./
 
-CMD ["java", "-jar", "msa-rms-service-item.jar"]
-
-EXPOSE 7002
+ENTRYPOINT ["java", "-jar", "application.jar"]

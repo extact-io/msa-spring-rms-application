@@ -97,7 +97,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items")
+                .uri("/member/items")
                 .exchange();
 
         // then
@@ -121,7 +121,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items")
+                .uri("/member/items")
                 .exchange();
 
         // then
@@ -143,7 +143,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items")
+                .uri("/member/items")
                 .exchange();
 
         // then
@@ -168,7 +168,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items/rentable")
+                .uri("/member/items/rentable")
                 .queryParam("from", from.toString())
                 .queryParam("to", to.toString())
                 .exchange();
@@ -196,7 +196,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items/rentable")
+                .uri("/member/items/rentable")
                 .queryParam("from", from.toString())
                 .queryParam("to", to.toString())
                 .exchange();
@@ -219,7 +219,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items/rentable")
+                .uri("/member/items/rentable")
                 .queryParam("from", "") // パラメータ不足
                 .exchange();
 
@@ -244,7 +244,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items/rentable")
+                .uri("/member/items/rentable")
                 .queryParam("from", from.toString())
                 .queryParam("to", to.toString())
                 .exchange();
@@ -273,7 +273,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items/{itemId}/rentable", itemId.id())
+                .uri("/member/items/{itemId}/rentable", itemId.id())
                 .queryParam("from", from.toString())
                 .queryParam("to", to.toString())
                 .exchange();
@@ -297,7 +297,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items/{itemId}/rentable", itemId)
+                .uri("/member/items/{itemId}/rentable", itemId)
                 .queryParam("from", from)
                 .queryParam("to", to)
                 .exchange();
@@ -322,7 +322,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items/{itemId}/rentable", itemId)
+                .uri("/member/items/{itemId}/rentable", itemId)
                 .queryParam("from", from)
                 .queryParam("to", to)
                 .exchange();
@@ -347,7 +347,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/items/{itemId}/rentable", itemId.id())
+                .uri("/member/items/{itemId}/rentable", itemId.id())
                 .queryParam("from", from.toString())
                 .queryParam("to", to.toString())
                 .exchange();
@@ -376,7 +376,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("item-id", itemId.toString())
                 .exchange();
 
@@ -417,7 +417,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("item-id", itemId.toString())
                 .queryParam("from-date", fromDate.toString())
                 .exchange();
@@ -459,7 +459,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("item-id", itemId.toString())
                 .queryParam("from-date", "")
                 .exchange();
@@ -488,7 +488,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("item-id", itemId.toString())
                 .queryParam("from-date", fromDate.toString())
                 .exchange();
@@ -517,7 +517,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("item-id", invalidItemId.toString())
                 .exchange();
 
@@ -540,7 +540,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("item-id", itemId.toString())
                 .exchange();
 
@@ -568,7 +568,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("reserver-id", reserverId.toString())
                 .exchange();
 
@@ -607,7 +607,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("reserver-id", reserverId.toString())
                 .exchange();
 
@@ -635,7 +635,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("reserver-id", invalidReserverId.toString())
                 .exchange();
 
@@ -658,7 +658,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .queryParam("reserver-id", reserverId.toString())
                 .exchange();
 
@@ -679,7 +679,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .exchange();
 
         // then
@@ -704,7 +704,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations/own")
+                .uri("/member/reservations/own")
                 .exchange();
 
         // then
@@ -738,7 +738,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations/own")
+                .uri("/member/reservations/own")
                 .exchange();
 
         // then
@@ -760,7 +760,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .get()
-                .uri("/reserve/reservations/own")
+                .uri("/member/reservations/own")
                 .exchange();
 
         // then
@@ -797,7 +797,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .post()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .exchange();
@@ -829,7 +829,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .post()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .exchange();
@@ -858,7 +858,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .post()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .exchange();
@@ -880,7 +880,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .post()
-                .uri("/reserve/reservations")
+                .uri("/member/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
                 .exchange();
@@ -905,7 +905,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .delete()
-                .uri("/reserve/reservations/{id}", reservationId)
+                .uri("/member/reservations/{id}", reservationId)
                 .exchange();
 
         // then
@@ -922,7 +922,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .delete()
-                .uri("/reserve/reservations/{id}", invalidId)
+                .uri("/member/reservations/{id}", invalidId)
                 .exchange();
 
         // then
@@ -945,7 +945,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .delete()
-                .uri("/reserve/reservations/{id}", reservationId)
+                .uri("/member/reservations/{id}", reservationId)
                 .exchange();
 
         // then
@@ -971,7 +971,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .delete()
-                .uri("/reserve/reservations/{id}", reservationId)
+                .uri("/member/reservations/{id}", reservationId)
                 .exchange();
 
         // then
@@ -990,7 +990,7 @@ class ReserveItemControllerTest {
         // when
         MvcTestResult result = mockMvc
                 .delete()
-                .uri("/reserve/reservations/{id}", reservationId)
+                .uri("/member/reservations/{id}", reservationId)
                 .exchange();
 
         // then

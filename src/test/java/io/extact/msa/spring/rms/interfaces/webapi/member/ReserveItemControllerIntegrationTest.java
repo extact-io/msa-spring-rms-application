@@ -709,33 +709,33 @@ class ReserveItemControllerIntegrationTest {
     @HttpExchange
     public interface ReservationClient {
 
-        @GetExchange("/reserve/items")
+        @GetExchange("/member/items")
         List<ItemResponse> getItemAll();
 
-        @GetExchange("/reserve/items/rentable")
+        @GetExchange("/member/items/rentable")
         List<ItemResponse> findRentableItemAtPeriod(
                 @RequestParam LocalDateTime from,
                 @RequestParam LocalDateTime to);
 
-        @GetExchange("/reserve/items/{itemId}/rentable")
+        @GetExchange("/member/items/{itemId}/rentable")
         boolean isRentableItemAtPeriod(
                 @PathVariable @RmsId Integer itemId,
                 @RequestParam LocalDateTime from,
                 @RequestParam LocalDateTime to);
 
-        @GetExchange("/reserve/reservations")
+        @GetExchange("/member/reservations")
         public List<ReserveItemResponse> findReservationByParams(
                 @RequestParam(name = "item-id", required = false) Integer itemId,
                 @RequestParam(name = "reserver-id", required = false) Integer reserverId,
                 @RequestParam(name = "from-date", required = false) LocalDate from);
         
-        @GetExchange("/reserve/reservations/own")
+        @GetExchange("/member/reservations/own")
         List<ReserveItemResponse> getOwnReservations();
 
-        @PostExchange("/reserve/reservations")
+        @PostExchange("/member/reservations")
         ReserveItemResponse reserve(@RequestBody ReserveItemRequest request);
 
-        @DeleteExchange("/reserve/reservations/{reservationId}")
+        @DeleteExchange("/member/reservations/{reservationId}")
         void cancel(@PathVariable Integer reservationId);
 
         @GetExchange("/admin/reservations") // for assert use only

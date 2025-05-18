@@ -40,7 +40,6 @@ public class ReserveItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-
     public List<ItemModelView> getItemAll() {
         return new ArrayList<>(itemRepository.findAll()); // 型をModelViewに制限するため変換
     }
@@ -68,7 +67,7 @@ public class ReserveItemService {
                 .findOverlappingReservations(itemId, overlapPeriod)
                 .isEmpty();
     }
-    
+
     public List<ReservationComposeModel> findReservationByCondition(ReserveItemQueryCondition cond) {
         return queryService
                 .findByCondition(cond)
