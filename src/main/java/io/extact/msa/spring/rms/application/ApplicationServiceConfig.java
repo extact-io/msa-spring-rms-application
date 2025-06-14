@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Import;
 
 import io.extact.msa.spring.platform.core.async.AsyncConfig;
 import io.extact.msa.spring.platform.core.async.AsyncInvoker;
-import io.extact.msa.spring.platform.core.auth.context.DefaultLoginContext;
 import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
@@ -115,11 +114,4 @@ public class ApplicationServiceConfig {
 
         return new ReservationDependencyEventListener(repository);
     }
-
-    // ---- for etc.
-    @Bean
-    LoginContext loginContext() {
-        return new DefaultLoginContext();
-    }
-
 }

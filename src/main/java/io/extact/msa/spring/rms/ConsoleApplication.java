@@ -12,7 +12,8 @@ import io.extact.msa.spring.rms.domain.DomainConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.interfaces.console.ConsoleConfig;
 
-@Configuration // @SpringBootConfigurationは複数存在させられない
+//localの場合はwebapiの@SpringBootConfigurationがクラスパスに含まれるためConfigurationを使っている
+@Configuration
 @EnableAutoConfiguration
 @Import({
         CoreConfig.class,

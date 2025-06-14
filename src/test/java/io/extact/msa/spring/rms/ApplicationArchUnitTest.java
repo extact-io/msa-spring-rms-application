@@ -69,7 +69,6 @@ class ApplicationArchUnitTest {
             .adapter("external", "..infrastructure.external..")
             .adapter("framework", "..infrastructure.framework..")
             // Cofigurationクラスからの依存は無視する
-            .ensureAllClassesAreContainedInArchitectureIgnoring(configurationClasses())
             .ignoreDependency(configurationClasses(), alwaysTrue());
 
     /**
