@@ -34,7 +34,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArr
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.JpaRepositoryDelegator;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.StartupLogRunner;
-import io.extact.msa.spring.rms.interfaces.console.MainScreenRunner;
 
 @AnalyzeClasses(packages = "io.extact.msa.spring.rms", importOptions = ImportOption.DoNotIncludeTests.class)
 class ApplicationArchUnitTest {
@@ -61,8 +60,7 @@ class ApplicationArchUnitTest {
             .applicationServices(
                     "..application..")
             // それぞれのapapterは独立し、相互に依存関係がないこともチェックされる
-            .adapter("interface-console", "..interfaces.console..")
-            .adapter("interface-webapi", "..interfaces.webapi..")
+            .adapter("interface", "..webapi..")
             .adapter("persistence-file", "..infrastructure.persistence.file..")
             .adapter("persistence-jpa", "..infrastructure.persistence.jpa..")
             .adapter("persistence-remote", "..infrastructure.persistence.remote..")
@@ -83,7 +81,7 @@ class ApplicationArchUnitTest {
     static final ArchRule architecture_respect_addon_rule_for_onion = noClasses()
             // 対象条件(that)に対するパッチングは@AnalyzeClassesのpackagesに対して行われる
             .that()
-            .resideInAPackage("..interfaces..")
+            .resideInAPackage("..webapi..")
             // 制約条件(should)はfwなども含めclassパス上のすべてのクラスに対してマッチングされる
             .should().dependOnClassesThat(
                     resideInAnyPackage("io.extact.msa.spring.rms.domain..")
@@ -123,7 +121,7 @@ class ApplicationArchUnitTest {
      */
     @ArchTest
     static final ArchRule isolate_webapi_not_depend_on_each_other = SlicesRuleDefinition.slices()
-            .matching("..rms.interfaces.webapi.(*)..")
+            .matching("..rms.webapi.(*)..")
             .should().notDependOnEachOther();
 
     /**
@@ -194,7 +192,7 @@ class ApplicationArchUnitTest {
     @ArchTest
     static final ArchRule dependency_webapi = classes()
             .that()
-            .resideInAPackage("..interfaces.webapi..")
+            .resideInAPackage("..webapi..")
             .and(not(configurationClasses()))
             .and(not(type(StartupLogRunner.class)))
             .should().onlyDependOnClassesThat()
@@ -217,29 +215,7 @@ class ApplicationArchUnitTest {
                     "..fw.feature.exception..",
                     "..rms.domain..",
                     "..rms.application..",
-                    "..rms.interfaces.webapi.." //
-            );
-
-    /**
-     * consoleパッケージから依存してOKなモジュールの検証
-     */
-    @ArchTest
-    static final ArchRule dependency_console = classes()
-            .that()
-            .resideInAPackage("..interfaces.console..")
-            .and(not(configurationClasses()))
-            .and(not(type(MainScreenRunner.class)))
-            .should().onlyDependOnClassesThat()
-            .resideInAnyPackage(
-                    "java..",
-                    "org.beryx.textio..", // コンソールFWには依存してOK
-                    "lombok..",
-                    "..core.env..",
-                    "..fw.exception",
-                    "..fw.interfaces",
-                    "..rms.domain..",
-                    "..rms.application..",
-                    "..rms.interfaces.console.." //
+                    "..rms.webapi.." //
             );
 
     /**
@@ -375,7 +351,7 @@ class ApplicationArchUnitTest {
     @ArchTest
     static final ArchRule naming_controller_should_be_suffixed = classes()
             .that()
-            .resideInAPackage("..interfaces.webapi..")
+            .resideInAPackage("..webapi..")
             .and().areAnnotatedWith(RmsRestController.class)
             .should().haveSimpleNameEndingWith("Controller");
 
@@ -385,7 +361,7 @@ class ApplicationArchUnitTest {
     @ArchTest
     static final ArchRule naming_controller_should_be_suffixed_reverse = classes()
             .that()
-            .resideInAPackage("..interfaces.webapi..")
+            .resideInAPackage("..webapi..")
             .and().haveSimpleNameEndingWith("Controller")
             .should().beAnnotatedWith(RmsRestController.class);
 
