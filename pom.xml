@@ -27,10 +27,6 @@
 		</repository>
 	</repositories>
 
-	<properties>
-		<image.name>msa-spring-application</image.name>
-	</properties>
-
 	<dependencies>
 
 		<!-- ======================================== -->
@@ -135,14 +131,24 @@
 
 	<build>
 		<plugins>
+            <plugin>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
 					<excludes>
-						<exclude>io/extact/msa/spring/rms/ConsoleApplication.class</exclude>
 						<exclude>io/extact/msa/spring/rms/WebApiApplication.class</exclude>
-						<exclude>io/extact/msa/spring/rms/interfaces/console/**/*</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
