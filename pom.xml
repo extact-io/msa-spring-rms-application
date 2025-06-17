@@ -1,116 +1,116 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>io.extact</groupId>
-		<artifactId>msa-spring-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../msa-spring-parent/pom.xml</relativePath>
-	</parent>
-	<artifactId>msa-spring-rms-application</artifactId>
-	<packaging>jar</packaging>
-	<name>msa-spring-rms-application</name>
-	<description>Spring application of rental management system</description>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.extact</groupId>
+        <artifactId>msa-spring-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../msa-spring-parent/pom.xml</relativePath>
+    </parent>
+    <artifactId>msa-spring-rms-application</artifactId>
+    <packaging>jar</packaging>
+    <name>msa-spring-rms-application</name>
+    <description>Spring application of rental management system</description>
 
-	<repositories>
-		<repository>
-			<id>github</id>
-			<name>GitHub Apache Maven Packages</name>
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Apache Maven Packages</name>
 			<url>https://maven.pkg.github.com/extact-io/msa-spring-rms-application</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
-	<dependencies>
+    <dependencies>
 
-		<!-- ======================================== -->
-		<!-- adding optional transitive dependencies  -->
-		<!-- ======================================== -->
-		<dependency>
-			<groupId>io.extact</groupId>
-			<artifactId>msa-spring-platform-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.extact</groupId>
-			<artifactId>msa-spring-platform-fw</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.extact</groupId>
-			<artifactId>msa-spring-test-lib</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.extact</groupId>
-			<artifactId>msa-spring-platform-fw-test-lib</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <!-- ======================================== -->
+        <!-- adding optional transitive dependencies  -->
+        <!-- ======================================== -->
+        <dependency>
+            <groupId>io.extact</groupId>
+            <artifactId>msa-spring-platform-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.extact</groupId>
+            <artifactId>msa-spring-platform-fw</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.extact</groupId>
+            <artifactId>msa-spring-test-lib</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.extact</groupId>
+            <artifactId>msa-spring-platform-fw-test-lib</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-csv</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback.access</groupId>
-			<artifactId>logback-access-tomcat</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback.access</groupId>
+            <artifactId>logback-access-tomcat</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>com.auth0</groupId>
-			<artifactId>java-jwt</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- ========================================= -->
         <!-- application-specific dependencies         -->
         <!-- ========================================= -->
-		<dependency>
-			<groupId>org.beryx</groupId>
-			<artifactId>text-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.beryx</groupId>
+            <artifactId>text-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- ========================================= -->
         <!-- *** test scope dependencies ***           -->
         <!-- ========================================= -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
@@ -127,10 +127,10 @@
             <scope>test</scope>
         </dependency>
 
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<plugins>
+    <build>
+        <plugins>
             <plugin>
                 <groupId>io.github.git-commit-id</groupId>
                 <artifactId>git-commit-id-maven-plugin</artifactId>
@@ -143,16 +143,16 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
 						<exclude>io/extact/msa/spring/rms/WebApiApplication.class</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
