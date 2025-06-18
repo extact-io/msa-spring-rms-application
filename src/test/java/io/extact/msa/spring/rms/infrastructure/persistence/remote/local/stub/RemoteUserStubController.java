@@ -14,7 +14,7 @@ import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.user.RemoteUser;
 
-@RmsRestController("/users")
+@RmsRestController("/remote/users")
 public class RemoteUserStubController extends RemoteStubController<User, RemoteUser> {
 
     private Map<Integer, RemoteUser> usersMap;
@@ -39,7 +39,7 @@ public class RemoteUserStubController extends RemoteStubController<User, RemoteU
     public RemoteUser findByLoginIdAndPassword(
             @RequestParam("login-id") String loginId,
             @RequestParam String password) {
-        
+
         return usersMap.values().stream()
                 .filter(user -> user.loginId().equals(loginId))
                 .filter(user -> user.password().equals(password))

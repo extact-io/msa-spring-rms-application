@@ -2,7 +2,7 @@
 FROM bellsoft/liberica-openjre-debian:24-cds AS builder
 WORKDIR /builder
 
-ARG JAR_FILE=target/*.jar
+ARG JAR_FILE=target/*-uber.jar
 COPY ${JAR_FILE} application.jar
 
 RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted

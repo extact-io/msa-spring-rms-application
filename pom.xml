@@ -17,7 +17,8 @@
         <repository>
             <id>github</id>
             <name>GitHub Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/extact-io/msa-spring-rms-application</url>
+            <url>
+                https://maven.pkg.github.com/extact-io/msa-spring-rms-application</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -148,11 +149,11 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
                     <excludes>
-						<exclude>io/extact/msa/spring/rms/WebApiApplication.class</exclude>
+                        <exclude>
+                            io/extact/msa/spring/rms/WebApiApplication.class</exclude>
                     </excludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

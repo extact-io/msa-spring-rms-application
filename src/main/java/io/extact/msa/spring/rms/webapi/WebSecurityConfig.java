@@ -1,5 +1,6 @@
 package io.extact.msa.spring.rms.webapi;
 
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -41,6 +42,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .requestMatchers("/member/**").hasRole("MEMBER")
                 .requestMatchers("/profile").authenticated()
                 .requestMatchers("/login").permitAll()
+                .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                 .anyRequest().authenticated();
     }
 }

@@ -14,7 +14,7 @@ import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
 import io.extact.msa.spring.rms.domain.item.model.Item;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.item.RemoteItem;
 
-@RmsRestController("/items")
+@RmsRestController("/remote/items")
 public class RemoteItemStubController extends RemoteStubController<Item, RemoteItem> {
 
     private Map<Integer, RemoteItem> itemsMap;
@@ -27,7 +27,7 @@ public class RemoteItemStubController extends RemoteStubController<Item, RemoteI
         itemsMap.put(item3.getId().id(), RemoteItem.from(item3));
         itemsMap.put(item4.getId().id(), RemoteItem.from(item4));
     }
-    
+
     @GetMapping("/unique")
     public RemoteItem findBySerialNo(@RequestParam("serial-no") String serialNo) {
         return itemsMap.values().stream()
