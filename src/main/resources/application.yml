@@ -5,6 +5,8 @@ logging.level:
     #context.support.ResourceBundleMessageSource: DEBUG
 
 spring:
+  application:
+    name: rms-application
   messages:
     basename: fw-messages,application-messages
     encoding: UTF-8
@@ -43,7 +45,41 @@ management:
         readiness:
           include: "readinessState,db,dependentServers"
       validate-group-membership: false # groupにindicatorが存在しない場合もエラーにしない設定
-
+      
+  # =======
+  # ＜TelemetryパイプラインはOTEL+HTTPの標準的な構成＞
+  # metrics(micrometer-registry-otlp) ------------(HTTP)--┐                ┌-- (http://prometheus:9090/api/v1/otlp) -> Prometheus/otlp-receiver
+  # tracing(micrometer-tracing-bridge-otel) ------(gRPC)--├--> collector --┤-- (http://tempo:4418) ------------------> Grafana Tempo
+  # logging(opentelemetry-logback-appender-1.0) --(gRPC)--┘                └-- (http://loki:3100/otlp) --------------> Grafana Loki
+  # =======
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      instance: "host.docker.internal:8080"
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  tracing:
+    sampling:
+      probability: 1.0  # 100%サンプリング（開発環境向け）
+  otlp:
+    metrics:
+      export:
+        enabled: false
+        url: "http://localhost:4318/v1/metrics" # MicrometerはgRPCは未サポートのため
+        step: 2s
+    tracing:
+      export:
+        enabled: false
+      transport: grpc
+      endpoint: "http://localhost:4317" # for gRPC
+    logging:
+      export:
+        enabled: false
+      transport: grpc
+      endpoint: "http://localhost:4317" # for gRPC
+      
+      
 rms:
   log:
     server:

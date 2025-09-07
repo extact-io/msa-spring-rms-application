@@ -53,8 +53,12 @@ public class RemoteRepositoryConfig {
         }
 
         @Bean
-        RemoteItemClientApi remoteItemClientApi(@Qualifier("item") ExternalProperties prop, Environment env) {
-            HttpServiceProxyFactory factory = httpServiceProxyFactory(prop, env);
+        RemoteItemClientApi remoteItemClientApi(
+                RestClient.Builder builder,
+                @Qualifier("item") ExternalProperties prop,
+                Environment env) {
+
+            HttpServiceProxyFactory factory = httpServiceProxyFactory(builder, prop, env);
             return factory.createClient(RemoteItemClientApi.class);
         }
 
@@ -77,8 +81,12 @@ public class RemoteRepositoryConfig {
         }
 
         @Bean
-        RemoteReservationClientApi remoteReservationClientApi(@Qualifier("reservation") ExternalProperties prop, Environment env) {
-            HttpServiceProxyFactory factory = httpServiceProxyFactory(prop, env);
+        RemoteReservationClientApi remoteReservationClientApi(
+                RestClient.Builder builder,
+                @Qualifier("reservation") ExternalProperties prop,
+                Environment env) {
+
+            HttpServiceProxyFactory factory = httpServiceProxyFactory(builder, prop, env);
             return factory.createClient(RemoteReservationClientApi.class);
         }
 
@@ -101,8 +109,11 @@ public class RemoteRepositoryConfig {
         }
 
         @Bean
-        RemoteUserClientApi remoteUserClientApi(@Qualifier("user") ExternalProperties prop, Environment env) {
-            HttpServiceProxyFactory factory = httpServiceProxyFactory(prop, env);
+        RemoteUserClientApi remoteUserClientApi(
+                RestClient.Builder builder,
+                @Qualifier("user") ExternalProperties prop,
+                Environment env) {
+            HttpServiceProxyFactory factory = httpServiceProxyFactory(builder, prop, env);
             return factory.createClient(RemoteUserClientApi.class);
         }
 
@@ -114,7 +125,10 @@ public class RemoteRepositoryConfig {
         }
     }
 
-    static HttpServiceProxyFactory httpServiceProxyFactory(ExternalProperties prop, Environment env) {
+    static HttpServiceProxyFactory httpServiceProxyFactory(
+            RestClient.Builder builder,
+            ExternalProperties prop,
+            Environment env) {
 
         ConversionService conversionService = ConfigConversionServiceBuilder
                 .builder(prop)
@@ -128,7 +142,7 @@ public class RemoteRepositoryConfig {
                 .builder(prop)
                 .build();
 
-        RestClient restClient = RestClient.builder()
+        RestClient restClient = builder
                 .uriBuilderFactory(uriFactory)
                 .messageConverters(converters -> converters.addFirst(converter))
                 .requestInitializer(new LoginUserHeaderRequestInitializer())
