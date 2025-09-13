@@ -3,6 +3,7 @@ package io.extact.msa.spring.rms.infrastructure.persistence.remote.remote;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import io.extact.msa.spring.test.spring.NopTransactionManager;
 import lombok.extern.slf4j.Slf4j;
 
 @RestClientTest
+@AutoConfigureMockRestServiceServer(enabled = false)
 @Testcontainers
 @ActiveProfiles({ "test", "user-remote" })
 @Slf4j
