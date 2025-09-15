@@ -24,6 +24,9 @@ spring:
       jpa-all: item-jpa,reservation-jpa,user-jpa
       file-all: item-file,reservation-file,user-file
     default: jpa-all
+  datasource:
+    generate-unique-name: false
+    name: application-datasource
   jpa:
     open-in-view: false
     hibernate:
