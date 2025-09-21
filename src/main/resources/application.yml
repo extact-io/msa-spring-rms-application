@@ -1,12 +1,3 @@
-env:
-  otlp:
-    enabled: false
-    endpoint:
-      scheme: http
-      host: localhost
-      port-rest: 4318
-      port-grpc: 4317
-
 logging.level:
   org.springframework: info
     #transaction: info
@@ -33,65 +24,7 @@ spring:
       ddl-auto: none
     properties:
       javax.persistence.validation.mode: NONE
-  mvc:
-    format:
-      date: yyyyMMdd
-      date-time: yyyyMMdd HH:mm
 
-management:
-  info:
-    java.enabled: true
-    os.enabled: true
-    process.enabled: true    
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-        exclude: "env,beans"
-  endpoint:
-    health:
-      show-details: always
-      probes:
-        enabled: true
-      group:
-        readiness:
-          include: "readinessState,db,dependentServers"
-      validate-group-membership: false # groupにindicatorが存在しない場合もエラーにしない設定
-      
-  # =======
-  # ＜TelemetryパイプラインはOTEL+HTTPの標準的な構成＞
-  # metrics(micrometer-registry-otlp) ------------(HTTP)--┐                ┌-- (http://prometheus:9090/api/v1/otlp) -> Prometheus/otlp-receiver
-  # tracing(micrometer-tracing-bridge-otel) ------(gRPC)--├--> collector --┤-- (http://tempo:4418) ------------------> Grafana Tempo
-  # logging(opentelemetry-logback-appender-1.0) --(gRPC)--┘                └-- (http://loki:3100/otlp) --------------> Grafana Loki
-  # =======
-  metrics:
-    tags:
-      application: ${spring.application.name}
-      instance: "host.docker.internal:8080"
-    distribution:
-      percentiles-histogram:
-        http.server.requests: true
-  tracing:
-    sampling:
-      probability: 1.0  # 100%サンプリング（開発環境向け）
-  otlp:
-    metrics:
-      export:
-        enabled: ${env.otlp.enabled}
-        url: ${env.otlp.endpoint.scheme}://${env.otlp.endpoint.host}:${env.otlp.endpoint.port-rest}/v1/metrics # MicrometerはgRPCは未サポート
-        step: 2s
-    tracing:
-      export:
-        enabled: ${env.otlp.enabled}
-      transport: grpc
-      endpoint: ${env.otlp.endpoint.scheme}://${env.otlp.endpoint.host}:${env.otlp.endpoint.port-grpc} # for gRPC
-    logging:
-      export:
-        enabled: ${env.otlp.enabled}
-      transport: grpc
-      endpoint: ${env.otlp.endpoint.scheme}://${env.otlp.endpoint.host}:${env.otlp.endpoint.port-grpc} # for gRPC
-     
-      
 rms:
   log:
     server:
@@ -103,7 +36,7 @@ rms:
       type: SYSTEM
       fixed-datetime: 2024-01-01T12:30 # typeがSYSTEMの場合は無視される
     claim:
-      issuer: JsonWebTokenIntegrationTest
+      issuer: ${spring.application.name}
       exp: 60                 # 有効期限（分単位）
   jwt-deencode:
     public-key: classpath:/jwt.pub.key
@@ -112,11 +45,6 @@ rms:
   health:
     depend-services:
       - http://localhost:8081/actuator/health/readiness
-  rest:
-    controller:
-      format:
-        date: ${spring.mvc.format.date}
-        date-time: ${spring.mvc.format.date-time}
   persistence:
     item:
       csv:

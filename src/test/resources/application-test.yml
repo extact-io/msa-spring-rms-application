@@ -11,9 +11,9 @@ spring:
 rms:
   debug:
     configdump:
-      enable: off
-      #system-properties: on
-      #system-environment: on
+      enable: false
+      #system-properties: true
+      #system-environment: true
   jwt-encode:
     enable: true
     private-key: classpath:/jwt.key
