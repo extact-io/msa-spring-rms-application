@@ -3,6 +3,8 @@ package io.extact.msa.spring.rms.infrastructure.persistence.remote.remote;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 class RemoteItemRepositoryUsingRemoteStubTest extends AbstractRemoteItemRepositoryTest {
 
     @Configuration(proxyBeanMethods = false)
+    @ImportAutoConfiguration(TaskExecutionAutoConfiguration.class)
     @Import({
             CoreConfig.class,
             RemoteRepositoryConfig.class,

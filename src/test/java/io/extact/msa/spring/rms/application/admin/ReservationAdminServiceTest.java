@@ -10,6 +10,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +48,7 @@ class ReservationAdminServiceTest {
     private ReservationAdminService service;
 
     @Configuration(proxyBeanMethods = false)
+    @ImportAutoConfiguration(TaskExecutionAutoConfiguration.class)
     @Import({
             PersistenceConfig.class,
             DomainConfig.class,
