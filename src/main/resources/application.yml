@@ -1,5 +1,10 @@
+env:
+  otlp:
+    enabled: true
+
 logging.level:
   org.springframework: info
+  io.extact.msa.spring.platform.core.async: debug
     #transaction: info
     #security: trace
     #context.support.ResourceBundleMessageSource: DEBUG
