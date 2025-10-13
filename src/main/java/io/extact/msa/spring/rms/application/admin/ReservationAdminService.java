@@ -2,6 +2,7 @@ package io.extact.msa.spring.rms.application.admin;
 
 import java.util.List;
 
+import io.extact.msa.spring.platform.core.transaction.ReadOnly;
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
 import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
@@ -27,6 +28,7 @@ public class ReservationAdminService {
         this.support = new ApplicationCrudSupport<>(duplicateChecker, repository);
     }
 
+    @ReadOnly
     public List<ReservationComposeModel> getAll() {
         return support
                 .getAll()

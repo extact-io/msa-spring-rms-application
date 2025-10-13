@@ -233,6 +233,7 @@ class ApplicationArchUnitTest {
                             "..core.generic..",
                             "..core.auth..",
                             "..core.async..",
+                            "..core.transaction..",
                             "..fw.domain..",
                             "..fw.application..",
                             "..fw.exception..",

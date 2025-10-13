@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import io.extact.msa.spring.platform.core.auth.context.LoginContext;
+import io.extact.msa.spring.platform.core.transaction.ReadOnly;
 import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
@@ -40,10 +41,12 @@ public class ReserveItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
+    @ReadOnly
     public List<ItemModelView> getItemAll() {
         return new ArrayList<>(itemRepository.findAll()); // 型をModelViewに制限するため変換
     }
 
+    @ReadOnly
     public List<ItemModelView> findRentableItemAtPeriod(LocalDateTime from, LocalDateTime to) {
 
         ReservationPeriod overlapPeriod = new ReservationPeriod(from, to);
@@ -61,6 +64,7 @@ public class ReserveItemService {
         return new ArrayList<>(items); // 型をModelViewに制限するため変換
     }
 
+    @ReadOnly
     public boolean isRentableItemAtPeriod(ItemId itemId, LocalDateTime from, LocalDateTime to) {
         ReservationPeriod overlapPeriod = new ReservationPeriod(from, to);
         return reservationRepository
@@ -68,6 +72,7 @@ public class ReserveItemService {
                 .isEmpty();
     }
 
+    @ReadOnly
     public List<ReservationComposeModel> findReservationByCondition(ReserveItemQueryCondition cond) {
         return queryService
                 .findByCondition(cond)
@@ -76,6 +81,7 @@ public class ReserveItemService {
                 .toList();
     }
 
+    @ReadOnly
     public List<ReservationComposeModel> getOwnReservations() {
         int userId = loginContext.getLoginUser().getUserId();
         ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
