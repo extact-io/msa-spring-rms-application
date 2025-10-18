@@ -31,9 +31,6 @@ spring:
       javax.persistence.validation.mode: NONE
 
 rms:
-  log:
-    server:
-      enable: false
   jwt-encode:
     enable: true
     private-key: classpath:/jwt.key

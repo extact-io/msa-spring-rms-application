@@ -3,14 +3,15 @@
 
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
-
-    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
-        <captureExperimentalAttributes>true</captureExperimentalAttributes>
-        <captureMdcAttributes>!traceId,!spanId,*</captureMdcAttributes>
-    </appender>
+    <include resource="io/extact/msa/spring/platform/core/log/access/access-log-console-appender.xml"/>
+    <include resource="io/extact/msa/spring/platform/core/log/access/otel-appender.xml"/>
 
     <root level="INFO">
-        <appender-ref ref="OTEL"/>
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="OTEL"/>
     </root>
+    <logger name="ACCESS-LOG" level="DEBUG" additivity="false">
+        <appender-ref ref="ACCESS-LOG-CONSOLE"/>
+        <appender-ref ref="OTEL"/>
+    </logger>
 </configuration>
