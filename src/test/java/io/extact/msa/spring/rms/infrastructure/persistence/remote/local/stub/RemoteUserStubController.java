@@ -10,11 +10,11 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.ApiController;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.user.RemoteUser;
 
-@RmsRestController("/remote/users")
+@ApiController("/remote/users")
 public class RemoteUserStubController extends RemoteStubController<User, RemoteUser> {
 
     private Map<Integer, RemoteUser> usersMap;

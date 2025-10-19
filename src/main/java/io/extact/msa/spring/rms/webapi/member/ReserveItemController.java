@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsRequestCheckException;
-import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.ApiController;
 import io.extact.msa.spring.rms.application.member.ReserveItemQueryCondition;
 import io.extact.msa.spring.rms.application.member.ReserveItemService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import lombok.RequiredArgsConstructor;
 
-@RmsRestController
+@ApiController
 @RequiredArgsConstructor
 public class ReserveItemController {
 

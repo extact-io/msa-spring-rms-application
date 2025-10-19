@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.extact.msa.spring.platform.core.jwt.encode.GenerateToken;
-import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.ApiController;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.domain.user.constraint.LoginId;
 import io.extact.msa.spring.rms.domain.user.constraint.Passowrd;
 import lombok.RequiredArgsConstructor;
 
-@RmsRestController("/login")
+@ApiController("/login")
 @RequiredArgsConstructor
 public class LoginController {
 

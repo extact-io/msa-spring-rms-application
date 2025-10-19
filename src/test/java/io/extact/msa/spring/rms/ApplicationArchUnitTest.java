@@ -32,7 +32,7 @@ import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.PhysicalEntity;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArrayMapper;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.JpaRepositoryDelegator;
-import io.extact.msa.spring.platform.fw.interfaces.webapi.RmsRestController;
+import io.extact.msa.spring.platform.fw.interfaces.webapi.ApiController;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.StartupLogRunner;
 
 @AnalyzeClasses(packages = "io.extact.msa.spring.rms", importOptions = ImportOption.DoNotIncludeTests.class)
@@ -353,7 +353,7 @@ class ApplicationArchUnitTest {
     static final ArchRule naming_controller_should_be_suffixed = classes()
             .that()
             .resideInAPackage("..webapi..")
-            .and().areAnnotatedWith(RmsRestController.class)
+            .and().areAnnotatedWith(ApiController.class)
             .should().haveSimpleNameEndingWith("Controller");
 
     /**
@@ -364,7 +364,7 @@ class ApplicationArchUnitTest {
             .that()
             .resideInAPackage("..webapi..")
             .and().haveSimpleNameEndingWith("Controller")
-            .should().beAnnotatedWith(RmsRestController.class);
+            .should().beAnnotatedWith(ApiController.class);
 
     /**
      * applicationパッケージ配下でApplicationServiceアノテーションが付いているクラスの
