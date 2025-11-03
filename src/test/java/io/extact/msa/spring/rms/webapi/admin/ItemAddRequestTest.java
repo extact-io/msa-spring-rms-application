@@ -16,7 +16,6 @@ import org.springframework.test.context.ActiveProfiles;
 import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
 import io.extact.msa.spring.rms.domain.item.constraint.ItemName;
 import io.extact.msa.spring.rms.domain.item.constraint.SerialNo;
-import io.extact.msa.spring.rms.webapi.admin.ItemAddRequest;
 import io.extact.msa.spring.test.junit5.ConstraintAnnotationAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)

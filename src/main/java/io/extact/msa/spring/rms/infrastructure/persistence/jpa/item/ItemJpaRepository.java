@@ -6,15 +6,16 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.ModelEntityMa
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.jpa.AbstractJpaRepository;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 
-public class ItemJpaRepository extends AbstractJpaRepository<Item, ItemEntity> implements ItemRepository {
+public class ItemJpaRepository extends AbstractJpaRepository<Item, ItemId, ItemEntity> implements ItemRepository {
 
     private final ItemJpaRepositoryDelegator springJpa;
     private final ModelEntityMapper<Item, ItemEntity> entityMapper;
 
     public ItemJpaRepository(ItemJpaRepositoryDelegator jpa,
             ModelEntityMapper<Item, ItemEntity> entityMapper) {
-        super(jpa, entityMapper);
+        super(jpa, entityMapper, ItemId::new);
         this.springJpa = jpa;
         this.entityMapper = entityMapper;
     }

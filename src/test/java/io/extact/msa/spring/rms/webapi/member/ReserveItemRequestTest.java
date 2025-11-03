@@ -22,7 +22,6 @@ import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTime;
 import io.extact.msa.spring.rms.domain.reservation.constraint.FromDateTimeFuture;
 import io.extact.msa.spring.rms.domain.reservation.constraint.Note;
 import io.extact.msa.spring.rms.domain.reservation.constraint.ToDateTime;
-import io.extact.msa.spring.rms.webapi.member.ReserveItemRequest;
 import io.extact.msa.spring.test.junit5.ConstraintAnnotationAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)

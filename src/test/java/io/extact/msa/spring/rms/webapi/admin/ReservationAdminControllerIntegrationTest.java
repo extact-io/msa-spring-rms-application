@@ -48,8 +48,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.converter.Config
 import io.extact.msa.spring.platform.fw.infrastructure.external.converter.ConfigMessageConveterBuilder;
 import io.extact.msa.spring.platform.fw.test.utils.TestAuthUtils;
 import io.extact.msa.spring.rms.WebApiApplication;
-import io.extact.msa.spring.rms.webapi.admin.ReservationAdminResponse;
-import io.extact.msa.spring.rms.webapi.admin.ReservationUpdateRequest;
 import io.extact.msa.spring.rms.webapi.admin.ReservationUpdateRequest.ReservationUpdateRequestBuilder;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
@@ -69,13 +67,13 @@ class ReservationAdminControllerIntegrationTest {
     @Configuration(proxyBeanMethods = false)
     @Import(WebApiApplication.class)
     static class TestConfig {
-        
+
         @Bean
         @ConfigurationProperties("rms.persistence.reservation.remote")
         ExternalProperties externalProperties() {
             return new ExternalProperties();
         }
-        
+
         @Bean
         ReservationClient reservationClient(ExternalProperties prop, Environment env) {
 

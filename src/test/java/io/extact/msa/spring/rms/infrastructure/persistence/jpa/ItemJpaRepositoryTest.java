@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractItemRepositoryTest;
 
 @DataJpaTest
@@ -34,12 +35,12 @@ class ItemJpaRepositoryTest extends AbstractItemRepositoryTest {
     protected void testNextIdentity() {
 
         // when
-        int firstTime = repository.nextIdentity();
-        int secondTime = repository.nextIdentity();
-        int thirdTime = repository.nextIdentity();
+        ItemId firstTime = repository.nextIdentity();
+        ItemId secondTime = repository.nextIdentity();
+        ItemId thirdTime = repository.nextIdentity();
 
         // then
-        assertThat(secondTime).isEqualTo(firstTime + 1);
-        assertThat(thirdTime).isEqualTo(secondTime + 1);
+        assertThat(secondTime.id()).isEqualTo(firstTime.id() + 1);
+        assertThat(thirdTime.id()).isEqualTo(secondTime.id() + 1);
     }
 }

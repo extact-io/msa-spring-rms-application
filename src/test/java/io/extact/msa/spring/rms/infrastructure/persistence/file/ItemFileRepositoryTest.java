@@ -70,15 +70,15 @@ class ItemFileRepositoryTest extends AbstractItemRepositoryTest {
     protected void testNextIdentity() {
 
         // when
-        int firstTime = repository.nextIdentity();
-        repository.add(testCreator.newInstance(new ItemId(firstTime), "1st", ""));
-        int secondTime = repository.nextIdentity();
-        repository.add(testCreator.newInstance(new ItemId(secondTime), "2nd", ""));
-        int thirdTime = repository.nextIdentity();
-        repository.add(testCreator.newInstance(new ItemId(thirdTime), "3rd", ""));
+        ItemId firstTime = repository.nextIdentity();
+        repository.add(testCreator.newInstance(firstTime, "1st", ""));
+        ItemId secondTime = repository.nextIdentity();
+        repository.add(testCreator.newInstance(secondTime, "2nd", ""));
+        ItemId thirdTime = repository.nextIdentity();
+        repository.add(testCreator.newInstance(thirdTime, "3rd", ""));
 
         // then
-        assertThat(secondTime).isEqualTo(firstTime + 1);
-        assertThat(thirdTime).isEqualTo(secondTime + 1);
+        assertThat(secondTime.id()).isEqualTo(firstTime.id() + 1);
+        assertThat(thirdTime.id()).isEqualTo(secondTime.id() + 1);
     }
 }

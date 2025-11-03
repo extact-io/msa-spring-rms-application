@@ -28,8 +28,6 @@ import io.extact.msa.spring.rms.application.universal.UserProfileService;
 import io.extact.msa.spring.rms.application.universal.UserProfileUpdateCommand;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.webapi.WebApiConfig.WebApiContextConfigs;
-import io.extact.msa.spring.rms.webapi.universal.UserProfileController;
-import io.extact.msa.spring.rms.webapi.universal.UserProfileUpdateRequest;
 
 @WebMvcTest
 @ActiveProfiles("test")

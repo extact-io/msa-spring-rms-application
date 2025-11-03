@@ -5,7 +5,7 @@ import jakarta.validation.groups.Default;
 import io.extact.msa.spring.platform.fw.domain.constraint.ValidationGroups.Add;
 import io.extact.msa.spring.platform.fw.domain.model.ModelCreator;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
-import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
+import io.extact.msa.spring.platform.fw.domain.repository.IdProvider;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationCreator.ReservationModelAttributes;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
@@ -19,13 +19,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReservationCreator implements ModelCreator<Reservation, ReservationModelAttributes> {
 
-    private final IdentityGenerator idGenerator;
+    private final IdProvider<ReservationId> idProvider;
     private final ModelValidator Validator;
     private final ReservationCreatable constructorProxy = new ReservationCreatable() {};
 
     public Reservation create(ReservationModelAttributes attrs) {
 
-        ReservationId id = new ReservationId(idGenerator.nextIdentity());
+        ReservationId id = idProvider.nextIdentity();
         Reservation reservation = constructorProxy.newInstance(
                 id,
                 attrs.period,

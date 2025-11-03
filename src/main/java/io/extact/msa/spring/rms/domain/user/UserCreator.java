@@ -2,7 +2,7 @@ package io.extact.msa.spring.rms.domain.user;
 
 import io.extact.msa.spring.platform.fw.domain.model.ModelCreator;
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
-import io.extact.msa.spring.platform.fw.domain.service.IdentityGenerator;
+import io.extact.msa.spring.platform.fw.domain.repository.IdProvider;
 import io.extact.msa.spring.rms.domain.user.UserCreator.UserModelAttributes;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
@@ -14,13 +14,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserCreator implements ModelCreator<User, UserModelAttributes> {
 
-    private final IdentityGenerator idGenerator;
+    private final IdProvider<UserId> idProvider;
     private final ModelValidator validator;
     private final UserCreatable constructorProxy = new UserCreatable() {};
 
     public User create(UserModelAttributes attrs) {
 
-        UserId id = new UserId(idGenerator.nextIdentity());
+        UserId id = idProvider.nextIdentity();
         User user = constructorProxy.newInstance(
                 id,
                 attrs.loginId,

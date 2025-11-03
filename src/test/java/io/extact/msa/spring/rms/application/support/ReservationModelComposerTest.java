@@ -161,7 +161,7 @@ class ReservationModelComposerTest {
         }
 
         @Override
-        public int nextIdentity() {
+        public ItemId nextIdentity() {
             throw new UnsupportedOperationException();
         }
     }
@@ -202,7 +202,7 @@ class ReservationModelComposerTest {
         }
 
         @Override
-        public int nextIdentity() {
+        public UserId nextIdentity() {
             throw new UnsupportedOperationException();
         }
 

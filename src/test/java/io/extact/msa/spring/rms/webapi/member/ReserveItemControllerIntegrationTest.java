@@ -55,9 +55,6 @@ import io.extact.msa.spring.platform.fw.test.utils.TestAuthUtils;
 import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.webapi.admin.ReservationAdminResponse;
-import io.extact.msa.spring.rms.webapi.member.ItemResponse;
-import io.extact.msa.spring.rms.webapi.member.ReserveItemRequest;
-import io.extact.msa.spring.rms.webapi.member.ReserveItemResponse;
 import io.extact.msa.spring.rms.webapi.member.ReserveItemRequest.ReserveItemRequestBuilder;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
@@ -86,13 +83,13 @@ class ReserveItemControllerIntegrationTest {
     @Configuration(proxyBeanMethods = false)
     @Import(WebApiApplication.class)
     static class TestConfig {
-        
+
         @Bean
         @ConfigurationProperties("rms.persistence.reservation.remote")
         ExternalProperties externalProperties() {
             return new ExternalProperties();
         }
-        
+
         @Bean
         ReservationClient reservationClient(ExternalProperties prop, Environment env) {
 
@@ -348,11 +345,11 @@ class ReserveItemControllerIntegrationTest {
         Integer invalidItemId = -1;
         LocalDate date = null;
         Integer reserverId = null;
-        
+
         // when
         // 検索条件なので-1が来ても検索結果がないだけなのでエラーにはしない
         List<ReserveItemResponse> actual = client.findReservationByParams(invalidItemId, reserverId, date);
-        
+
         // then
         assertThat(actual).isEmpty();
     }
@@ -360,13 +357,13 @@ class ReserveItemControllerIntegrationTest {
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
     void testFindReservationByItemIdOnAuthError(@Autowired JsonWebTokenGenerator generator) {
-        
+
         // given -- 認証エラー
         SecurityContextHolder.clearContext();
         Integer itemId = 3;
         LocalDate fromDate = LocalDate.of(2020, 4, 1);
         Integer reserverId = null;
-        
+
         // when
         assertThatThrownBy(() -> client.findReservationByParams(itemId, reserverId, fromDate))
                 // then
@@ -457,7 +454,7 @@ class ReserveItemControllerIntegrationTest {
                     assertThat(thrown).hasMessageContaining("at least one request parameter");
                 });
     }
-    
+
     @Test
     @Order(NO_SIDE_EFFECT_CASE)
     void testGetOwnReservations() {
@@ -731,7 +728,7 @@ class ReserveItemControllerIntegrationTest {
                 @RequestParam(name = "item-id", required = false) Integer itemId,
                 @RequestParam(name = "reserver-id", required = false) Integer reserverId,
                 @RequestParam(name = "from-date", required = false) LocalDate from);
-        
+
         @GetExchange("/member/reservations/own")
         List<ReserveItemResponse> getOwnReservations();
 

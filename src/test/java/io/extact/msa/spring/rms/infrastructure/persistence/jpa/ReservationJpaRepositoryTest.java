@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.rms.application.member.ReserveItemQueryService;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractReservationRepositoryTest;
 
 @DataJpaTest
@@ -31,7 +32,7 @@ class ReservationJpaRepositoryTest extends AbstractReservationRepositoryTest {
     protected ReservationRepository repository() {
         return this.repository;
     }
-    
+
     @Override
     protected ReserveItemQueryService queryService() {
         return this.queryService;
@@ -42,12 +43,12 @@ class ReservationJpaRepositoryTest extends AbstractReservationRepositoryTest {
     protected void testNextIdentity() {
 
         // when
-        int firstTime = repository.nextIdentity();
-        int secondTime = repository.nextIdentity();
-        int thirdTime = repository.nextIdentity();
+        ReservationId firstTime = repository.nextIdentity();
+        ReservationId secondTime = repository.nextIdentity();
+        ReservationId thirdTime = repository.nextIdentity();
 
         // then
-        assertThat(secondTime).isEqualTo(firstTime + 1);
-        assertThat(thirdTime).isEqualTo(secondTime + 1);
+        assertThat(secondTime.id()).isEqualTo(firstTime.id() + 1);
+        assertThat(thirdTime.id()).isEqualTo(secondTime.id() + 1);
     }
 }

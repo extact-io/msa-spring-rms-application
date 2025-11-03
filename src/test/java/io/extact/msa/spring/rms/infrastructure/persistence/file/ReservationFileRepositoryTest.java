@@ -82,38 +82,38 @@ class ReservationFileRepositoryTest extends AbstractReservationRepositoryTest {
     protected void testNextIdentity() {
 
         // when
-        int firstTime = repository.nextIdentity();
+        ReservationId firstTime = repository.nextIdentity();
         LocalDateTime from = LocalDateTime.now().plusDays(1);
         LocalDateTime to = from.plusDays(1);
         repository.add(testCreator.newInstance(
-                new ReservationId(firstTime),
+                firstTime,
                 new ReservationPeriod(from, to),
                 "1st",
                 new ItemId(1),
                 new UserId(1)));
 
-        int secondTime = repository.nextIdentity();
+        ReservationId secondTime = repository.nextIdentity();
         from = from.plusDays(1);
         to = to.plusDays(1);
         repository.add(testCreator.newInstance(
-                new ReservationId(secondTime),
+                secondTime,
                 new ReservationPeriod(from, to),
                 "2nd",
                 new ItemId(1),
                 new UserId(1)));
 
-        int thirdTime = repository.nextIdentity();
+        ReservationId thirdTime = repository.nextIdentity();
         from = from.plusDays(1);
         to = to.plusDays(1);
         repository.add(testCreator.newInstance(
-                new ReservationId(thirdTime),
+                thirdTime,
                 new ReservationPeriod(from, to),
                 "3rd",
                 new ItemId(1),
                 new UserId(1)));
 
         // then
-        assertThat(secondTime).isEqualTo(firstTime + 1);
-        assertThat(thirdTime).isEqualTo(secondTime + 1);
+        assertThat(secondTime.id()).isEqualTo(firstTime.id() + 1);
+        assertThat(thirdTime.id()).isEqualTo(secondTime.id() + 1);
     }
 }

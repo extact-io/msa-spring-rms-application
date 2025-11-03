@@ -32,8 +32,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorH
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
 import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.WebApiApplication;
-import io.extact.msa.spring.rms.webapi.universal.LoginRequest;
-import io.extact.msa.spring.rms.webapi.universal.LoginUserResponse;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)

@@ -6,17 +6,18 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.ModelEntityMa
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.remote.AbstractRemoteRepository;
 import io.extact.msa.spring.rms.domain.user.UserRepository;
 import io.extact.msa.spring.rms.domain.user.model.User;
+import io.extact.msa.spring.rms.domain.user.model.UserId;
 
-public class RemoteUserRepository extends AbstractRemoteRepository<User, RemoteUser> implements UserRepository {
+public class RemoteUserRepository extends AbstractRemoteRepository<User, UserId, RemoteUser> implements UserRepository {
 
     private final RemoteUserClientApi clientApi;
     private final ModelEntityMapper<User, RemoteUser> entityMapper;
 
     public RemoteUserRepository(
-            RemoteUserClientApi clientApi, 
+            RemoteUserClientApi clientApi,
             ModelEntityMapper<User, RemoteUser> entityMapper) {
-        
-        super(clientApi, entityMapper);
+
+        super(clientApi, entityMapper, UserId::new);
         this.clientApi = clientApi;
         this.entityMapper = entityMapper;
     }

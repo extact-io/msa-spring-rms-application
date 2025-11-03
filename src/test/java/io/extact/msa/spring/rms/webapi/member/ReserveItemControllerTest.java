@@ -42,8 +42,6 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.webapi.WebApiConfig.WebApiContextConfigs;
-import io.extact.msa.spring.rms.webapi.member.ReserveItemController;
-import io.extact.msa.spring.rms.webapi.member.ReserveItemRequest;
 
 /**
  * Controller 単体テスト。

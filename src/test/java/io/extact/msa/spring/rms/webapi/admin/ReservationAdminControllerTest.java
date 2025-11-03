@@ -38,8 +38,6 @@ import io.extact.msa.spring.rms.domain.reservation.model.Reservation.Reservation
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.webapi.WebApiConfig.WebApiContextConfigs;
-import io.extact.msa.spring.rms.webapi.admin.ReservationAdminController;
-import io.extact.msa.spring.rms.webapi.admin.ReservationUpdateRequest;
 import io.extact.msa.spring.rms.webapi.admin.ReservationUpdateRequest.ReservationUpdateRequestBuilder;
 
 @WebMvcTest

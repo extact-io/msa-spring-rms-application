@@ -88,7 +88,7 @@ class UserAdminServiceTest {
         UserModelView actual = service.add(command);
 
         // then
-        int addedId = forResultAssert.nextIdentity() - 1;
+        int addedId = forResultAssert.nextIdentity().id() - 1;
         User expected = testCreator.newInstance(
                 new UserId(addedId),
                 "newLogin",

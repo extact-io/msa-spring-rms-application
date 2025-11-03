@@ -35,8 +35,6 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstrai
 import io.extact.msa.spring.platform.fw.test.utils.TestAuthUtils;
 import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.WebApiApplication;
-import io.extact.msa.spring.rms.webapi.universal.UserProfileResponse;
-import io.extact.msa.spring.rms.webapi.universal.UserProfileUpdateRequest;
 import io.extact.msa.spring.rms.webapi.universal.UserProfileUpdateRequest.UserProfileUpdateRequestBuilder;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 

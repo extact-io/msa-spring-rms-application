@@ -33,9 +33,6 @@ import io.extact.msa.spring.rms.application.admin.ItemUpdateCommand;
 import io.extact.msa.spring.rms.domain.item.model.Item.ItemCreatable;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.webapi.WebApiConfig.WebApiContextConfigs;
-import io.extact.msa.spring.rms.webapi.admin.ItemAddRequest;
-import io.extact.msa.spring.rms.webapi.admin.ItemAdminController;
-import io.extact.msa.spring.rms.webapi.admin.ItemUpdateRequest;
 
 /**
  * Controllerの単体テストクラス。

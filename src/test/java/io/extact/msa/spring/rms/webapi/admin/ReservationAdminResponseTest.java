@@ -16,9 +16,6 @@ import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationPeriod;
 import io.extact.msa.spring.rms.domain.user.model.User;
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
-import io.extact.msa.spring.rms.webapi.admin.ItemAdminResponse;
-import io.extact.msa.spring.rms.webapi.admin.ReservationAdminResponse;
-import io.extact.msa.spring.rms.webapi.admin.UserAdminResponse;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 

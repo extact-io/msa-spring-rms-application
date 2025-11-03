@@ -18,7 +18,6 @@ import io.extact.msa.spring.rms.domain.user.constraint.Contact;
 import io.extact.msa.spring.rms.domain.user.constraint.Passowrd;
 import io.extact.msa.spring.rms.domain.user.constraint.PhoneNumber;
 import io.extact.msa.spring.rms.domain.user.constraint.UserName;
-import io.extact.msa.spring.rms.webapi.universal.UserProfileUpdateRequest;
 import io.extact.msa.spring.test.junit5.ConstraintAnnotationAsserter;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)

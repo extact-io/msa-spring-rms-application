@@ -11,23 +11,24 @@ import io.extact.msa.spring.rms.application.member.ReserveItemQueryService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
-public class ReservationFileRepository extends AbstractFileRepository<Reservation>
+public class ReservationFileRepository extends AbstractFileRepository<Reservation, ReservationId>
         implements ReservationRepository, ReserveItemQueryService {
 
     public static final String FILE_ENTITY = "reservation";
 
     public ReservationFileRepository(FileOperator fileReadWriter, ModelArrayMapper<Reservation> mapper) {
-        super(fileReadWriter, mapper);
+        super(fileReadWriter, mapper, ReservationId::new);
     }
 
     @Override
     public String getEntityName() {
         return FILE_ENTITY;
     }
-    
+
     @Override
     public List<Reservation> findByItemId(ItemId itemId) {
         return this.findAll()

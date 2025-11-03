@@ -92,7 +92,7 @@ class ItemAdminServiceTest {
         ItemModelView actual = service.add(command);
 
         // then
-        int addedId = forResultAssert.nextIdentity() - 1;
+        int addedId = forResultAssert.nextIdentity().id() - 1;
         Item expected = testCreator.newInstance(new ItemId(addedId), "newNo", "newItem");
         assertThatToString(actual).isEqualTo(expected);
         // commitされているかの確認

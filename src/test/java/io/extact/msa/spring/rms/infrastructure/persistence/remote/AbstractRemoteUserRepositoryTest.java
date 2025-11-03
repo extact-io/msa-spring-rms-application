@@ -31,10 +31,10 @@ public abstract class AbstractRemoteUserRepositoryTest extends AbstractUserRepos
     protected void testNextIdentity() {
 
         // when
-        int firstTime = repository.nextIdentity();
+        UserId firstTime = repository.nextIdentity();
         repository.add(testCreator
                 .newInstance(
-                        new UserId(firstTime),
+                        firstTime,
                         "seq-test",
                         "seq-test",
                         UserType.MEMBER,
@@ -42,10 +42,10 @@ public abstract class AbstractRemoteUserRepositoryTest extends AbstractUserRepos
                         "070-1111-8888",
                         "seq-test"));
 
-        int secondTime = repository.nextIdentity();
+        UserId secondTime = repository.nextIdentity();
         repository.add(testCreator
                 .newInstance(
-                        new UserId(secondTime),
+                        secondTime,
                         "seq-test",
                         "seq-test",
                         UserType.MEMBER,
@@ -53,10 +53,10 @@ public abstract class AbstractRemoteUserRepositoryTest extends AbstractUserRepos
                         "070-1111-8888",
                         "seq-test"));
 
-        int thirdTime = repository.nextIdentity();
+        UserId thirdTime = repository.nextIdentity();
         repository.add(testCreator
                 .newInstance(
-                        new UserId(thirdTime),
+                        thirdTime,
                         "seq-test",
                         "seq-test",
                         UserType.MEMBER,
@@ -65,7 +65,7 @@ public abstract class AbstractRemoteUserRepositoryTest extends AbstractUserRepos
                         "seq-test"));
 
         // then
-        assertThat(secondTime).isEqualTo(firstTime + 1);
-        assertThat(thirdTime).isEqualTo(secondTime + 1);
+        assertThat(secondTime.id()).isEqualTo(firstTime.id() + 1);
+        assertThat(thirdTime.id()).isEqualTo(secondTime.id() + 1);
     }
 }

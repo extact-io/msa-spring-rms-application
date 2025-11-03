@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.domain.item.model.ItemModelView;
-import io.extact.msa.spring.rms.webapi.admin.ItemAdminResponse;
 
 class ItemAdminResponseTest {
 

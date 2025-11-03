@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
-import io.extact.msa.spring.rms.webapi.admin.UserAdminResponse;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserType;

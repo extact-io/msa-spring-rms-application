@@ -34,9 +34,6 @@ import io.extact.msa.spring.rms.domain.user.model.User.UserCreatable;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.domain.user.model.UserType;
 import io.extact.msa.spring.rms.webapi.WebApiConfig.WebApiContextConfigs;
-import io.extact.msa.spring.rms.webapi.admin.UserAddRequest;
-import io.extact.msa.spring.rms.webapi.admin.UserAdminController;
-import io.extact.msa.spring.rms.webapi.admin.UserUpdateRequest;
 
 @WebMvcTest
 @ActiveProfiles("test")

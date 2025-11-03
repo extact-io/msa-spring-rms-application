@@ -287,7 +287,7 @@ class ReserveItemServiceTest {
         ReservationComposeModel actual = service.reserve(command);
 
         // then
-        int addedId = forResultAssert.nextIdentity() - 1;
+        int addedId = forResultAssert.nextIdentity().id() - 1;
         Reservation added = testCreator.newInstance(
                 new ReservationId(addedId),
                 command.period(),

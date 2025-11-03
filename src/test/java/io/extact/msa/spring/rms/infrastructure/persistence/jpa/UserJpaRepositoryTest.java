@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.rms.domain.user.UserRepository;
+import io.extact.msa.spring.rms.domain.user.model.UserId;
 import io.extact.msa.spring.rms.infrastructure.persistence.AbstractUserRepositoryTest;
 
 @DataJpaTest
@@ -34,12 +35,12 @@ class UserJpaRepositoryTest extends AbstractUserRepositoryTest {
     protected void testNextIdentity() {
 
         // when
-        int firstTime = repository.nextIdentity();
-        int secondTime = repository.nextIdentity();
-        int thirdTime = repository.nextIdentity();
+        UserId firstTime = repository.nextIdentity();
+        UserId secondTime = repository.nextIdentity();
+        UserId thirdTime = repository.nextIdentity();
 
         // then
-        assertThat(secondTime).isEqualTo(firstTime + 1);
-        assertThat(thirdTime).isEqualTo(secondTime + 1);
+        assertThat(secondTime.id()).isEqualTo(firstTime.id() + 1);
+        assertThat(thirdTime.id()).isEqualTo(secondTime.id() + 1);
     }
 }

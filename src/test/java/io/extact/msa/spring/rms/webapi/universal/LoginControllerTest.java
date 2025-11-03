@@ -25,8 +25,6 @@ import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.rms.application.universal.LoginFailedException;
 import io.extact.msa.spring.rms.application.universal.LoginService;
 import io.extact.msa.spring.rms.webapi.WebApiConfig.WebApiContextConfigs;
-import io.extact.msa.spring.rms.webapi.universal.LoginController;
-import io.extact.msa.spring.rms.webapi.universal.LoginRequest;
 
 @WebMvcTest
 @ActiveProfiles("test")

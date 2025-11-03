@@ -1,7 +1,8 @@
 env:
   otlp:
     enabled: true
-
+    
+# Logback configuration
 logging.level:
   org.springframework: info
   io.extact.msa.spring.platform.core.async: debug
@@ -9,6 +10,7 @@ logging.level:
     #security: trace
     #context.support.ResourceBundleMessageSource: DEBUG
 
+# Spring Boot configuration
 spring:
   application:
     name: rms-application
@@ -30,6 +32,17 @@ spring:
     properties:
       javax.persistence.validation.mode: NONE
 
+# Micrometer integration configuration
+management:
+  observations:
+    enable:
+      spring.security: false
+      
+# jdbc-observations configuration (https://github.com/jdbc-observations/datasource-proxy)      
+jdbc:
+  includes: [KEYS, FETCH, QUERY] # [KEYS, FETCH, QUERY, CONNECTION](default properties)
+      
+# application configuration
 rms:
   jwt-encode:
     enable: true

@@ -27,9 +27,9 @@ public class DomainConfig {
 
     @Bean
     ItemCreator itemCreator(
-            ItemRepository idGenerator,
+            ItemRepository idProvider,
             ModelValidator validator) {
-        return new ItemCreator(idGenerator, validator);
+        return new ItemCreator(idProvider, validator);
     }
 
     @Bean
@@ -39,9 +39,9 @@ public class DomainConfig {
 
     @Bean
     ReservationCreator reservationCreator(
-            ReservationRepository repository,
+            ReservationRepository idProvider,
             ModelValidator validator) {
-        return new ReservationCreator(repository, validator);
+        return new ReservationCreator(idProvider, validator);
     }
 
     @Bean
@@ -51,9 +51,9 @@ public class DomainConfig {
 
     @Bean
     UserCreator userCreator(
-            UserRepository repository,
+            UserRepository idProvider,
             ModelValidator validator) {
-        return new UserCreator(repository, validator);
+        return new UserCreator(idProvider, validator);
     }
 
     @Bean

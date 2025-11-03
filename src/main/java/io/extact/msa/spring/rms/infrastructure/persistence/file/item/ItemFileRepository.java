@@ -7,13 +7,14 @@ import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.ModelArr
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.file.io.FileOperator;
 import io.extact.msa.spring.rms.domain.item.ItemRepository;
 import io.extact.msa.spring.rms.domain.item.model.Item;
+import io.extact.msa.spring.rms.domain.item.model.ItemId;
 
-public class ItemFileRepository extends AbstractFileRepository<Item> implements ItemRepository {
+public class ItemFileRepository extends AbstractFileRepository<Item, ItemId> implements ItemRepository {
 
     public static final String FILE_ENTITY = "item";
 
     public ItemFileRepository(FileOperator fileReadWriter, ModelArrayMapper<Item> mapper) {
-        super(fileReadWriter, mapper);
+        super(fileReadWriter, mapper, ItemId::new);
     }
 
     @Override

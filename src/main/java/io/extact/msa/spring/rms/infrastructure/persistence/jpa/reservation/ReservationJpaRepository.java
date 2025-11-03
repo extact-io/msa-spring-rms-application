@@ -14,10 +14,11 @@ import io.extact.msa.spring.rms.application.member.ReserveItemQueryService;
 import io.extact.msa.spring.rms.domain.item.model.ItemId;
 import io.extact.msa.spring.rms.domain.reservation.ReservationRepository;
 import io.extact.msa.spring.rms.domain.reservation.model.Reservation;
+import io.extact.msa.spring.rms.domain.reservation.model.ReservationId;
 import io.extact.msa.spring.rms.domain.reservation.model.ReservationModelView;
 import io.extact.msa.spring.rms.domain.user.model.UserId;
 
-public class ReservationJpaRepository extends AbstractJpaRepository<Reservation, ReservationEntity>
+public class ReservationJpaRepository extends AbstractJpaRepository<Reservation, ReservationId, ReservationEntity>
         implements ReservationRepository, ReserveItemQueryService {
 
     private final ReservationJpaRepositoryDelegator delegator;
@@ -25,7 +26,7 @@ public class ReservationJpaRepository extends AbstractJpaRepository<Reservation,
 
     public ReservationJpaRepository(ReservationJpaRepositoryDelegator delegator,
             ModelEntityMapper<Reservation, ReservationEntity> entityMapper) {
-        super(delegator, entityMapper);
+        super(delegator, entityMapper, ReservationId::new);
         this.delegator = delegator;
         this.entityMapper = entityMapper;
     }
