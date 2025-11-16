@@ -1,6 +1,6 @@
 env:
   otlp:
-    enabled: true
+    enabled: false
     
 # Logback configuration
 logging.level:
