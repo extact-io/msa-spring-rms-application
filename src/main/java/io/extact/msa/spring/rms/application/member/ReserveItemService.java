@@ -83,7 +83,7 @@ public class ReserveItemService {
 
     @ReadOnly
     public List<ReservationComposeModel> getOwnReservations() {
-        int userId = loginContext.getLoginUser().getUserId();
+        int userId = loginContext.getLoginUser().getUserId().value();
         ReserveItemQueryCondition cond = ReserveItemQueryCondition.builder()
                 .reserverId(userId)
                 .build();
@@ -96,7 +96,7 @@ public class ReserveItemService {
                 .period(command.period())
                 .note(command.note())
                 .itemId(command.itemId())
-                .reserverId(new UserId(loginContext.getLoginUser().getUserId()))
+                .reserverId(new UserId(loginContext.getLoginUser().getUserId().value()))
                 .build();
 
         Reservation newReservation = modelCreator.create(attrs);
@@ -117,7 +117,7 @@ public class ReserveItemService {
         }
 
         Reservation cancelTarget = optCancelTarget.get();
-        int cancelingUser = loginContext.getLoginUser().getUserId();
+        int cancelingUser = loginContext.getLoginUser().getUserId().value();
 
         if (cancelTarget.getReserverId().id() != cancelingUser) {
             throw new BusinessFlowException(

@@ -42,7 +42,7 @@ public class UserProfileService {
     }
 
     private User getInternalOwnProfile() {
-        int loginUserId = loginContext.getLoginUser().getUserId();
+        int loginUserId = loginContext.getLoginUser().getUserId().value();
         return repository
                 .find(new UserId(loginUserId))
                 .orElseThrow(() -> new BusinessFlowException(
