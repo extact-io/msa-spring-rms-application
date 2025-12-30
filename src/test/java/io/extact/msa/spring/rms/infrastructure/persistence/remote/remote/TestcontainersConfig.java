@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 class TestcontainersConfig {
 
     @Bean
+    @SuppressWarnings("resource")
     GenericContainer<?> stubContainer(Environment env) {
         return new GenericContainer<>(env.getProperty("rms.remote-stub.image"))
                 .withExposedPorts(8081)
