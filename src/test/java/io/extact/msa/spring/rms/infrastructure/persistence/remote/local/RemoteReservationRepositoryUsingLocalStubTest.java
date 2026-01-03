@@ -18,6 +18,7 @@ import io.extact.msa.spring.platform.core.auth.header.RmsHeaderAuthConfig;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.env.EnvConfig;
 import io.extact.msa.spring.platform.core.log.LogConfig;
+import io.extact.msa.spring.platform.fw.feature.auth.RdbAttributesProviderConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.RestControllerConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.AbstractRemoteReservationRepositoryTest;
@@ -37,6 +38,7 @@ class RemoteReservationRepositoryUsingLocalStubTest extends AbstractRemoteReserv
             EnvConfig.class,
             RestControllerConfig.class,
             RmsHeaderAuthConfig.class,
+            RdbAttributesProviderConfig.class,
             RemoteRepositoryConfig.class
     })
     static class WebSecurityConfig implements WebMvcConfigurer {

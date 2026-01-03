@@ -12,13 +12,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import io.extact.msa.spring.platform.core.auth.configure.AuthorizeHttpRequestCustomizer;
 import io.extact.msa.spring.platform.core.auth.jwt.RmsJwtAuthConfig;
+import io.extact.msa.spring.platform.fw.feature.auth.RdbAttributesProviderConfig;
 import io.extact.msa.spring.rms.webapi.admin.ItemAdminController;
 import io.extact.msa.spring.rms.webapi.admin.ReservationAdminController;
 import io.extact.msa.spring.rms.webapi.admin.UserAdminController;
 import io.extact.msa.spring.rms.webapi.member.ReserveItemController;
 
 @Configuration(proxyBeanMethods = false)
-@Import(RmsJwtAuthConfig.class)
+@Import({
+        RmsJwtAuthConfig.class,
+        RdbAttributesProviderConfig.class
+})
 public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Override

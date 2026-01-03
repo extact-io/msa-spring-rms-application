@@ -49,7 +49,7 @@ class LoginControllerIntegrationTest {
     @Import(WebApiApplication.class)
     static class TestConfig {
         @Bean
-        LoginClient userClient(Environment env) {
+        LoginClient loginClient(Environment env) {
             RestClient restClient = RestClient.builder()
                     .uriBuilderFactory(new LocalHostUriBuilderFactory(env))
                     .defaultStatusHandler(new RestClientErrorHandler(new ErrorMessageDeserializer()))
