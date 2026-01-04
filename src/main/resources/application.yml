@@ -4,7 +4,7 @@ env:
     
 # Logback configuration
 logging.level:
-  org.springframework: info
+  #org.springframework:
   io.extact.msa.spring.platform.core.async: debug
     #transaction: info
     #security: trace
