@@ -12,6 +12,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
@@ -34,6 +35,7 @@ import io.extact.msa.spring.platform.core.auth.user.LoginUser;
 import io.extact.msa.spring.platform.core.auth.user.LoginUserAttributes;
 import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
 import io.extact.msa.spring.platform.fw.feature.auth.RmsLoginUserAttributes;
+import io.extact.msa.spring.platform.fw.infrastructure.datasource.FrameworkDataSource;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
 import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
 import io.extact.msa.spring.platform.fw.interfaces.webapi.ApiController;
@@ -73,12 +75,28 @@ class LoginUserAttributeIntegrationTest {
         }
 
         @Bean
-        PostgreSQLContainer<?> postgreSQLContainer() {
+        @Primary
+        PostgreSQLContainer<?> appPostgreSQLContainer() {
             return new PostgreSQLContainer<>("postgres:16-alpine");
         }
 
         @Bean
-        DynamicPropertyRegistrar targetUrlRegistrar(PostgreSQLContainer<?> postgres) {
+        @FrameworkDataSource
+        PostgreSQLContainer<?> fwPostgreSQLContainer() {
+            return new PostgreSQLContainer<>("postgres:16-alpine");
+        }
+
+        @Bean
+        DynamicPropertyRegistrar appTargetUrlRegistrar(PostgreSQLContainer<?> postgres) { // @Primary
+            return registry -> {
+                registry.add("rms.datasource.applicaiton.url", postgres::getJdbcUrl);
+                registry.add("rms.datasource.applicaiton.username", postgres::getUsername);
+                registry.add("rms.datasource.applicaiton.password", postgres::getPassword);
+            };
+        }
+
+        @Bean
+        DynamicPropertyRegistrar fwTargetUrlRegistrar(@FrameworkDataSource PostgreSQLContainer<?> postgres) {
             return registry -> {
                 registry.add("rms.datasource.fw.url", postgres::getJdbcUrl);
                 registry.add("rms.datasource.fw.username", postgres::getUsername);

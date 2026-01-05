@@ -11,8 +11,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import io.extact.msa.spring.platform.fw.domain.model.ModelValidator;
 import io.extact.msa.spring.platform.fw.feature.profile.ConditionalOnAnyPersistenceProfile;
-import io.extact.msa.spring.platform.fw.feature.sqlinit.ProfileBasedDbInitializerConfig;
 import io.extact.msa.spring.platform.fw.feature.validator.ValidatorConfig;
+import io.extact.msa.spring.platform.fw.infrastructure.datasource.ApplicationDataSourceConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.DefaultModelEntityMapper;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemEntity;
 import io.extact.msa.spring.rms.infrastructure.persistence.jpa.item.ItemJpaRepository;
@@ -28,7 +28,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.jpa.user.UserJpaRepos
 @ConditionalOnAnyPersistenceProfile(JPA)
 @Import({
         ValidatorConfig.class,
-        ProfileBasedDbInitializerConfig.class })
+        ApplicationDataSourceConfig.class })
 public class JpaRepositoryConfig {
 
     @Configuration(proxyBeanMethods = false)

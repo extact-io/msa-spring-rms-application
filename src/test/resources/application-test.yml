@@ -4,6 +4,10 @@ env:
   otlp:
     enabled: false # テストはOTELは無効なのを前提にしているためfalse固定すること
 
+# Logback configuration
+logging.level:
+  org.springframework: INFO
+    
 spring:
   main:
     banner-mode: off

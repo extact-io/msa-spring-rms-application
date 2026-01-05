@@ -2,14 +2,6 @@ env:
   otlp:
     enabled: false
     
-# Logback configuration
-logging.level:
-  #org.springframework:
-  io.extact.msa.spring.platform.core.async: debug
-    #transaction: info
-    #security: trace
-    #context.support.ResourceBundleMessageSource: DEBUG
-
 # Spring Boot configuration
 spring:
   application:
