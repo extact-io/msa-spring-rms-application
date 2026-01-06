@@ -44,8 +44,6 @@ import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 // TODO:
-// ・@FrameworkDataSourceに対するオレオレServiceConnectionを作る
-// ・remoteの方でHeaderAuthに対しても同じようにテストする
 // ・Filterでエラーが出た時のハンドリングを確認する→今はerrorページに行っちゃってる
 // ・Client側のシナリオテストをdocker composeを使って本物構成にしてテストを通るようにする
 
@@ -55,7 +53,7 @@ import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
         """)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles({ "test", "jpa-all" })
-class LoginUserAttributeIntegrationTest {
+class JwtAuthLoginUserAttributeIntegrationTest {
 
     private static LoginUser CAPTURED_AUTH;
 
@@ -153,7 +151,7 @@ class LoginUserAttributeIntegrationTest {
     void testAuthenticatedUser(@Autowired JsonWebTokenGenerator generator) {
 
         // given
-        TestAuthUtils.signinByJwt(generator, 1, "ADMIN");
+        TestAuthUtils.signinByJwt(generator, 99, "ADMIN");
 
         // when
         client.get()
