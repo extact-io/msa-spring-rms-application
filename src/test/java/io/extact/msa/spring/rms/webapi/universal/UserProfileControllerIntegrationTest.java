@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
@@ -39,6 +40,7 @@ import io.extact.msa.spring.rms.webapi.universal.UserProfileUpdateRequest.UserPr
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@TestPropertySource(properties = "rms.login-user-attributes.cache.enabled=false") // testUpdateOwnProfileOnNotFoundでcacheでNullValueでエラーにならないようにする
 @EnableAutoConfigurationWithoutJpa
 @ActiveProfiles({ "test", "file-all" })
 @TestMethodOrder(OrderAnnotation.class)
@@ -145,7 +147,7 @@ class UserProfileControllerIntegrationTest {
     void testUpdateOwnProfileOnNotFound(@Autowired JsonWebTokenGenerator generator) {
         // given
         TestAuthUtils.signoutQuietly();
-        TestAuthUtils.signinByJwt(generator, 999, "MEMBER");
+        TestAuthUtils.signinByJwt(generator, 9, "MEMBER");
         UserProfileUpdateRequest req = userProfileUpdateRequestBuilder().build();
         // when
         assertThatThrownBy(() -> client.updateOwnProfile(req))

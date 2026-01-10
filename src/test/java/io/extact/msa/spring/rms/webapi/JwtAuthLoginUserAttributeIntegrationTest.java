@@ -151,7 +151,7 @@ class JwtAuthLoginUserAttributeIntegrationTest {
     void testAuthenticatedUser(@Autowired JsonWebTokenGenerator generator) {
 
         // given
-        TestAuthUtils.signinByJwt(generator, 99, "ADMIN");
+        TestAuthUtils.signinByJwt(generator, 1, "ADMIN");
 
         // when
         client.get()
