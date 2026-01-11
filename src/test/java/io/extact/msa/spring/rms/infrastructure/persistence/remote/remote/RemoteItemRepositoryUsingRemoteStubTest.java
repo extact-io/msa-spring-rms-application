@@ -2,7 +2,6 @@ package io.extact.msa.spring.rms.infrastructure.persistence.remote.remote;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
@@ -22,6 +21,7 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperti
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.AbstractRemoteItemRepositoryTest;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryTestInitializer;
+import io.extact.msa.spring.rms.infrastructure.persistence.remote.item.ItemQualifier;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +47,7 @@ class RemoteItemRepositoryUsingRemoteStubTest extends AbstractRemoteItemReposito
 
         @Bean
         RemoteRepositoryTestInitializer remoteRepositoryTestInitializer(
-                @Qualifier("item") ExternalProperties prop,
+                @ItemQualifier ExternalProperties prop,
                 Environment env) {
             return new RemoteRepositoryTestInitializer(prop, env, "items");
         }

@@ -326,6 +326,7 @@ class ApplicationArchUnitTest {
             .should()
             .onlyDependOnClassesThat(resideInAnyPackage(
                     "java..",
+                    "org.springframework.beans..",
                     "org.springframework.web..", // Spring WebなのでOK
                     "com.fasterxml.jackson.*",
                     "lombok..",

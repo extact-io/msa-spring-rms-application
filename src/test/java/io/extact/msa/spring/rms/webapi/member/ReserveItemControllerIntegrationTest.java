@@ -18,11 +18,11 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.core.env.Environment;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
@@ -91,17 +91,17 @@ class ReserveItemControllerIntegrationTest {
         }
 
         @Bean
-        ReservationClient reservationClient(ExternalProperties prop, Environment env) {
+        ReservationClient reservationClient(ExternalProperties prop, ApplicationContext context) {
 
             HttpMessageConverter<Object> converter = ConfigMessageConveterBuilder
                     .builder(prop)
-                    .build();
+                    .build(context);
             ConversionService conversionService = ConfigConversionServiceBuilder
                     .builder(prop)
                     .build();
 
             RestClient restClient = RestClient.builder()
-                    .uriBuilderFactory(new LocalHostUriBuilderFactory(env))
+                    .uriBuilderFactory(new LocalHostUriBuilderFactory(context.getEnvironment()))
                     .messageConverters(converters -> converters.addFirst(converter))
                     .defaultStatusHandler(new RestClientErrorHandler(new ErrorMessageDeserializer()))
                     .requestInitializer(new BearerTokenRequestInitializer())

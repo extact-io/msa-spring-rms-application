@@ -26,7 +26,7 @@ class TestcontainersConfig {
         return new GenericContainer<>(env.getProperty("rms.remote-stub.image"))
                 .withExposedPorts(8081)
                 .waitingFor(Wait.forHttp("/actuator/health/readiness").withStartupTimeout(Duration.ofSeconds(10)))
-                .withEnv("RMS_LOG_SERVER_ENABLE", "true");
+                .withEnv("ENV_OTLP_ENABLED", "false");
     }
 
     @Bean

@@ -1,6 +1,5 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.remote.local;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +23,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.remote.AbstractRemote
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryTestInitializer;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.local.stub.RemoteUserStubController;
+import io.extact.msa.spring.rms.infrastructure.persistence.remote.user.UserQualifier;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -55,7 +55,7 @@ class RemoteUserRepositoryUsingLocalStubTest extends AbstractRemoteUserRepositor
         }
         @Bean
         RemoteRepositoryTestInitializer remoteRepositoryTestInitializer(
-                @Qualifier("user") ExternalProperties prop,
+                @UserQualifier ExternalProperties prop,
                 Environment env) {
             return new RemoteRepositoryTestInitializer(prop, env, "users");
         }

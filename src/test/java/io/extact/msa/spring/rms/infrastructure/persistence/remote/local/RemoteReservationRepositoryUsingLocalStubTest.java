@@ -1,6 +1,5 @@
 package io.extact.msa.spring.rms.infrastructure.persistence.remote.local;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +24,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.remote.AbstractRemote
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.RemoteRepositoryTestInitializer;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.local.stub.RemoteReservationStubController;
+import io.extact.msa.spring.rms.infrastructure.persistence.remote.reservation.ReservationQualifier;
 import io.extact.msa.spring.test.spring.NopTransactionManager;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -57,7 +57,7 @@ class RemoteReservationRepositoryUsingLocalStubTest extends AbstractRemoteReserv
         }
         @Bean
         RemoteRepositoryTestInitializer remoteRepositoryTestInitializer(
-                @Qualifier("reservation") ExternalProperties prop,
+                @ReservationQualifier ExternalProperties prop,
                 Environment env) {
             return new RemoteRepositoryTestInitializer(prop, env, "reservations");
         }
