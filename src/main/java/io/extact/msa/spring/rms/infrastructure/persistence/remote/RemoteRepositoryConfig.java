@@ -5,6 +5,7 @@ import static io.extact.msa.spring.platform.fw.feature.profile.PersistenceProfil
 import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -22,10 +23,10 @@ import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.Defau
 import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.DefaultRmsRestClientCustomizer;
 import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.DefaultRmsRestClientObjectMapperCustomizer;
 import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.RmsProxyFactoryCustomizer;
-import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.RmsProxyFactorySourceCreator;
-import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.RmsProxyFactorySourceCreator.Source;
 import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.RmsRestClientCustomizer;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.RmsRestClientFactory;
 import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.RmsRestClientObjectMapperCustomizer;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.SingleRestClientConfig;
 import io.extact.msa.spring.platform.fw.infrastructure.persistence.DefaultModelEntityMapper;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.item.ItemQualifier;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.item.RemoteItem;
@@ -40,6 +41,10 @@ import io.extact.msa.spring.rms.infrastructure.persistence.remote.user.RemoteUse
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.user.RemoteUserRepository;
 import io.extact.msa.spring.rms.infrastructure.persistence.remote.user.UserQualifier;
 
+/**
+ * Item, Reservation, Userの複数の接続先を設定するコンフィグ。
+ * 接続先が1つの場合は{@link SingleRestClientConfig}を利用する。
+ */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnAnyPersistenceProfile(REMOTE)
 @Import(ValidatorConfig.class)
@@ -76,12 +81,14 @@ public class RemoteRepositoryConfig {
         @ItemQualifier
         @Order(Ordered.LOWEST_PRECEDENCE)
         RmsProxyFactoryCustomizer defaultItemProxyFactoryCustomizer(
+                ApplicationContext context,
                 RestClient.Builder builder, // RestClientAutoConfigurationでCustomierが提供済みのBuilderを使用する
                 @ItemQualifier List<RmsRestClientCustomizer> customizers) {
 
-            RmsProxyFactorySourceCreator creator = new RmsProxyFactorySourceCreator(builder, customizers);
-            Source source = creator.create();
-            return new DefaultRmsProxyFactoryCustomizer(source.restClient(), source.conversionService());
+            RmsRestClientFactory factory = new RmsRestClientFactory(builder, context);
+            return new DefaultRmsProxyFactoryCustomizer(
+                    factory.create(customizers),
+                    factory.appliedConversionService());
         }
 
         @Bean
@@ -117,7 +124,8 @@ public class RemoteRepositoryConfig {
         @Bean
         @ReservationQualifier
         @Order(Ordered.LOWEST_PRECEDENCE)
-        RmsRestClientObjectMapperCustomizer defaultItemObjectMapperCustomizer(@ReservationQualifier ExternalProperties props) {
+        RmsRestClientObjectMapperCustomizer defaultItemObjectMapperCustomizer(
+                @ReservationQualifier ExternalProperties props) {
             return new DefaultRmsRestClientObjectMapperCustomizer(props);
         }
 
@@ -134,12 +142,14 @@ public class RemoteRepositoryConfig {
         @ReservationQualifier
         @Order(Ordered.LOWEST_PRECEDENCE)
         RmsProxyFactoryCustomizer defaultItemProxyFactoryCustomizer(
+                ApplicationContext context,
                 RestClient.Builder builder, // RestClientAutoConfigurationでCustomierが提供済みのBuilderを使用する
                 @ReservationQualifier List<RmsRestClientCustomizer> customizers) {
 
-            RmsProxyFactorySourceCreator creator = new RmsProxyFactorySourceCreator(builder, customizers);
-            Source source = creator.create();
-            return new DefaultRmsProxyFactoryCustomizer(source.restClient(), source.conversionService());
+            RmsRestClientFactory factory = new RmsRestClientFactory(builder, context);
+            return new DefaultRmsProxyFactoryCustomizer(
+                    factory.create(customizers),
+                    factory.appliedConversionService());
         }
 
         @Bean
@@ -193,12 +203,14 @@ public class RemoteRepositoryConfig {
         @UserQualifier
         @Order(Ordered.LOWEST_PRECEDENCE)
         RmsProxyFactoryCustomizer defaultItemProxyFactoryCustomizer(
+                ApplicationContext context,
                 RestClient.Builder builder, // RestClientAutoConfigurationでCustomierが提供済みのBuilderを使用する
                 @UserQualifier List<RmsRestClientCustomizer> customizers) {
 
-            RmsProxyFactorySourceCreator creator = new RmsProxyFactorySourceCreator(builder, customizers);
-            Source source = creator.create();
-            return new DefaultRmsProxyFactoryCustomizer(source.restClient(), source.conversionService());
+            RmsRestClientFactory factory = new RmsRestClientFactory(builder, context);
+            return new DefaultRmsProxyFactoryCustomizer(
+                    factory.create(customizers),
+                    factory.appliedConversionService());
         }
 
         @Bean

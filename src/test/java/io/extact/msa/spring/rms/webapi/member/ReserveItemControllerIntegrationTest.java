@@ -18,19 +18,15 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.annotation.DeleteExchange;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
@@ -38,6 +34,7 @@ import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
+import io.extact.msa.spring.platform.core.auth.client.LoginUserHeaderRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
 import io.extact.msa.spring.platform.fw.domain.constraint.RmsId;
@@ -45,12 +42,10 @@ import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsRequestCheckException;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
-import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
 import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
-import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
-import io.extact.msa.spring.platform.fw.infrastructure.external.converter.ConfigConversionServiceBuilder;
-import io.extact.msa.spring.platform.fw.infrastructure.external.converter.ConfigMessageConveterBuilder;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.RmsRestClientCustomizer;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.SingleRestClientConfig;
 import io.extact.msa.spring.platform.fw.test.utils.TestAuthUtils;
 import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.WebApiApplication;
@@ -81,7 +76,8 @@ class ReserveItemControllerIntegrationTest {
     private int defaultLoginUserId = 1;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(WebApiApplication.class)
+    @Import({ WebApiApplication.class,
+        SingleRestClientConfig.class })
     static class TestConfig {
 
         @Bean
@@ -91,27 +87,18 @@ class ReserveItemControllerIntegrationTest {
         }
 
         @Bean
-        ReservationClient reservationClient(ExternalProperties prop, ApplicationContext context) {
+        RmsRestClientCustomizer overrideRestClientCustomizer(Environment env) {
+            return (buidler, _) -> {
+                buidler.uriBuilderFactory(new LocalHostUriBuilderFactory(env))
+                        .requestInitializers(initializers -> {
+                            initializers.removeIf(LoginUserHeaderRequestInitializer.class::isInstance); // defaultで入っているのを削除
+                            initializers.add(new BearerTokenRequestInitializer());
+                        });
+            };
+        }
 
-            HttpMessageConverter<Object> converter = ConfigMessageConveterBuilder
-                    .builder(prop)
-                    .build(context);
-            ConversionService conversionService = ConfigConversionServiceBuilder
-                    .builder(prop)
-                    .build();
-
-            RestClient restClient = RestClient.builder()
-                    .uriBuilderFactory(new LocalHostUriBuilderFactory(context.getEnvironment()))
-                    .messageConverters(converters -> converters.addFirst(converter))
-                    .defaultStatusHandler(new RestClientErrorHandler(new ErrorMessageDeserializer()))
-                    .requestInitializer(new BearerTokenRequestInitializer())
-                    .build();
-
-            RestClientAdapter adapter = RestClientAdapter.create(restClient);
-            HttpServiceProxyFactory factory = HttpServiceProxyFactory
-                    .builderFor(adapter)
-                    .conversionService(conversionService)
-                    .build();
+        @Bean
+        ReservationClient reservationClient(HttpServiceProxyFactory factory) {
             return factory.createClient(ReservationClient.class);
         }
     }
