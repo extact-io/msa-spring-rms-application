@@ -25,7 +25,7 @@ public class RemoteRepositoryTestInitializer {
     void init() {
         UriBuilderFactory uriFactory = CustomUriBuilderFactory.newInstance()
                 .env(env)
-                .uriTemplate(prop.getUrl() + "/" + resource)
+                .baseUri(prop.getUrl() + "/" + resource)
                 .build();
         client = RestClient.builder()
                 .uriBuilderFactory(uriFactory)
