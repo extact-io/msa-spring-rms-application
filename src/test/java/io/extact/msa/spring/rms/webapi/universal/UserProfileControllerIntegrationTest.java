@@ -17,27 +17,26 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PutExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.core.jwt.encode.JsonWebTokenGenerator;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
-import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
-import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
+import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.BearerTokenRequestInitializerCustomizer;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.RmsRestClientCustomizer;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.SingleRestClientConfig;
+import io.extact.msa.spring.platform.fw.test.customizer.LocalHostUriDefaultFormatExternalPropeties;
 import io.extact.msa.spring.platform.fw.test.utils.TestAuthUtils;
 import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.webapi.universal.UserProfileUpdateRequest.UserProfileUpdateRequestBuilder;
-import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @TestPropertySource(properties = "rms.login-user-attributes.cache.enabled=false") // testUpdateOwnProfileOnNotFoundでcacheでNullValueでエラーにならないようにする
@@ -53,18 +52,23 @@ class UserProfileControllerIntegrationTest {
     private ProfileClient client;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(WebApiApplication.class)
+    @Import({
+            WebApiApplication.class,
+            SingleRestClientConfig.class })
     static class TestConfig {
-        @Bean
-        ProfileClient userClient(Environment env) {
-            RestClient restClient = RestClient.builder()
-                    .uriBuilderFactory(new LocalHostUriBuilderFactory(env))
-                    .defaultStatusHandler(new RestClientErrorHandler(new ErrorMessageDeserializer()))
-                    .requestInitializer(new BearerTokenRequestInitializer())
-                    .build();
 
-            RestClientAdapter adapter = RestClientAdapter.create(restClient);
-            HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+        @Bean
+        ExternalProperties externalProperties(Environment env) {
+            return new LocalHostUriDefaultFormatExternalPropeties(env);
+        }
+
+        @Bean
+        RmsRestClientCustomizer overriteRestClientConfig() {
+            return BearerTokenRequestInitializerCustomizer.INSTANCE;
+        }
+
+        @Bean
+        ProfileClient userClient(HttpServiceProxyFactory factory) {
             return factory.createClient(ProfileClient.class);
         }
     }

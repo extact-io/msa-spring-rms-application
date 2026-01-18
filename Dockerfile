@@ -1,5 +1,5 @@
 # Perform the extraction in a separate builder container
-FROM bellsoft/liberica-openjre-debian:24-cds AS builder
+FROM bellsoft/liberica-openjre-debian:25-cds AS builder
 WORKDIR /builder
 
 ARG JAR_FILE=target/*-uber.jar
@@ -8,7 +8,7 @@ COPY ${JAR_FILE} application.jar
 RUN java -Djarmode=tools -jar application.jar extract --layers --destination extracted
 
 # This is the runtime container
-FROM bellsoft/liberica-openjre-debian:24-cds
+FROM bellsoft/liberica-openjre-debian:25-cds
 WORKDIR /application
 
 COPY --from=builder /builder/extracted/dependencies/ ./

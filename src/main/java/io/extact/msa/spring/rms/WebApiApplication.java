@@ -2,6 +2,7 @@ package io.extact.msa.spring.rms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 import io.extact.msa.spring.platform.core.CoreConfig;
@@ -13,6 +14,7 @@ import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.webapi.WebApiConfig;
 
 @SpringBootConfiguration
+@EnableAutoConfiguration
 @Import({
         CoreConfig.class,
         ObservationConfig.class,

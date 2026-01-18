@@ -17,22 +17,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import io.extact.msa.spring.platform.core.auth.client.BearerTokenRequestInitializer;
 import io.extact.msa.spring.platform.core.condition.EnableAutoConfigurationWithoutJpa;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
-import io.extact.msa.spring.platform.fw.infrastructure.external.ErrorMessageDeserializer;
-import io.extact.msa.spring.platform.fw.infrastructure.external.RestClientErrorHandler;
+import io.extact.msa.spring.platform.fw.infrastructure.external.ExternalProperties;
 import io.extact.msa.spring.platform.fw.infrastructure.external.SecurityConstraintException;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.BearerTokenRequestInitializerCustomizer;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.RmsRestClientCustomizer;
+import io.extact.msa.spring.platform.fw.infrastructure.external.customizer.SingleRestClientConfig;
+import io.extact.msa.spring.platform.fw.test.customizer.LocalHostUriDefaultFormatExternalPropeties;
 import io.extact.msa.spring.rms.PersistedTestData;
 import io.extact.msa.spring.rms.WebApiApplication;
-import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @EnableAutoConfigurationWithoutJpa
@@ -46,18 +45,23 @@ class LoginControllerIntegrationTest {
     private LoginClient client;
 
     @Configuration(proxyBeanMethods = false)
-    @Import(WebApiApplication.class)
+    @Import({
+            WebApiApplication.class,
+            SingleRestClientConfig.class })
     static class TestConfig {
-        @Bean
-        LoginClient loginClient(Environment env) {
-            RestClient restClient = RestClient.builder()
-                    .uriBuilderFactory(new LocalHostUriBuilderFactory(env))
-                    .defaultStatusHandler(new RestClientErrorHandler(new ErrorMessageDeserializer()))
-                    .requestInitializer(new BearerTokenRequestInitializer())
-                    .build();
 
-            RestClientAdapter adapter = RestClientAdapter.create(restClient);
-            HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
+        @Bean
+        ExternalProperties externalProperties(Environment env) {
+            return new LocalHostUriDefaultFormatExternalPropeties(env);
+        }
+
+        @Bean
+        RmsRestClientCustomizer overriteRestClientConfig() {
+            return BearerTokenRequestInitializerCustomizer.INSTANCE;
+        }
+
+        @Bean
+        LoginClient loginClient(HttpServiceProxyFactory factory) {
             return factory.createClient(LoginClient.class);
         }
     }

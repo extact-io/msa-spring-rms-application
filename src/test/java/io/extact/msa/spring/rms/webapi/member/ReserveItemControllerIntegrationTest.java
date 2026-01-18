@@ -52,8 +52,8 @@ import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.rms.webapi.admin.ReservationAdminResponse;
 import io.extact.msa.spring.rms.webapi.member.ReserveItemRequest.ReserveItemRequestBuilder;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
-
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+
 @EnableAutoConfigurationWithoutJpa
 @ActiveProfiles({ "test", "file-all" })
 @TestMethodOrder(OrderAnnotation.class)
