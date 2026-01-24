@@ -1,31 +1,15 @@
-debug: false
-
+# テスト向け設定
 env:
   otlp:
     enabled: false # テストはOTELは無効なのを前提にしているためfalse固定すること
 
-# Logback configuration
-logging.level:
-  org.springframework: INFO
-    
 spring:
   main:
     banner-mode: off
 
 rms:
-  debug:
-    configdump:
-      enable: false
-      #system-properties: true
-      #system-environment: true
   jwt-encode:
-    enable: true
-    private-key: classpath:/jwt.key
-    clock:
-      type: SYSTEM
-      fixed-datetime: 2024-01-01T12:30 # typeがSYSTEMの場合は無視される
     claim:
       issuer: JsonWebTokenIntegrationTest
-      exp: 60                 # 有効期限（分単位）
   remote-stub:
     image: "msa-spring-rms-remote-resources:0.0.1-SNAPSHOT"

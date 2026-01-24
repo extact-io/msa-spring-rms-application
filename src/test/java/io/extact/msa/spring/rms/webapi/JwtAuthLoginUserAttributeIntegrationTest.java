@@ -43,10 +43,6 @@ import io.extact.msa.spring.platform.fw.test.utils.TestAuthUtils;
 import io.extact.msa.spring.rms.WebApiApplication;
 import io.extact.msa.spring.test.spring.LocalHostUriBuilderFactory;
 
-// TODO:
-// ・Filterでエラーが出た時のハンドリングを確認する→今はerrorページに行っちゃってる
-// ・Client側のシナリオテストをdocker composeを使って本物構成にしてテストを通るようにする
-
 @TestPropertySource(properties = """
         rms.login-user-attributes.cache.enabled=true
         rms.login-user-attributes.cache.type=redis

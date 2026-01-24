@@ -31,3 +31,4 @@ ObjectStore
 *.log
 
 init-rms-prod.ddl
+config/*.yml

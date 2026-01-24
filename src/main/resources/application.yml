@@ -1,7 +1,3 @@
-env:
-  otlp:
-    enabled: false
-    
 # Spring Boot configuration
 spring:
   application:
