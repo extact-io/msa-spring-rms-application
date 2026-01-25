@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
+import io.extact.msa.spring.platform.fw.domain.service.DomainEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
@@ -60,8 +61,14 @@ class ItemAdminServiceTest {
                 ItemCreator modelCreator,
                 DuplicateChecker<Item> duplicateChecker,
                 ItemRepository repository,
-                ApplicationServiceEventPublisher eventPublisher) {
-            return new ItemAdminService(modelCreator, duplicateChecker, repository, eventPublisher);
+                ApplicationServiceEventPublisher applicationEventPublisher,
+                DomainEventPublisher domainEventPublisher) {
+            return new ItemAdminService(
+                    modelCreator,
+                    duplicateChecker,
+                    repository,
+                    applicationEventPublisher,
+                    domainEventPublisher);
         }
 
         @Bean

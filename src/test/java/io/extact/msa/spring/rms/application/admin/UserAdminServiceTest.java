@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
+import io.extact.msa.spring.platform.fw.domain.service.DomainEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
@@ -53,8 +54,14 @@ class UserAdminServiceTest {
                 UserCreator modelCreator,
                 DuplicateChecker<User> duplicateChecker,
                 UserRepository repository,
-                ApplicationServiceEventPublisher eventPublisher) {
-            return new UserAdminService(modelCreator, duplicateChecker, repository, eventPublisher);
+                ApplicationServiceEventPublisher applicationEventPublisher,
+                DomainEventPublisher domainEventPublisher) {
+            return new UserAdminService(
+                    modelCreator,
+                    duplicateChecker,
+                    repository,
+                    applicationEventPublisher,
+                    domainEventPublisher);
         }
 
         @Bean

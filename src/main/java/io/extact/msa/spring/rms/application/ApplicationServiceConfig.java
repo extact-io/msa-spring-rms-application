@@ -8,6 +8,7 @@ import io.extact.msa.spring.platform.core.async.AsyncConfig;
 import io.extact.msa.spring.platform.core.async.AsyncInvoker;
 import io.extact.msa.spring.platform.core.auth.context.LoginContext;
 import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
+import io.extact.msa.spring.platform.fw.domain.service.DomainEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.platform.fw.feature.event.EventPublisherConfig;
 import io.extact.msa.spring.rms.application.admin.ItemAdminService;
@@ -50,18 +51,29 @@ public class ApplicationServiceConfig {
             ItemCreator modelCreator,
             DuplicateChecker<Item> duplicateChecker,
             ItemRepository repository,
-            ApplicationServiceEventPublisher eventPublisher) {
+            ApplicationServiceEventPublisher applicationEventPublisher,
+            DomainEventPublisher domainEventPublisher) {
 
-        return new ItemAdminService(modelCreator, duplicateChecker, repository, eventPublisher);
+        return new ItemAdminService(
+                modelCreator,
+                duplicateChecker,
+                repository,
+                applicationEventPublisher,
+                domainEventPublisher);
     }
 
     @Bean
     ReservationAdminService reservationAdminService(
             ReservationDuplicateChecker duplicateChecker,
             ReservationModelComposer modelComposer,
-            ReservationRepository repository) {
+            ReservationRepository repository,
+            DomainEventPublisher domainEventPublisher) {
 
-        return new ReservationAdminService(duplicateChecker, modelComposer, repository);
+        return new ReservationAdminService(
+                duplicateChecker,
+                modelComposer,
+                repository,
+                domainEventPublisher);
     }
 
     @Bean
@@ -69,9 +81,15 @@ public class ApplicationServiceConfig {
             UserCreator modelCreator,
             DuplicateChecker<User> duplicateChecker,
             UserRepository repository,
-            ApplicationServiceEventPublisher eventPublisher) {
+            ApplicationServiceEventPublisher applicationEventPublisher,
+            DomainEventPublisher domainEventPublisher) {
 
-        return new UserAdminService(modelCreator, duplicateChecker, repository, eventPublisher);
+        return new UserAdminService(
+                modelCreator,
+                duplicateChecker,
+                repository,
+                applicationEventPublisher,
+                domainEventPublisher);
     }
 
     // ---- for member
@@ -111,7 +129,6 @@ public class ApplicationServiceConfig {
     // ---- for listener
     @Bean
     ReservationDependencyEventListener dependencyEventListener(ReservationRepository repository) {
-
         return new ReservationDependencyEventListener(repository);
     }
 }

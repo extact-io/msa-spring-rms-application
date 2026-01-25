@@ -51,6 +51,7 @@ class ApplicationArchUnitTest {
     static final ArchRule architecture_respect_onion = onionArchitecture()
             .domainModels(
                     "..domain..model..",
+                    "..domain..event..",
                     "..domain..constraint..")
             .domainServices(
                     // domainパッケージ直下のクラス
@@ -340,6 +341,28 @@ class ApplicationArchUnitTest {
                             .or(type(io.extact.msa.spring.rms.domain.item.ItemRepository.class))
                             .or(type(io.extact.msa.spring.rms.domain.reservation.ReservationRepository.class))
                             .or(type(io.extact.msa.spring.rms.domain.user.UserRepository.class)) //
+            );
+
+    /**
+     * frameworkパッケージから依存してOKなモジュールの検証
+     */
+    @ArchTest
+    static final ArchRule dependency_framework = classes()
+            .that()
+            .resideInAPackage("..infrastructure.framework..")
+            .and(not(configurationClasses()))
+            .should().onlyDependOnClassesThat(
+                    resideInAnyPackage(
+                            "java..",
+                            "org.springframework.context..",
+                            "lombok..",
+                            "..core.auth..",
+                            "..fw.exception..",
+                            "..fw.domain.model..",
+                            "..fw.feature.auth..",
+                            "..rms.application..",
+                            "..rms.domain..model..",
+                            "..rms.domain..event..")
             );
 
     // ---------------------------------------------------------------------

@@ -1,12 +1,18 @@
 package io.extact.msa.spring.rms.domain.user.model;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import io.extact.msa.spring.platform.fw.domain.model.AbstractEntityModel;
+import io.extact.msa.spring.platform.fw.domain.model.DomainEvent;
+import io.extact.msa.spring.platform.fw.domain.model.DomainEventStorable;
+import io.extact.msa.spring.platform.fw.domain.model.DomainEvents;
 import io.extact.msa.spring.rms.domain.user.constraint.LoginId;
 import io.extact.msa.spring.rms.domain.user.constraint.Passowrd;
 import io.extact.msa.spring.rms.domain.user.constraint.UserTypeConstraint;
+import io.extact.msa.spring.rms.domain.user.event.UserAddedEvent;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +22,9 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = "id", callSuper = false)
 @ToString
-public class User extends AbstractEntityModel implements UserModelView {
+public class User extends AbstractEntityModel implements UserModelView, DomainEventStorable {
+
+    private final DomainEvents domainEvents = new DomainEvents();
 
     @Getter
     @NotNull
@@ -50,6 +58,10 @@ public class User extends AbstractEntityModel implements UserModelView {
         return this.userType == UserType.ADMIN;
     }
 
+    public void register() {
+         domainEvents.add(new UserAddedEvent(this));
+    }
+
     public void changePassword(String newPassword) {
         applyPassword(newPassword);
     }
@@ -61,6 +73,11 @@ public class User extends AbstractEntityModel implements UserModelView {
     public void editProfile(String userName, String phoneNumber, String contact) {
         UserProfile newProfile = new UserProfile(userName, phoneNumber, contact);
         applyProfile(newProfile);
+    }
+
+    @Override
+    public List<DomainEvent> pullDomainEvents() {
+        return domainEvents.pullDomainEvents();
     }
 
     // --------------------------------------- private methods

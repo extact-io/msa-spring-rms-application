@@ -7,6 +7,7 @@ import io.extact.msa.spring.platform.core.transaction.ReadOnly;
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
 import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
+import io.extact.msa.spring.platform.fw.domain.service.DomainEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.rms.application.admin.event.UserWillBeDeletedEvent;
 import io.extact.msa.spring.rms.domain.user.UserCreator;
@@ -21,17 +22,18 @@ public class UserAdminService {
 
     private final UserCreator modelCreator;
     private final ApplicationCrudSupport<User> support;
-    private final ApplicationServiceEventPublisher eventPublisher;
+    private final ApplicationServiceEventPublisher applicationEventPublisher;
 
     public UserAdminService(
             UserCreator modelCreator,
             DuplicateChecker<User> duplicateChecker,
             UserRepository repository,
-            ApplicationServiceEventPublisher eventPublisher) {
+            ApplicationServiceEventPublisher eventPublisher,
+            DomainEventPublisher domainEventPublisher) {
 
         this.modelCreator = modelCreator;
-        this.support = new ApplicationCrudSupport<>(duplicateChecker, repository);
-        this.eventPublisher = eventPublisher;
+        this.support = new ApplicationCrudSupport<>(duplicateChecker, repository, domainEventPublisher);
+        this.applicationEventPublisher = eventPublisher;
     }
 
     @ReadOnly
@@ -49,7 +51,7 @@ public class UserAdminService {
     }
 
     public void delete(UserId id) {
-        eventPublisher.publish(new UserWillBeDeletedEvent(id));
+        applicationEventPublisher.publish(new UserWillBeDeletedEvent(id));
         support.delete(id);
     }
 

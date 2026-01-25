@@ -32,6 +32,7 @@ public class UserCreator implements ModelCreator<User, UserModelAttributes> {
 
         user.configure(validator);
         user.verify();
+        user.register();
 
         return user;
     }

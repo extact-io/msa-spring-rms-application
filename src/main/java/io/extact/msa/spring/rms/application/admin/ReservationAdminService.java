@@ -5,6 +5,7 @@ import java.util.List;
 import io.extact.msa.spring.platform.core.transaction.ReadOnly;
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
 import io.extact.msa.spring.platform.fw.application.ApplicationService;
+import io.extact.msa.spring.platform.fw.domain.service.DomainEventPublisher;
 import io.extact.msa.spring.rms.application.support.ReservationComposeModel;
 import io.extact.msa.spring.rms.application.support.ReservationModelComposer;
 import io.extact.msa.spring.rms.domain.reservation.ReservationDuplicateChecker;
@@ -22,10 +23,11 @@ public class ReservationAdminService {
     public ReservationAdminService(
             ReservationDuplicateChecker duplicateChecker,
             ReservationModelComposer modelComposer,
-            ReservationRepository repository) {
+            ReservationRepository repository,
+            DomainEventPublisher eventPublisher) {
 
         this.modelComposer = modelComposer;
-        this.support = new ApplicationCrudSupport<>(duplicateChecker, repository);
+        this.support = new ApplicationCrudSupport<>(duplicateChecker, repository, eventPublisher);
     }
 
     @ReadOnly

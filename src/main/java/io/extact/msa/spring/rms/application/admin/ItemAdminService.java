@@ -7,6 +7,7 @@ import io.extact.msa.spring.platform.core.transaction.ReadOnly;
 import io.extact.msa.spring.platform.fw.application.ApplicationCrudSupport;
 import io.extact.msa.spring.platform.fw.application.ApplicationService;
 import io.extact.msa.spring.platform.fw.application.event.ApplicationServiceEventPublisher;
+import io.extact.msa.spring.platform.fw.domain.service.DomainEventPublisher;
 import io.extact.msa.spring.platform.fw.domain.service.DuplicateChecker;
 import io.extact.msa.spring.rms.application.admin.event.ItemWillBeDeletedEvent;
 import io.extact.msa.spring.rms.domain.item.ItemCreator;
@@ -21,17 +22,18 @@ public class ItemAdminService {
 
     private final ItemCreator modelCreator;
     private final ApplicationCrudSupport<Item> support;
-    private final ApplicationServiceEventPublisher eventPublisher;
+    private final ApplicationServiceEventPublisher applicationEventPublisher;
 
     public ItemAdminService(
             ItemCreator modelCreator,
             DuplicateChecker<Item> duplicateChecker,
             ItemRepository repository,
-            ApplicationServiceEventPublisher eventPublisher) {
+            ApplicationServiceEventPublisher eventPublisher,
+            DomainEventPublisher domainEventPublisher) {
 
         this.modelCreator = modelCreator;
-        this.support = new ApplicationCrudSupport<>(duplicateChecker, repository);
-        this.eventPublisher = eventPublisher;
+        this.support = new ApplicationCrudSupport<>(duplicateChecker, repository, domainEventPublisher);
+        this.applicationEventPublisher = eventPublisher;
     }
 
     @ReadOnly
@@ -48,10 +50,9 @@ public class ItemAdminService {
     }
 
     public void delete(ItemId id) {
-        eventPublisher.publish(new ItemWillBeDeletedEvent(id));
+        applicationEventPublisher.publish(new ItemWillBeDeletedEvent(id));
         support.delete(id);
     }
-
 
     private Item createModel(ItemAddCommand command) {
         ItemModelAttributes attrs = ItemModelAttributes.builder()

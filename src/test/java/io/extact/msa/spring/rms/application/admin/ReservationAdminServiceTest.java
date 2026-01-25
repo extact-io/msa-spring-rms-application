@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import io.extact.msa.spring.platform.core.async.AsyncConfig;
 import io.extact.msa.spring.platform.core.async.AsyncInvoker;
+import io.extact.msa.spring.platform.fw.domain.service.DomainEventPublisher;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException;
 import io.extact.msa.spring.platform.fw.exception.BusinessFlowException.CauseType;
 import io.extact.msa.spring.platform.fw.feature.exception.RmsValidationException;
@@ -67,8 +68,9 @@ class ReservationAdminServiceTest {
         ReservationAdminService reservationAdminService(
                 ReservationDuplicateChecker duplicateChecker,
                 ReservationModelComposer modelComposer,
-                ReservationRepository repository) {
-            return new ReservationAdminService(duplicateChecker, modelComposer, repository);
+                ReservationRepository repository,
+                DomainEventPublisher eventPublisher) {
+            return new ReservationAdminService(duplicateChecker, modelComposer, repository, eventPublisher);
         }
     }
 

@@ -10,6 +10,7 @@ import io.extact.msa.spring.platform.core.auth.context.LoginContextConfig;
 import io.extact.msa.spring.platform.fw.feature.observation.ObservationConfig;
 import io.extact.msa.spring.rms.application.ApplicationServiceConfig;
 import io.extact.msa.spring.rms.domain.DomainConfig;
+import io.extact.msa.spring.rms.infrastructure.framework.FrameworkConfig;
 import io.extact.msa.spring.rms.infrastructure.persistence.PersistenceConfig;
 import io.extact.msa.spring.rms.webapi.WebApiConfig;
 
@@ -22,7 +23,8 @@ import io.extact.msa.spring.rms.webapi.WebApiConfig;
         WebApiConfig.class,
         ApplicationServiceConfig.class,
         DomainConfig.class,
-        PersistenceConfig.class })
+        PersistenceConfig.class,
+        FrameworkConfig.class })
 public class WebApiApplication {
 
     public static void main(String[] args) {
